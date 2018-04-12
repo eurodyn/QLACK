@@ -10,6 +10,7 @@ import com.eurodyn.qlack.fuse.mailing.util.QFMMailConstants;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import java.util.List;
  */
 @Service
 @Validated
-@org.springframework.transaction.annotation.Transactional
+@Transactional
 public class QFMInternalMessageService {
 
   @PersistenceContext
