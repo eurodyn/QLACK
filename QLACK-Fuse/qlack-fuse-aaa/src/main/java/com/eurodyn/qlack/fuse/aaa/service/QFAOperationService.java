@@ -240,7 +240,8 @@ public class QFAOperationService {
 
     QFAOperation operation = QFAOperation.findByName(operationName, em);
     String resourceId =
-        (resourceObjectID == null) ? null : QFAResource.findByObjectID(resourceObjectID, em).getId();
+        (resourceObjectID == null) ? null
+            : QFAResource.findByObjectID(resourceObjectID, em).getId();
 
     Boolean retVal = null;
     QFAUserHasOperation uho = (resourceId == null)
@@ -316,7 +317,8 @@ public class QFAOperationService {
     QFAGroup group = QFAGroup.find(groupID, em);
     QFAOperation operation = QFAOperation.findByName(operationName, em);
     String resourceId =
-        (resourceObjectID == null) ? null : QFAResource.findByObjectID(resourceObjectID, em).getId();
+        (resourceObjectID == null) ? null
+            : QFAResource.findByObjectID(resourceObjectID, em).getId();
 
     Boolean retVal = null;
     QFAGroupHasOperation gho = (resourceId == null)

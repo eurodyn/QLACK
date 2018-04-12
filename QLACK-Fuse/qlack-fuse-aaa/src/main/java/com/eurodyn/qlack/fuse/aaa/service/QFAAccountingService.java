@@ -1,6 +1,6 @@
 package com.eurodyn.qlack.fuse.aaa.service;
 
-import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
+import com.eurodyn.qlack.common.exceptions.QCDoesNotExistException;
 import com.eurodyn.qlack.fuse.aaa.dto.QFASessionAttributeDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.QFASessionDTO;
 import com.eurodyn.qlack.fuse.aaa.model.QFASession;
@@ -41,13 +41,11 @@ public class QFAAccountingService {
 
   // JUL reference.
   private static final Logger LOGGER = Logger.getLogger(QFAAccountingService.class.getName());
-
-  @PersistenceContext
-  private EntityManager em;
-
   // QuertyDSL helpers.
   private static QQFASession qSession = QQFASession.qFASession;
   private static QQFASessionAttribute qSessionAttribute = QQFASessionAttribute.qFASessionAttribute;
+  @PersistenceContext
+  private EntityManager em;
 
   public String createSession(QFASessionDTO session) {
     QFASession entity = QFAConverterUtil.sessionDTOToSession(session, em);
@@ -84,7 +82,7 @@ public class QFAAccountingService {
     if (session != null) {
       terminateSession(session.getId());
     } else {
-      throw new QDoesNotExistException(MessageFormat
+      throw new QCDoesNotExistException(MessageFormat
           .format("QFASession with application session Id {0} could not be found to be terminated.",
               applicationSessionId));
     }

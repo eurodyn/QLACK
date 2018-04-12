@@ -66,8 +66,9 @@ public class QFAOpTemplateService {
 
   public void addOperation(String templateID, String operationName,
       String resourceID, boolean isDeny) {
-    QFAOpTemplateHasOperation tho = QFAOpTemplateHasOperation.findByTemplateAndResourceIDAndOperationName(
-        templateID, operationName, resourceID, em);
+    QFAOpTemplateHasOperation tho = QFAOpTemplateHasOperation
+        .findByTemplateAndResourceIDAndOperationName(
+            templateID, operationName, resourceID, em);
     if (tho != null) {
       tho.setDeny(isDeny);
     } else {
@@ -91,8 +92,9 @@ public class QFAOpTemplateService {
 
   public void removeOperation(String templateID, String operationName,
       String resourceID) {
-    QFAOpTemplateHasOperation tho = QFAOpTemplateHasOperation.findByTemplateAndResourceIDAndOperationName(
-        templateID, operationName, resourceID, em);
+    QFAOpTemplateHasOperation tho = QFAOpTemplateHasOperation
+        .findByTemplateAndResourceIDAndOperationName(
+            templateID, operationName, resourceID, em);
     em.remove(tho);
   }
 
@@ -112,8 +114,9 @@ public class QFAOpTemplateService {
       String resourceID) {
     Boolean retVal = null;
 
-    QFAOpTemplateHasOperation tho = QFAOpTemplateHasOperation.findByTemplateAndResourceIDAndOperationName(
-        templateID, operationName, resourceID, em);
+    QFAOpTemplateHasOperation tho = QFAOpTemplateHasOperation
+        .findByTemplateAndResourceIDAndOperationName(
+            templateID, operationName, resourceID, em);
     if (tho != null) {
       retVal = tho.isDeny();
     }

@@ -133,7 +133,8 @@ public class QFAUserGroupService {
       query = em.createQuery("SELECT g FROM QFAGroup g WHERE g.parent IS NULL ORDER BY g.name ASC");
     } else {
       query = em
-          .createQuery("SELECT g FROM QFAGroup g WHERE g.parent.id = :parentId ORDER BY g.name ASC");
+          .createQuery(
+              "SELECT g FROM QFAGroup g WHERE g.parent.id = :parentId ORDER BY g.name ASC");
       query.setParameter("parentId", groupID);
     }
     return QFAConverterUtil.groupToGroupDTOList(

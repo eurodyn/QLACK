@@ -128,8 +128,10 @@ public class QFAGroupHasOperation implements Serializable {
     return q.getResultList();
   }
 
-  public static List<QFAGroupHasOperation> findByGroupName(List<String> groupNames, EntityManager em) {
-    Query q = em.createQuery("SELECT o FROM QFAGroupHasOperation o WHERE group.name in :groupNames");
+  public static List<QFAGroupHasOperation> findByGroupName(List<String> groupNames,
+      EntityManager em) {
+    Query q = em
+        .createQuery("SELECT o FROM QFAGroupHasOperation o WHERE group.name in :groupNames");
     q.setParameter("groupNames", groupNames);
     return q.getResultList();
   }

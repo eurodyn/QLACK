@@ -165,7 +165,8 @@ public class QFAConverterUtil {
     return dto;
   }
 
-  public static QFASessionAttributeDTO sessionAttributeToSessionAttributeDTO(QFASessionAttribute entity) {
+  public static QFASessionAttributeDTO sessionAttributeToSessionAttributeDTO(
+      QFASessionAttribute entity) {
     if (entity == null) {
       return null;
     }
@@ -231,7 +232,8 @@ public class QFAConverterUtil {
    * when getting a node's parent since in any other case we will get a stack overflow.
    * For consistency reasons we also specify lazyParent = true when getting a node's children
    */
-  private static QFAGroupDTO groupToGroupDTO(QFAGroup entity, boolean lazyParent, boolean lazyChildren) {
+  private static QFAGroupDTO groupToGroupDTO(QFAGroup entity, boolean lazyParent,
+      boolean lazyChildren) {
     if (entity == null) {
       return null;
     }

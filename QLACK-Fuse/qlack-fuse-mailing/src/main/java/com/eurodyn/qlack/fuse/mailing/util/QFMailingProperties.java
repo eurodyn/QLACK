@@ -8,6 +8,7 @@ import org.springframework.context.annotation.PropertySource;
 @ConfigurationProperties(prefix = "qlack.fuse.mailing")
 @PropertySource("classpath:qlack.fuse.mailing.application.properties")
 public class QFMailingProperties {
+
   private byte maxTries;
   private boolean debug;
   private String serverHost;

@@ -12,20 +12,15 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package com.eurodyn.qlack.fuse.aaa.exception;
+package com.eurodyn.qlack.fuse.lexicon.exception;
 
 
 import com.eurodyn.qlack.common.exceptions.QCException;
 
-public class QFAAAAException extends QCException {
+public class QFLLanguageProcessingException extends QCException {
 
-  private static final long serialVersionUID = -153032703610522736L;
-
-  public QFAAAAException() {
-  }
-
-  public QFAAAAException(String message) {
-    super(message);
+  public QFLLanguageProcessingException(String msg) {
+    super(msg);
   }
 
 }

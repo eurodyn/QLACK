@@ -1,6 +1,6 @@
 package com.eurodyn.qlack.fuse.aaa.criteria;
 
-import com.eurodyn.qlack.common.search.QPagingParams;
+import com.eurodyn.qlack.common.search.QCPagingParams;
 import com.eurodyn.qlack.fuse.aaa.criteria.QFAUserSearchCriteria.UserAttributeCriteria.Type;
 import com.eurodyn.qlack.fuse.aaa.dto.QFAUserAttributeDTO;
 
@@ -21,7 +21,8 @@ public class QFAUserSearchCriteria {
   private String sortColumn;
   private String sortAttribute;
   private boolean ascending = true;
-  private QPagingParams paging;
+  private QCPagingParams paging;
+
   private QFAUserSearchCriteria() {
   }
 
@@ -121,11 +122,11 @@ public class QFAUserSearchCriteria {
     this.ascending = ascending;
   }
 
-  public QPagingParams getPaging() {
+  public QCPagingParams getPaging() {
     return paging;
   }
 
-  private void setPaging(QPagingParams paging) {
+  private void setPaging(QCPagingParams paging) {
     this.paging = paging;
   }
 
@@ -143,7 +144,7 @@ public class QFAUserSearchCriteria {
   public static class UserSearchCriteriaBuilder {
 
     private QFAUserSearchCriteria criteria;
-    private QPagingParams paging;
+    private QCPagingParams paging;
 
     private UserSearchCriteriaBuilder() {
       criteria = new QFAUserSearchCriteria();
@@ -317,7 +318,7 @@ public class QFAUserSearchCriteria {
 
     public UserSearchCriteriaBuilder withPageSize(int pageSize) {
       if (paging == null) {
-        paging = new QPagingParams();
+        paging = new QCPagingParams();
       }
       paging.setPageSize(pageSize);
       return this;
@@ -325,7 +326,7 @@ public class QFAUserSearchCriteria {
 
     public UserSearchCriteriaBuilder getPage(int page) {
       if (paging == null) {
-        paging = new QPagingParams();
+        paging = new QCPagingParams();
       }
       paging.setCurrentPage(page);
       return this;
@@ -338,6 +339,7 @@ public class QFAUserSearchCriteria {
     private Collection<QFAUserAttributeDTO> attributes;
     private Collection<UserAttributeCriteria> attCriteria;
     private boolean useLike;
+
     private UserAttributeCriteria() {
     }
 
@@ -353,12 +355,12 @@ public class QFAUserSearchCriteria {
       return attributes;
     }
 
-    private void setAttributes(QFAUserAttributeDTO[] attributes) {
-      this.attributes = Arrays.asList(attributes);
-    }
-
     private void setAttributes(Collection<QFAUserAttributeDTO> attributes) {
       this.attributes = attributes;
+    }
+
+    private void setAttributes(QFAUserAttributeDTO[] attributes) {
+      this.attributes = Arrays.asList(attributes);
     }
 
     public Collection<UserAttributeCriteria> getAttCriteria() {

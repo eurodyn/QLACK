@@ -42,7 +42,8 @@ public class QFAJSONConfigService {
   private QFAOperationService operationService;
 
   @Autowired
-  public QFAJSONConfigService(QFAUserGroupService groupService, QFAOpTemplateService templateService,
+  public QFAJSONConfigService(QFAUserGroupService groupService,
+      QFAOpTemplateService templateService,
       QFAOperationService operationService) {
     this.groupService = groupService;
     this.templateService = templateService;

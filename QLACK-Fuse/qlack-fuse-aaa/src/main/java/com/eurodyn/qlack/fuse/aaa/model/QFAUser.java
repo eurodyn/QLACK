@@ -100,7 +100,8 @@ public class QFAUser implements Serializable {
     return resultList.isEmpty() ? null : resultList.get(0);
   }
 
-  public static QFAUserAttribute findAttribute(String userId, String attributeName, EntityManager em) {
+  public static QFAUserAttribute findAttribute(String userId, String attributeName,
+      EntityManager em) {
     QFAUserAttribute retVal = null;
     Query query = em.createQuery("SELECT a FROM QFAUserAttribute a "
         + "WHERE a.user.id = :id AND a.name = :name");
