@@ -1,15 +1,15 @@
-package com.eurodyn.qlack2.fuse.imaging.api.dto;
+package com.eurodyn.qlack.fuse.imaging.dto;
 
-import com.eurodyn.qlack2.fuse.imaging.api.util.ColorSpaceType;
+import com.eurodyn.qlack.fuse.imaging.util.QFIColorSpaceType;
 
 /**
  * A variety of information about an image.
  */
-public class ImageInfo {
+public class QFIImageInfo {
   // The total bits per pixel.
   private int bitsPerPixel;
 
-  // The format of the image. This format is what is returned by the respective ImageFormatHandler
+  // The format of the image. This format is what is returned by the respective QFIImageFormatHandler
   // class.
   private String format;
 
@@ -22,11 +22,11 @@ public class ImageInfo {
   // The width of the image in pixels.
   private int width;
 
-  // The color-type found in the image as represented by ColorSpaceType class.
-  private ColorSpaceType colorType;
+  // The color-type found in the image as represented by QFIColorSpaceType class.
+  private QFIColorSpaceType colorType;
 
   // The DPI of the aimge.
-  private DotsPerInch dotsPerInch;
+  private QFIDotsPerInch dotsPerInch;
 
   public int getBitsPerPixel() {
     return bitsPerPixel;
@@ -68,25 +68,25 @@ public class ImageInfo {
     this.width = width;
   }
 
-  public ColorSpaceType getColorType() {
+  public QFIColorSpaceType getColorType() {
     return colorType;
   }
 
-  public void setColorType(ColorSpaceType colorType) {
+  public void setColorType(QFIColorSpaceType colorType) {
     this.colorType = colorType;
   }
 
-  public DotsPerInch getDotsPerInch() {
+  public QFIDotsPerInch getDotsPerInch() {
     return dotsPerInch;
   }
 
-  public void setDotsPerInch(DotsPerInch dotsPerInch) {
+  public void setDotsPerInch(QFIDotsPerInch dotsPerInch) {
     this.dotsPerInch = dotsPerInch;
   }
 
   @Override
   public String toString() {
-    return "ImageInfo{" +
+    return "QFIImageInfo{" +
       "bitsPerPixel=" + bitsPerPixel +
       ", format='" + format + '\'' +
       ", height=" + height +

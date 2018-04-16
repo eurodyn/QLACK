@@ -1,7 +1,7 @@
-package com.eurodyn.qlack2.fuse.imaging.impl.util;
+package com.eurodyn.qlack.fuse.imaging.util;
 
-import com.eurodyn.qlack2.fuse.imaging.api.dto.DotsPerInch;
-import com.eurodyn.qlack2.fuse.imaging.api.exception.QImagingException;
+import com.eurodyn.qlack.fuse.imaging.dto.QFIDotsPerInch;
+import com.eurodyn.qlack.fuse.imaging.exception.QFIImagingException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
@@ -18,9 +18,9 @@ import java.util.Iterator;
 /**
  * Utility methods to be used by various imaging functions.
  */
-public class ImagingUtil {
+public class QFIImagingUtil {
 
-  private ImagingUtil() {
+  private QFIImagingUtil() {
   }
 
   /**
@@ -31,21 +31,21 @@ public class ImagingUtil {
    * @return Returns the DPIs of the image.
    * @throws IOException When the image could not be properly parsed to extract DPIs.
    */
-  public static DotsPerInch getDPI(byte[] image) throws IOException {
-    DotsPerInch dotsPerInch = null;
+  public static QFIDotsPerInch getDPI(byte[] image) throws IOException {
+    QFIDotsPerInch dotsPerInch = null;
 
     try (ImageInputStream stream = ImageIO
       .createImageInputStream(new ByteArrayInputStream(image))) {
       Iterator it = ImageIO.getImageReaders(stream);
       if (!it.hasNext()) {
-        throw new QImagingException("Could not find a reader for the image.");
+        throw new QFIImagingException("Could not find a reader for the image.");
       }
       ImageReader reader = (ImageReader) it.next();
       reader.setInput(stream);
       IIOMetadata meta = reader.getImageMetadata(0);
       IIOMetadataNode root = (IIOMetadataNode) meta.getAsTree("javax_imageio_1.0");
       NodeList nodes = root.getElementsByTagName("HorizontalPixelSize");
-      dotsPerInch = new DotsPerInch();
+      dotsPerInch = new QFIDotsPerInch();
       if (nodes.getLength() > 0) {
         IIOMetadataNode dpcWidth = (IIOMetadataNode) nodes.item(0);
         NamedNodeMap nnm = dpcWidth.getAttributes();

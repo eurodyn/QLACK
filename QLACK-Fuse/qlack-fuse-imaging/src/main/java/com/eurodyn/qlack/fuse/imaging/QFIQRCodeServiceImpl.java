@@ -1,7 +1,6 @@
-package com.eurodyn.qlack2.fuse.imaging.impl;
+package com.eurodyn.qlack.fuse.imaging;
 
-import com.eurodyn.qlack2.fuse.imaging.api.QRCodeService;
-import com.eurodyn.qlack2.fuse.imaging.api.exception.QImagingException;
+import com.eurodyn.qlack.fuse.imaging.exception.QFIImagingException;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -9,8 +8,8 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import javax.imageio.ImageIO;
-import javax.inject.Singleton;
-import org.ops4j.pax.cdi.api.OsgiServiceProvider;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -19,9 +18,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
-@Singleton
-@OsgiServiceProvider(classes = QRCodeService.class)
-public class QRCodeServiceImpl implements QRCodeService {
+@Service
+@Validated
+public class QFIQRCodeServiceImpl {
 
   // Default width for QR code.
   public static final int DEFAULT_WIDTH = 125;
@@ -38,13 +37,11 @@ public class QRCodeServiceImpl implements QRCodeService {
   // Default foreground color for QR code.
   public static final Color DEFAULT_FOREGROUND = Color.BLACK;
 
-  @Override
   public byte[] generateQRCode(String text) {
     return generateQRCode(text, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_FORMAT, DEFAULT_BACKGROUND,
       DEFAULT_FOREGROUND);
   }
 
-  @Override
   public byte[] generateQRCode(String text, int width, int height, String imageFormat,
     Color background, Color foreground) {
     byte[] qrCode = null;
@@ -81,7 +78,7 @@ public class QRCodeServiceImpl implements QRCodeService {
         qrCode = dstImage.toByteArray();
       }
     } catch (WriterException | IOException e) {
-      throw new QImagingException("Could not generate QR code.", e);
+      throw new QFIImagingException("Could not generate QR code.", e);
     }
 
     return qrCode;

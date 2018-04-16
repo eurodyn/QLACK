@@ -1,4 +1,4 @@
-package com.eurodyn.qlack2.fuse.imaging.api.util;
+package com.eurodyn.qlack.fuse.imaging.util;
 
 /**
  * A list of resampling algorithms to use while resampling an image. Be aware that not just any
@@ -6,7 +6,7 @@ package com.eurodyn.qlack2.fuse.imaging.api.util;
  * type of resampling you are about to perform (and some times even the type of image you are
  * working with) to be able to choose the most appropriate algorithm.
  */
-public enum ResamplingAlgorithm {
+public enum QFIResamplingAlgorithm {
   FILTER_UNDEFINED(0),
   FILTER_POINT(1),
   FILTER_BOX(2),
@@ -26,7 +26,7 @@ public enum ResamplingAlgorithm {
 
   private final int val;
 
-  ResamplingAlgorithm(int val) {
+  QFIResamplingAlgorithm(int val) {
     this.val = val;
   }
 

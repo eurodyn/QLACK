@@ -1,10 +1,10 @@
-package com.eurodyn.qlack2.fuse.imaging.api.util;
+package com.eurodyn.qlack.fuse.imaging.util;
 
 /**
  * A list of ICC color profiles to be used in colorspace conversions.
  */
 @SuppressWarnings("squid:S00115")
-public enum ICCProfile {
+public enum QFIICCProfile {
   // Official profiles from http://www.color.org
   CGATS21_CRPC1,
   CGATS21_CRPC2,

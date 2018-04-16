@@ -14,7 +14,7 @@
 */
 package com.eurodyn.qlack.fuse.fileupload.response;
 
-public class FileDeleteResponse {
+public class QFFIFileDeleteResponse {
 	private long deletedChunks;
 
 	public long getDeletedChunks() {
@@ -25,7 +25,7 @@ public class FileDeleteResponse {
 		this.deletedChunks = deletedChunks;
 	}
 
-	public FileDeleteResponse(long deletedChunks) {
+	public QFFIFileDeleteResponse(long deletedChunks) {
 		super();
 		this.deletedChunks = deletedChunks;
 	}

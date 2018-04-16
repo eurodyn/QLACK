@@ -1,4 +1,4 @@
-package com.eurodyn.qlack2.fuse.imaging.api.dto;
+package com.eurodyn.qlack.fuse.imaging.dto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Definition of a handler for a specific image format.
  */
-public class ImageFormatHandler {
+public class QFIImageFormatHandler {
   // The format this handler handles.
   private String format;
 
@@ -35,7 +35,7 @@ public class ImageFormatHandler {
 
   @Override
   public String toString() {
-    return "ImageFormatHandler{" +
+    return "QFIImageFormatHandler{" +
         "format='" + format + '\'' +
         ", handlerClasses=" + handlerClasses +
         '}';

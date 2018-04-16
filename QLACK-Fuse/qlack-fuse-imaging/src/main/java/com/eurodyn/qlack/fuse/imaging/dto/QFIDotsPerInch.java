@@ -1,9 +1,9 @@
-package com.eurodyn.qlack2.fuse.imaging.api.dto;
+package com.eurodyn.qlack.fuse.imaging.dto;
 
 /**
  * Definition of Dots Per Inch (DPI).
  */
-public class DotsPerInch {
+public class QFIDotsPerInch {
   // Horizontal DPI.
   private int horizontal;
 
@@ -28,7 +28,7 @@ public class DotsPerInch {
 
   @Override
   public String toString() {
-    return "DotsPerInch{" +
+    return "QFIDotsPerInch{" +
       "horizontal=" + horizontal +
       ", vertical=" + vertical +
       '}';

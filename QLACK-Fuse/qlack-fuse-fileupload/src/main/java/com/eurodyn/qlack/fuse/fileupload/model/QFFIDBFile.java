@@ -1,17 +1,3 @@
-/*
-* Copyright 2014 EUROPEAN DYNAMICS SA <info@eurodyn.com>
-*
-* Licensed under the EUPL, Version 1.1 only (the "License").
-* You may not use this work except in compliance with the Licence.
-* You may obtain a copy of the Licence at:
-* https://joinup.ec.europa.eu/software/page/eupl/licence-eupl
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the Licence is distributed on an "AS IS" basis,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the Licence for the specific language governing permissions and
-* limitations under the Licence.
-*/
 package com.eurodyn.qlack.fuse.fileupload.model;
 
 import javax.persistence.Basic;
@@ -26,9 +12,9 @@ import javax.persistence.Version;
 
 @Entity
 @Table(name = "flu_file")
-public class DBFile {
+public class QFFIDBFile {
 	@EmbeddedId
-	private DBFilePK id;
+	private QFFIDBFilePK id;
 	@Column(name = "uploaded_by")
 	private String uploadedBy;
 	@Column(name = "file_name")
@@ -48,20 +34,20 @@ public class DBFile {
 	@Version
 	private long dbversion;
 
-	public DBFile() {
+	public QFFIDBFile() {
 
 	}
 
-	public DBFile(DBFilePK id) {
+	public QFFIDBFile(QFFIDBFilePK id) {
 		super();
 		this.id = id;
 	}
 
-	public DBFilePK getId() {
+	public QFFIDBFilePK getId() {
 		return id;
 	}
 
-	public void setId(DBFilePK id) {
+	public void setId(QFFIDBFilePK id) {
 		this.id = id;
 	}
 
@@ -121,12 +107,12 @@ public class DBFile {
 		this.chunkSize = chunkSize;
 	}
 
-	public static DBFile getChunk(String id, long chunkOrder, EntityManager em) {
-		return em.find(DBFile.class, new DBFilePK(id, chunkOrder));
+	public static QFFIDBFile getChunk(String id, long chunkOrder, EntityManager em) {
+		return em.find(QFFIDBFile.class, new QFFIDBFilePK(id, chunkOrder));
 	}
 
 	public static long delete(String id, EntityManager em) {
-		Query q = em.createQuery("delete from DBFile f where f.id.id = :id")
+		Query q = em.createQuery("delete from QFFIDBFile f where f.id.id = :id")
 				.setParameter("id", id);
 
 		return q.executeUpdate();

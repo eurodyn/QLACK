@@ -1,14 +1,13 @@
-package com.eurodyn.qlack2.fuse.imaging.impl;
+package com.eurodyn.qlack.fuse.imaging;
 
-import com.eurodyn.qlack2.fuse.imaging.api.ImagingService;
-import com.eurodyn.qlack2.fuse.imaging.api.dto.ImageFormatHandler;
-import com.eurodyn.qlack2.fuse.imaging.api.dto.ImageInfo;
-import com.eurodyn.qlack2.fuse.imaging.api.exception.QImagingException;
-import com.eurodyn.qlack2.fuse.imaging.api.util.ColorSpaceType;
-import com.eurodyn.qlack2.fuse.imaging.api.util.ICCProfile;
-import com.eurodyn.qlack2.fuse.imaging.api.util.ResamplingAlgorithm;
-import com.eurodyn.qlack2.fuse.imaging.api.util.TIFFCompression;
-import com.eurodyn.qlack2.fuse.imaging.impl.util.ImagingUtil;
+import com.eurodyn.qlack.fuse.imaging.dto.QFIImageFormatHandler;
+import com.eurodyn.qlack.fuse.imaging.dto.QFIImageInfo;
+import com.eurodyn.qlack.fuse.imaging.exception.QFIImagingException;
+import com.eurodyn.qlack.fuse.imaging.util.QFIColorSpaceType;
+import com.eurodyn.qlack.fuse.imaging.util.QFIICCProfile;
+import com.eurodyn.qlack.fuse.imaging.util.QFIImagingUtil;
+import com.eurodyn.qlack.fuse.imaging.util.QFIResamplingAlgorithm;
+import com.eurodyn.qlack.fuse.imaging.util.QFITIFFCompression;
 import com.twelvemonkeys.image.ResampleOp;
 import javax.annotation.PostConstruct;
 import javax.imageio.IIOImage;
@@ -21,13 +20,11 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageOutputStream;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
-import org.ops4j.pax.cdi.api.OsgiServiceProvider;
-import org.osgi.framework.BundleContext;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.awt.Color;
 import java.awt.color.ColorSpace;
@@ -45,13 +42,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@Singleton
-@OsgiServiceProvider(classes = ImagingService.class)
-public class ImagingServiceImpl implements ImagingService {
-
-  // A reference to the bundle context to be able to read resources from classpath.
-  @Inject
-  BundleContext bundleContext;
+@Service
+@Validated
+public class QFIImagingServiceImpl  {
 
   /**
    * Resamples an image to the new dimensions using one of the available resampling algorithms.
@@ -59,15 +52,15 @@ public class ImagingServiceImpl implements ImagingService {
    * @param originalImage The image to resample.
    * @param width The new widht.
    * @param height The new height.
-   * @param resamplingAlgorithm The resampling algorithm to use.
+   * @param QFIResamplingAlgorithm The resampling algorithm to use.
    * @param imageType The type of the image (so that the resulting image is of the same type).
    * @return Returns a resampled image.
    */
   private byte[] resample(BufferedImage originalImage, int width, int height,
-    ResamplingAlgorithm resamplingAlgorithm, String imageType) throws IOException {
+    QFIResamplingAlgorithm QFIResamplingAlgorithm, String imageType) throws IOException {
 
     try (ByteArrayOutputStream resampledImageOutputStream = new ByteArrayOutputStream()) {
-      BufferedImageOp resampler = new ResampleOp(width, height, resamplingAlgorithm.getVal());
+      BufferedImageOp resampler = new ResampleOp(width, height, QFIResamplingAlgorithm.getVal());
       ImageIO.write(resampler.filter(originalImage, null), imageType, resampledImageOutputStream);
       resampledImageOutputStream.flush();
       return resampledImageOutputStream.toByteArray();
@@ -84,12 +77,11 @@ public class ImagingServiceImpl implements ImagingService {
     registry.registerServiceProviders(ServiceRegistry.lookupProviders(ImageWriterSpi.class));
   }
 
-  @Override
-  public List<ImageFormatHandler> getSupportedReadFormats() {
-    List<ImageFormatHandler> handlers = new ArrayList<>();
+  public List<QFIImageFormatHandler> getSupportedReadFormats() {
+    List<QFIImageFormatHandler> handlers = new ArrayList<>();
 
     for (String reader : ImageIO.getReaderFormatNames()) {
-      final ImageFormatHandler imageFormatHandler = new ImageFormatHandler();
+      final QFIImageFormatHandler imageFormatHandler = new QFIImageFormatHandler();
       imageFormatHandler.setFormat(reader);
       Iterator<ImageReader> imageReaders = ImageIO.getImageReadersByFormatName(reader);
       while (imageReaders.hasNext()) {
@@ -102,12 +94,11 @@ public class ImagingServiceImpl implements ImagingService {
     return handlers;
   }
 
-  @Override
-  public List<ImageFormatHandler> getSupportedWriteFormats() {
-    List<ImageFormatHandler> handlers = new ArrayList<>();
+  public List<QFIImageFormatHandler> getSupportedWriteFormats() {
+    List<QFIImageFormatHandler> handlers = new ArrayList<>();
 
     for (String reader : ImageIO.getWriterFormatNames()) {
-      final ImageFormatHandler imageFormatHandler = new ImageFormatHandler();
+      final QFIImageFormatHandler imageFormatHandler = new QFIImageFormatHandler();
       imageFormatHandler.setFormat(reader);
       Iterator<ImageWriter> imageWriters = ImageIO.getImageWritersByFormatName(reader);
       while (imageWriters.hasNext()) {
@@ -120,28 +111,25 @@ public class ImagingServiceImpl implements ImagingService {
     return handlers;
   }
 
-  @Override
   public boolean isFormatSupportedForRead(String format) {
     return getSupportedReadFormats().stream().anyMatch(o -> o.getFormat().equals(format));
   }
 
-  @Override
   public boolean isFormatSupportedForWrite(String format) {
     return getSupportedWriteFormats().stream().anyMatch(o -> o.getFormat().equals(format));
   }
 
-  @Override
-  public ImageInfo getInfo(byte[] image) {
-    ImageInfo imageInfo = null;
+  public QFIImageInfo getInfo(byte[] image) {
+    QFIImageInfo imageInfo = null;
 
     try {
-      imageInfo = new ImageInfo();
+      imageInfo = new QFIImageInfo();
       try (InputStream originalImageInputStream = new ByteArrayInputStream(image)) {
         BufferedImage bufferedImage = ImageIO.read(originalImageInputStream);
         imageInfo.setBitsPerPixel(bufferedImage.getColorModel().getPixelSize());
         imageInfo.setColorType(
-          ColorSpaceType.valueOf(
-            ColorSpaceType.getReverseVal(bufferedImage.getColorModel().getColorSpace().getType())));
+            QFIColorSpaceType.valueOf(
+            QFIColorSpaceType.getReverseVal(bufferedImage.getColorModel().getColorSpace().getType())));
         imageInfo.setHeight(bufferedImage.getHeight());
         imageInfo.setWidth(bufferedImage.getWidth());
         try (InputStream originalImageInputStream2 = new ByteArrayInputStream(image)) {
@@ -149,25 +137,23 @@ public class ImagingServiceImpl implements ImagingService {
             new TikaConfig().getDetector().detect(originalImageInputStream2, new Metadata())
               .toString());
         }
-        imageInfo.setDotsPerInch(ImagingUtil.getDPI(image));
-        imageInfo.setFormat(ImagingUtil.getType(image));
+        imageInfo.setDotsPerInch(QFIImagingUtil.getDPI(image));
+        imageInfo.setFormat(QFIImagingUtil.getType(image));
       }
     } catch (IOException | TikaException e) {
-      throw new QImagingException("Could not obtain image info.", e);
+      throw new QFIImagingException("Could not obtain image info.", e);
     }
 
     return imageInfo;
   }
 
-  @Override
   public byte[] convert(byte[] image, String dstFormat) {
     return convert(image, dstFormat, null);
   }
 
-  @Override
   public byte[] removeAlphaChannel(byte[] image) {
     try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-      final String type = ImagingUtil.getType(image);
+      final String type = QFIImagingUtil.getType(image);
       try (InputStream originalImageInputStream = new ByteArrayInputStream(image)) {
         BufferedImage originalImage = ImageIO.read(originalImageInputStream);
         BufferedImage newImage = new BufferedImage(originalImage.getWidth(),
@@ -179,12 +165,11 @@ public class ImagingServiceImpl implements ImagingService {
       // Return image.
       return baos.toByteArray();
     } catch (Exception e) {
-      throw new QImagingException("Could not remove alpha channel.", e);
+      throw new QFIImagingException("Could not remove alpha channel.", e);
     }
   }
 
-  @Override
-  public byte[] convert(byte[] image, String dstFormat, ICCProfile dstColorspace) {
+  public byte[] convert(byte[] image, String dstFormat, QFIICCProfile dstColorspace) {
     try (ByteArrayOutputStream dstImage = new ByteArrayOutputStream()) {
       // Read image.
       try (InputStream originalImageInputStream = new ByteArrayInputStream(image)) {
@@ -194,7 +179,7 @@ public class ImagingServiceImpl implements ImagingService {
         if (dstColorspace != null) {
           String iccProfileFile = "icc/" + dstColorspace.name() + ".icc";
           ColorSpace cmykColorSpace = new ICC_ColorSpace(ICC_Profile.getInstance(
-            bundleContext.getBundle().getResource(iccProfileFile).openStream()));
+            this.getClass().getClassLoader().getResource(iccProfileFile).openStream()));
           ColorConvertOp op = new ColorConvertOp(originalImage.getColorModel().getColorSpace(),
             cmykColorSpace, null);
           originalImage = op.filter(originalImage, null);
@@ -202,25 +187,23 @@ public class ImagingServiceImpl implements ImagingService {
 
         // Write destination image.
         if (!ImageIO.write(originalImage, dstFormat, dstImage)) {
-          throw new QImagingException(MessageFormat.format(
+          throw new QFIImagingException(MessageFormat.format(
             "Could not write destination format: {0}", dstFormat));
         }
       }
       // Return image.
       return dstImage.toByteArray();
     } catch (IOException e) {
-      throw new QImagingException("Could not convert image.", e);
+      throw new QFIImagingException("Could not convert image.", e);
     }
   }
 
-  @Override
-  public byte[] convertToTIFF(byte[] image, TIFFCompression tiffCompression) {
+  public byte[] convertToTIFF(byte[] image, QFITIFFCompression tiffCompression) {
     return convertToTIFF(image, null, tiffCompression);
   }
 
-  @Override
-  public byte[] convertToTIFF(byte[] image, ICCProfile dstColorspace,
-    TIFFCompression tiffCompression) {
+  public byte[] convertToTIFF(byte[] image, QFIICCProfile dstColorspace,
+      QFITIFFCompression tiffCompression) {
     try (ByteArrayOutputStream convertedImage = new ByteArrayOutputStream()) {
       // Read image.
       try (InputStream originalImageInputStream = new ByteArrayInputStream(image)) {
@@ -230,7 +213,7 @@ public class ImagingServiceImpl implements ImagingService {
         if (dstColorspace != null) {
           String iccProfileFile = "icc/" + dstColorspace.name() + ".icc";
           ColorSpace cmykColorSpace = new ICC_ColorSpace(ICC_Profile.getInstance(
-            bundleContext.getBundle().getResource(iccProfileFile).openStream()));
+            this.getClass().getClassLoader().getResource(iccProfileFile).openStream()));
           ColorConvertOp op = new ColorConvertOp(originalImage.getColorModel().getColorSpace(),
             cmykColorSpace, null);
           originalImage = op.filter(originalImage, null);
@@ -249,72 +232,67 @@ public class ImagingServiceImpl implements ImagingService {
       }
       return convertedImage.toByteArray();
     } catch (IOException e) {
-      throw new QImagingException("Could not convert image.", e);
+      throw new QFIImagingException("Could not convert image.", e);
     }
   }
 
-  @Override
   public byte[] resampleByPercent(byte[] image, int percent,
-    ResamplingAlgorithm resamplingAlgorithm) {
+    QFIResamplingAlgorithm QFIResamplingAlgorithm) {
     try (InputStream originalImageInputStream = new ByteArrayInputStream(image)) {
       BufferedImage originalBufferedImage = ImageIO.read(originalImageInputStream);
       return resample(originalBufferedImage,
         (int) (originalBufferedImage.getWidth() * ((float) percent / 100f)),
-        (int) (originalBufferedImage.getHeight() * ((float) percent / 100f)), resamplingAlgorithm,
-        ImagingUtil.getType(image));
+        (int) (originalBufferedImage.getHeight() * ((float) percent / 100f)), QFIResamplingAlgorithm,
+        QFIImagingUtil.getType(image));
     } catch (IOException e) {
-      throw new QImagingException("Could not resample image by percent.", e);
+      throw new QFIImagingException("Could not resample image by percent.", e);
     }
   }
 
-  @Override
   public byte[] resampleByFactor(byte[] image, float factor,
-    ResamplingAlgorithm resamplingAlgorithm) {
+    QFIResamplingAlgorithm QFIResamplingAlgorithm) {
     try (InputStream originalImageInputStream = new ByteArrayInputStream(image)) {
       BufferedImage originalBufferedImage = ImageIO.read(originalImageInputStream);
       return resample(originalBufferedImage, (int) (originalBufferedImage.getWidth() * factor),
-        (int) (originalBufferedImage.getHeight() * factor), resamplingAlgorithm,
-        ImagingUtil.getType(image));
+        (int) (originalBufferedImage.getHeight() * factor), QFIResamplingAlgorithm,
+        QFIImagingUtil.getType(image));
     } catch (IOException e) {
-      throw new QImagingException("Could not resample image by factor.", e);
+      throw new QFIImagingException("Could not resample image by factor.", e);
     }
   }
 
-  @Override
-  public byte[] resampleByWidth(byte[] image, int width, ResamplingAlgorithm resamplingAlgorithm) {
+  public byte[] resampleByWidth(byte[] image, int width, QFIResamplingAlgorithm QFIResamplingAlgorithm) {
     try (InputStream originalImageInputStream = new ByteArrayInputStream(image)) {
       BufferedImage originalBufferedImage = ImageIO.read(originalImageInputStream);
       float newYRatio = (float) width / (float) originalBufferedImage.getWidth();
       return resample(originalBufferedImage, width,
-        (int) (originalBufferedImage.getHeight() * newYRatio), resamplingAlgorithm,
-        ImagingUtil.getType(image));
+        (int) (originalBufferedImage.getHeight() * newYRatio), QFIResamplingAlgorithm,
+        QFIImagingUtil.getType(image));
     } catch (IOException e) {
-      throw new QImagingException("Could not resample image by width.", e);
+      throw new QFIImagingException("Could not resample image by width.", e);
     }
   }
 
-  @Override
   public byte[] resampleByHeight(byte[] image, int height,
-    ResamplingAlgorithm resamplingAlgorithm) {
+      QFIResamplingAlgorithm QFIResamplingAlgorithm) {
     try (InputStream originalImageInputStream = new ByteArrayInputStream(image)) {
       BufferedImage originalBufferedImage = ImageIO.read(originalImageInputStream);
       float newXRatio = (float) height / (float) originalBufferedImage.getHeight();
       return resample(originalBufferedImage, (int) (originalBufferedImage.getWidth() * newXRatio),
-        height, resamplingAlgorithm, ImagingUtil.getType(image));
+        height, QFIResamplingAlgorithm, QFIImagingUtil.getType(image));
     } catch (IOException e) {
-      throw new QImagingException("Could not resample image by height.", e);
+      throw new QFIImagingException("Could not resample image by height.", e);
     }
   }
 
-  @Override
   public byte[] resample(byte[] image, int width, int height,
-    ResamplingAlgorithm resamplingAlgorithm) {
+      QFIResamplingAlgorithm QFIResamplingAlgorithm) {
     try (InputStream originalImageInputStream = new ByteArrayInputStream(image)) {
       BufferedImage originalBufferedImage = ImageIO.read(originalImageInputStream);
-      return resample(originalBufferedImage, width, height, resamplingAlgorithm,
-        ImagingUtil.getType(image));
+      return resample(originalBufferedImage, width, height, QFIResamplingAlgorithm,
+        QFIImagingUtil.getType(image));
     } catch (IOException e) {
-      throw new QImagingException("Could not resample image.", e);
+      throw new QFIImagingException("Could not resample image.", e);
     }
   }
 }

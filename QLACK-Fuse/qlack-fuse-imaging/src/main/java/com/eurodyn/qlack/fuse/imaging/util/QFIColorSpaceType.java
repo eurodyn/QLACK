@@ -1,10 +1,10 @@
-package com.eurodyn.qlack2.fuse.imaging.api.util;
+package com.eurodyn.qlack.fuse.imaging.util;
 
 /**
  * The list of detectable color-spaces.
  */
 @SuppressWarnings("squid:S00115")
-public enum ColorSpaceType {
+public enum QFIColorSpaceType {
   TYPE_XYZ(0),
   TYPE_Lab(1),
   TYPE_Luv(2),
@@ -38,7 +38,7 @@ public enum ColorSpaceType {
 
   private final int val;
 
-  ColorSpaceType(int val) {
+  QFIColorSpaceType(int val) {
     this.val = val;
   }
 
@@ -47,7 +47,7 @@ public enum ColorSpaceType {
   }
 
   public static String getReverseVal(int val) {
-      for(ColorSpaceType v : values()) {
+      for(QFIColorSpaceType v : values()) {
         if (v.getVal() == val) {
           return v.name();
         }

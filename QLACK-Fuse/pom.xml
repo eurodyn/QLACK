@@ -20,6 +20,8 @@
     <module>qlack-fuse-settings</module>
     <module>qlack-fuse-lexicon</module>
     <module>qlack-fuse-search</module>
+    <module>qlack-fuse-imaging</module>
+    <module>qlack-fuse-fileupload</module>
   </modules>
 
   <build>
@@ -165,6 +167,21 @@
         <groupId>com.fasterxml.jackson.datatype</groupId>
         <artifactId>jackson-datatype-jsr310</artifactId>
         <version>2.9.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tika</groupId>
+        <artifactId>tika-core</artifactId>
+        <version>1.12</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.zxing</groupId>
+        <artifactId>core</artifactId>
+        <version>3.3.1</version>
+      </dependency>
+      <dependency>
+        <groupId>io.sensesecure</groupId>
+        <artifactId>clamav4j</artifactId>
+        <version>0.5</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

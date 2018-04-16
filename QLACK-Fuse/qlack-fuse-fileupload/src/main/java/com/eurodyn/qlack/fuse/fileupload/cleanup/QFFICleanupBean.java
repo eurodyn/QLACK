@@ -14,25 +14,26 @@
 */
 package com.eurodyn.qlack.fuse.fileupload.cleanup;
 
+import com.eurodyn.qlack.fuse.fileupload.QFFIFileUploadService;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.eurodyn.qlack2.fuse.fileupload.api.FileUpload;
 
-public class CleanupBean implements Runnable {
-	private static final Logger LOGGER = Logger.getLogger(CleanupBean.class.getName());
+public class QFFICleanupBean implements Runnable {
+	private static final Logger LOGGER = Logger.getLogger(QFFICleanupBean.class.getName());
 	private Thread cleanupThread;
 	private boolean enableCleanup;
 	private long cleanupInterval;
 	private long cleanupThreshold;
 	private int exceptionsCount = 0;
 	private boolean status = false;
-	private FileUpload fileUploadService;
+	private QFFIFileUploadService fileUploadService;
 	
 	/**
 	 * @param fileUploadService the fileUploadService to set
 	 */
-	public void setFileUploadService(FileUpload fileUploadService) {
+	public void setFileUploadService(QFFIFileUploadService fileUploadService) {
 		this.fileUploadService = fileUploadService;
 	}
 

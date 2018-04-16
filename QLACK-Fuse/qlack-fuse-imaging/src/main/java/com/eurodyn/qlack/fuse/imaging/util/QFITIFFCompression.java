@@ -1,9 +1,9 @@
-package com.eurodyn.qlack2.fuse.imaging.api.util;
+package com.eurodyn.qlack.fuse.imaging.util;
 
 /**
  * Available algorithm to compress TIFFs.
  */
-public enum TIFFCompression {
+public enum QFITIFFCompression {
   None("None"),
   CCITT_RLE("CCITT RLE"),
   CCITT_T4("CCITT T.4"),
@@ -15,7 +15,7 @@ public enum TIFFCompression {
   Deflate("Deflate");
 
   private final String val;
-  TIFFCompression(String val) {
+  QFITIFFCompression(String val) {
     this.val = val;
   }
 

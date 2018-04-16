@@ -1,6 +1,6 @@
 package com.eurodyn.qlack.fuse.fileupload.dto;
 
-public class DBFileChunkDTO {
+public class QFFIDBFileChunkDTO {
 	private String id;
 	private byte[] binContent;
 	private boolean hasMoreChunks = false;
