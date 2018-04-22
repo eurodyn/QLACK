@@ -1,6 +1,8 @@
 package com.eurodyn.qlack.fuse.mailing.dto;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,14 +17,14 @@ public class EmailDTO implements Serializable {
   private String id;
 
   private String messageId;
-  private String subject;
-  private String body;
+  private @NotBlank String subject;
+  private @NotBlank String body;
   private @NotBlank String from;
-  private List<String> toContact;
+  private @NotEmpty List<String> toContact;
   private List<String> ccContact;
   private List<String> bccContact;
   private List<String> replyToContact;
-  private EMAIL_TYPE emailType;
+  private @NotNull EMAIL_TYPE emailType;
   private String status;
   private List<AttachmentDTO> attachments;
   private Date dateSent;

@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "set_setting")
-public class QFSSetting implements java.io.Serializable {
+public class Setting implements java.io.Serializable {
 
   @Id
   private String id;
@@ -38,14 +38,14 @@ public class QFSSetting implements java.io.Serializable {
   @Column(name = "created_on")
   private long createdOn;
 
-  public QFSSetting() {
+  public Setting() {
     this.id = UUID.randomUUID().toString();
     this.createdOn = Instant.now().toEpochMilli();
   }
 
   @Override
   public String toString() {
-    return "QFSSetting [id=" + id + ", dbversion=" + dbversion + ", owner=" + owner + ", group="
+    return "Setting [id=" + id + ", dbversion=" + dbversion + ", owner=" + owner + ", group="
         + group + ", key="
         + key + ", val=" + val + ", createdOn=" + createdOn + "]";
   }

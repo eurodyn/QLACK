@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * @author European Dynamics SA
  */
-public class QFSSettingDTO implements Serializable {
+public class SettingDTO implements Serializable {
 
   private static final long serialVersionUID = -1745622761507844077L;
   private String id;
@@ -17,10 +17,10 @@ public class QFSSettingDTO implements Serializable {
   private boolean sensitive;
   private boolean password;
 
-  public QFSSettingDTO() {
+  public SettingDTO() {
   }
 
-  public QFSSettingDTO(String key, String val) {
+  public SettingDTO(String key, String val) {
     this.key = key;
     this.val = val;
   }

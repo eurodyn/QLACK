@@ -1,16 +1,16 @@
 package com.eurodyn.qlack.fuse.aaa.service;
 
-import com.eurodyn.qlack.fuse.aaa.model.QVerificationToken;
-import com.eurodyn.qlack.fuse.aaa.model.User;
 import com.eurodyn.qlack.fuse.aaa.model.VerificationToken;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
+import com.eurodyn.qlack.fuse.aaa.repository.VerificationTokenRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.Instant;
+import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -18,8 +18,17 @@ import java.util.UUID;
 @Transactional
 public class VerificationService {
 
-  @PersistenceContext
-  private EntityManager em;
+  // Service references.
+  private VerificationTokenRepository verificationTokenRepository;
+  private UserRepository userRepository;
+
+  @Autowired
+  public VerificationService(
+      VerificationTokenRepository verificationTokenRepository,
+      UserRepository userRepository) {
+    this.verificationTokenRepository = verificationTokenRepository;
+    this.userRepository = userRepository;
+  }
 
   public String createVerificationToken(String userId, long expiresOn) {
     return createVerificationToken(userId, expiresOn, null);
@@ -27,45 +36,45 @@ public class VerificationService {
 
   public String createVerificationToken(String userId, long expiresOn, String data) {
     VerificationToken vt = new VerificationToken();
-    vt.setUser(User.find(userId, em));
+    vt.setUser(userRepository.findById(userId).get());
     vt.setCreatedOn(Instant.now().toEpochMilli());
     if (data != null) {
       vt.setData(data);
     }
     vt.setExpiresOn(expiresOn);
     vt.setId(UUID.randomUUID().toString());
-    em.persist(vt);
+    verificationTokenRepository.save(vt);
 
     return vt.getId();
   }
 
   public String verifyToken(String tokenID) {
     String userId = null;
-    VerificationToken vt = em.find(VerificationToken.class, tokenID);
-    if (vt != null && vt.getExpiresOn() >= Instant.now().toEpochMilli()) {
-      userId = vt.getUser().getId();
+    Optional<VerificationToken> ovt = verificationTokenRepository.findById(tokenID);
+    if (ovt.isPresent()) {
+      if (ovt.get().getExpiresOn() >= Instant.now().toEpochMilli()) {
+        userId = ovt.get().getUser().getId();
+      }
     }
 
     return userId;
   }
 
+  public void deleteExpired() {
+    verificationTokenRepository.deleteByExpiresOnBefore(new Date());
+  }
+
   public void deleteToken(String tokenID) {
-    VerificationToken vt = em.find(VerificationToken.class, tokenID);
-    if (vt != null) {
-      em.remove(vt);
-    }
+    verificationTokenRepository.deleteById(tokenID);
 
     // Each time a token is deleted perform some housekeeping to also delete any other expired
     // tokens.
-    QVerificationToken qvt = QVerificationToken.verificationToken;
-    new JPAQueryFactory(em).delete(qvt)
-        .where(qvt.expiresOn.lt(Instant.now().toEpochMilli())).execute();
   }
 
   public String getTokenPayload(String tokenID) {
-    VerificationToken vt = em.find(VerificationToken.class, tokenID);
-    if (vt != null) {
-      return vt.getData();
+    Optional<VerificationToken> ovt = verificationTokenRepository.findById(tokenID);
+    if (ovt.isPresent()) {
+      return ovt.get().getData();
     } else {
       return null;
     }
@@ -74,9 +83,9 @@ public class VerificationService {
   public String getTokenUser(String tokenID) {
     String userId = null;
 
-    VerificationToken vt = em.find(VerificationToken.class, tokenID);
-    if (vt != null) {
-      userId = vt.getUser().getId();
+    Optional<VerificationToken> ovt = verificationTokenRepository.findById(tokenID);
+    if (ovt.isPresent()) {
+      userId = ovt.get().getUser().getId();
     }
 
     return userId;

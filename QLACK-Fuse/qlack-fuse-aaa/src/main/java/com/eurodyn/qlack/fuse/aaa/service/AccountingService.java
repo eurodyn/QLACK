@@ -8,12 +8,14 @@ import com.eurodyn.qlack.fuse.aaa.model.QSessionAttribute;
 import com.eurodyn.qlack.fuse.aaa.model.Session;
 import com.eurodyn.qlack.fuse.aaa.model.SessionAttribute;
 import com.eurodyn.qlack.fuse.aaa.model.User;
+import com.eurodyn.qlack.fuse.aaa.repository.SessionRepository;
 import com.eurodyn.qlack.fuse.aaa.util.ConverterUtil;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +24,7 @@ import java.text.MessageFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,11 +44,21 @@ public class AccountingService {
 
   // JUL reference.
   private static final Logger LOGGER = Logger.getLogger(AccountingService.class.getName());
+
   // QuertyDSL helpers.
   private static QSession qSession = QSession.session;
   private static QSessionAttribute qSessionAttribute = QSessionAttribute.sessionAttribute;
+
   @PersistenceContext
   private EntityManager em;
+
+  // Service references
+  private SessionRepository sessionRepository;
+
+  @Autowired
+  public AccountingService(SessionRepository sessionRepository) {
+    this.sessionRepository = sessionRepository;
+  }
 
   public String createSession(SessionDTO session) {
     Session entity = ConverterUtil.sessionDTOToSession(session, em);
@@ -216,10 +229,7 @@ public class AccountingService {
     return count == 0;
   }
 
-  public long deleteOldSessions(long deleteBeforeDate) {
-    return new JPAQueryFactory(em)
-        .delete(qSession)
-        .where(qSession.createdOn.lt(deleteBeforeDate))
-        .execute();
+  public void deleteExpiredSessions(Date expiryDate) {
+    sessionRepository.deleteByCreatedOnBefore(expiryDate);
   }
 }

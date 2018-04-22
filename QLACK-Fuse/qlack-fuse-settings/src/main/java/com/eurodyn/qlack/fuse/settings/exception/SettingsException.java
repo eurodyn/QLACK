@@ -8,16 +8,16 @@ import com.eurodyn.qlack.common.exceptions.QException;
  *
  * @author European Dynamics SA.
  */
-public class QFSSettingsException extends QException {
+public class SettingsException extends QException {
 
   /**
    * @param message
    */
-  public QFSSettingsException(String message) {
+  public SettingsException(String message) {
     super(message);
   }
 
-  public QFSSettingsException(String message, Throwable cause) {
+  public SettingsException(String message, Throwable cause) {
     super(message, cause);
   }
 }

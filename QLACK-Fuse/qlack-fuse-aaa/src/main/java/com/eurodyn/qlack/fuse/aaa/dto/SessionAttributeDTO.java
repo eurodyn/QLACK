@@ -53,4 +53,17 @@ public class SessionAttributeDTO implements Serializable {
     this.sessionId = sessionId;
   }
 
+  public SessionAttributeDTO() {
+  }
+
+  public SessionAttributeDTO(String name, String value, String sessionId) {
+    this.name = name;
+    this.value = value;
+    this.sessionId = sessionId;
+  }
+
+  public SessionAttributeDTO(String name, String value) {
+    this.name = name;
+    this.value = value;
+  }
 }

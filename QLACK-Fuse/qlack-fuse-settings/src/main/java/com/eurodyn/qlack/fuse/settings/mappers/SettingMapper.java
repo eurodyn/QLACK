@@ -1,8 +1,8 @@
 package com.eurodyn.qlack.fuse.settings.mappers;
 
-import com.eurodyn.qlack.fuse.settings.dto.QFSGroupDTO;
-import com.eurodyn.qlack.fuse.settings.dto.QFSSettingDTO;
-import com.eurodyn.qlack.fuse.settings.model.QFSSetting;
+import com.eurodyn.qlack.fuse.settings.dto.GroupDTO;
+import com.eurodyn.qlack.fuse.settings.dto.SettingDTO;
+import com.eurodyn.qlack.fuse.settings.model.Setting;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -10,17 +10,17 @@ import org.mapstruct.Mappings;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface QFSSettingMapper {
+public interface SettingMapper {
 
-  List<QFSSettingDTO> map(List<QFSSetting> o);
+  List<SettingDTO> map(List<Setting> o);
 
-  QFSSettingDTO map(QFSSetting o);
+  SettingDTO map(Setting o);
 
   @Mappings({
       @Mapping(source = "group", target = "name")
   })
-  QFSGroupDTO mapToGroupDTO(QFSSetting o);
+  GroupDTO mapToGroupDTO(Setting o);
 
-  List<QFSGroupDTO> mapToGroupDTO(List<QFSSetting> o);
+  List<GroupDTO> mapToGroupDTO(List<Setting> o);
 
 }

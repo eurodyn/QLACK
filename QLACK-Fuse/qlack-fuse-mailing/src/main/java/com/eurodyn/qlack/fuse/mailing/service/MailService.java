@@ -10,6 +10,7 @@ import com.eurodyn.qlack.fuse.mailing.util.MailConstants.EMAIL_STATUS;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -61,7 +62,7 @@ public class MailService {
    * @param emailDto - an email data transfer object.
    * @return email id
    */
-  public String queueEmail(EmailDTO emailDto) {
+  public String queueEmail(@Valid EmailDTO emailDto) {
     Email email = new Email();
 
     email.setSubject(emailDto.getSubject());
