@@ -1,27 +1,11 @@
-/*
- * Copyright 2014 EUROPEAN DYNAMICS SA <info@eurodyn.com>
- *
- * Licensed under the EUPL, Version 1.1 only (the "License").
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- * https://joinup.ec.europa.eu/software/page/eupl/licence-eupl
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and
- * limitations under the Licence.
- */
 package com.eurodyn.qlack.fuse.aaa.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -36,8 +20,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "aaa_session")
 public class Session implements Serializable {
-
-  private static final long serialVersionUID = 1L;
 
   @Id
   private String id;
@@ -66,26 +48,7 @@ public class Session implements Serializable {
   public Session() {
     id = UUID.randomUUID().toString();
   }
-
-  public static Session find(String sessionID, EntityManager em) {
-    return em.find(Session.class, sessionID);
-  }
-
-  public static SessionAttribute findAttribute(String sessionId, String attributeName,
-      EntityManager em) {
-    SessionAttribute retVal = null;
-    Query query = em.createQuery("SELECT a FROM com.eurodyn.qlack.fuse.aaa.model.SessionAttribute a "
-        + "WHERE a.session.id = :id AND a.name = :name");
-    query.setParameter("id", sessionId);
-    query.setParameter("name", attributeName);
-    List<SessionAttribute> l = query.getResultList();
-    if (!l.isEmpty()) {
-      retVal = (SessionAttribute) l.get(0);
-    }
-
-    return retVal;
-  }
-
+  
   public String getId() {
     return this.id;
   }

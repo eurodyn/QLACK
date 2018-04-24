@@ -8,6 +8,7 @@ import com.eurodyn.qlack.fuse.aaa.model.QSessionAttribute;
 import com.eurodyn.qlack.fuse.aaa.model.Session;
 import com.eurodyn.qlack.fuse.aaa.model.SessionAttribute;
 import com.eurodyn.qlack.fuse.aaa.model.User;
+import com.eurodyn.qlack.fuse.aaa.repository.SessionAttributeRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.SessionRepository;
 import com.eurodyn.qlack.fuse.aaa.util.ConverterUtil;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -54,10 +55,13 @@ public class AccountingService {
 
   // Service references
   private SessionRepository sessionRepository;
+  private SessionAttributeRepository sessionAttributeRepository;
 
   @Autowired
-  public AccountingService(SessionRepository sessionRepository) {
+  public AccountingService(SessionRepository sessionRepository,
+      SessionAttributeRepository sessionAttributeRepository) {
     this.sessionRepository = sessionRepository;
+    this.sessionAttributeRepository = sessionAttributeRepository;
   }
 
   public String createSession(SessionDTO session) {
@@ -76,7 +80,7 @@ public class AccountingService {
 
 
   public void terminateSession(String sessionID) {
-    Session sessionEntity = Session.find(sessionID, em);
+    Session sessionEntity = sessionRepository.findById(sessionID).get();
     if (sessionEntity != null) {
       sessionEntity.setTerminatedOn(Instant.now().toEpochMilli());
     } else {
@@ -103,12 +107,12 @@ public class AccountingService {
 
 
   public SessionDTO getSession(String sessionID) {
-    return ConverterUtil.sessionToSessionDTO(Session.find(sessionID, em));
+    return ConverterUtil.sessionToSessionDTO(sessionRepository.findById(sessionID).get());
   }
 
 
   public Long getSessionDuration(String sessionID) {
-    Session session = Session.find(sessionID, em);
+    Session session = sessionRepository.findById(sessionID).get();
     if (session.getTerminatedOn() == null) {
       return null;
     }
@@ -116,7 +120,8 @@ public class AccountingService {
   }
 
   public Long getUserLastLogIn(String userID) {
-    Query q = em.createQuery("SELECT MAX(s.createdOn) FROM com.eurodyn.qlack.fuse.aaa.model.Session s WHERE s.user = :user");
+    Query q = em.createQuery(
+        "SELECT MAX(s.createdOn) FROM com.eurodyn.qlack.fuse.aaa.model.Session s WHERE s.user = :user");
     q.setParameter("user", User.find(userID, em));
     List<Long> queryResult = q.getResultList();
     if (CollectionUtils.isEmpty(queryResult)) {
@@ -126,7 +131,8 @@ public class AccountingService {
   }
 
   public Long getUserLastLogOut(String userID) {
-    Query q = em.createQuery("SELECT MAX(s.terminatedOn) FROM com.eurodyn.qlack.fuse.aaa.model.Session s WHERE s.user = :user");
+    Query q = em.createQuery(
+        "SELECT MAX(s.terminatedOn) FROM com.eurodyn.qlack.fuse.aaa.model.Session s WHERE s.user = :user");
     q.setParameter("user", User.find(userID, em));
     List<Long> queryResult = q.getResultList();
     if (CollectionUtils.isEmpty(queryResult)) {
@@ -152,7 +158,8 @@ public class AccountingService {
   }
 
   public long getNoOfTimesUserLoggedIn(String userID) {
-    Query q = em.createQuery("SELECT COUNT(s) FROM com.eurodyn.qlack.fuse.aaa.model.Session s WHERE s.user = :user");
+    Query q = em.createQuery(
+        "SELECT COUNT(s) FROM com.eurodyn.qlack.fuse.aaa.model.Session s WHERE s.user = :user");
     q.setParameter("user", User.find(userID, em));
     return (Long) q.getSingleResult();
   }
@@ -177,12 +184,12 @@ public class AccountingService {
   public void updateAttributes(Collection<SessionAttributeDTO> attributes,
       boolean createIfMissing) {
     for (SessionAttributeDTO attributeDTO : attributes) {
-      SessionAttribute attribute = Session.findAttribute(
-          attributeDTO.getSessionId(), attributeDTO.getName(), em);
+      SessionAttribute attribute = sessionAttributeRepository.findBySessionIdAndName(
+          attributeDTO.getSessionId(), attributeDTO.getName());
       if ((attribute == null) && createIfMissing) {
         attribute = new SessionAttribute();
         attribute.setName(attributeDTO.getName());
-        attribute.setSession(Session.find(attributeDTO.getSessionId(), em));
+        attribute.setSession(sessionRepository.findById(attributeDTO.getSessionId()).get());
       }
       attribute.setValue(attributeDTO.getValue());
       em.merge(attribute);
@@ -190,13 +197,13 @@ public class AccountingService {
   }
 
   public void deleteAttribute(String sessionID, String attributeName) {
-    SessionAttribute attribute = Session.findAttribute(sessionID, attributeName, em);
+    SessionAttribute attribute = sessionAttributeRepository.findBySessionIdAndName(sessionID, attributeName);
     em.remove(attribute);
   }
 
   public SessionAttributeDTO getAttribute(String sessionID, String attributeName) {
-    return ConverterUtil.sessionAttributeToSessionAttributeDTO(Session
-        .findAttribute(sessionID, attributeName, em));
+    return ConverterUtil.sessionAttributeToSessionAttributeDTO(
+        sessionAttributeRepository.findBySessionIdAndName(sessionID, attributeName));
   }
 
   public Set<String> getSessionIDsForAttribute(Collection<String> sessionIDs,
