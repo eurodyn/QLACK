@@ -2,6 +2,7 @@ package com.eurodyn.qlack.fuse.scheduler;
 
 import com.eurodyn.qlack.fuse.scheduler.exception.QSchedulerException;
 import org.quartz.CronScheduleBuilder;
+import org.quartz.CronTrigger;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Transactional
@@ -128,17 +130,22 @@ public class SchedulerService {
 
   public <J extends Job> void registerJob(Class<J> jobClass, Map<String, Object> jobData) {
     try {
-      JobDataMap jobDataMap = new JobDataMap();
-      if (jobData != null) {
-        jobDataMap.putAll(jobData);
+      // Check if the job is already registered and ignore the request.
+      if (scheduler.getJobDetail(JobKey.jobKey(getJobName(jobClass))) != null) {
+        LOGGER.log(Level.CONFIG, "Job {0} is already registered.", getJobName(jobClass));
+      } else {
+        JobDataMap jobDataMap = new JobDataMap();
+        if (jobData != null) {
+          jobDataMap.putAll(jobData);
+        }
+        scheduler.addJob(
+            JobBuilder
+                .newJob(jobClass)
+                .withIdentity(getJobName(jobClass))
+                .storeDurably()
+                .setJobData(jobDataMap)
+                .build(), true);
       }
-      scheduler.addJob(
-          JobBuilder
-              .newJob(jobClass)
-              .withIdentity(getJobName(jobClass))
-              .storeDurably()
-              .setJobData(jobDataMap)
-              .build(), true);
     } catch (SchedulerException e) {
       throw new QSchedulerException(e);
     }
@@ -147,24 +154,38 @@ public class SchedulerService {
   public <J extends Job> void scheduleJob(Class<J> jobClass, String cronExpression,
       Map<String, Object> jobData) {
     try {
-      JobDataMap jobDataMap = new JobDataMap();
-      if (jobData != null) {
-        jobDataMap.putAll(jobData);
+      // Check if the job is already registered, in that case only reschedule it.
+      if (scheduler.getJobDetail(JobKey.jobKey(getJobName(jobClass))) != null) {
+        LOGGER.log(Level.CONFIG, "Job {0} is already registered, rescheduling it.", getJobName(jobClass));
+        final Trigger oldTrigger = scheduler.getTrigger(TriggerKey.triggerKey(getTriggerName(jobClass)));
+        final CronTrigger newTrigger = TriggerBuilder
+            .newTrigger()
+            .forJob(jobClass.getName())
+            .withIdentity(getTriggerName(jobClass))
+            .startNow()
+            .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
+            .build();
+        scheduler.rescheduleJob(oldTrigger.getKey(), newTrigger);
+      } else {
+        JobDataMap jobDataMap = new JobDataMap();
+        if (jobData != null) {
+          jobDataMap.putAll(jobData);
+        }
+        scheduler.scheduleJob(
+            JobBuilder
+                .newJob(jobClass)
+                .withIdentity(getJobName(jobClass))
+                .storeDurably()
+                .setJobData(jobDataMap)
+                .build(),
+            TriggerBuilder
+                .newTrigger()
+                .forJob(jobClass.getName())
+                .withIdentity(getTriggerName(jobClass))
+                .startNow()
+                .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
+                .build());
       }
-      scheduler.scheduleJob(
-          JobBuilder
-              .newJob(jobClass)
-              .withIdentity(getJobName(jobClass))
-              .storeDurably()
-              .setJobData(jobDataMap)
-              .build(),
-          TriggerBuilder
-              .newTrigger()
-              .forJob(jobClass.getName())
-              .withIdentity(getTriggerName(jobClass))
-              .startNow()
-              .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
-              .build());
     } catch (SchedulerException e) {
       throw new QSchedulerException(e);
     }
@@ -176,7 +197,8 @@ public class SchedulerService {
   }
 
 
-  public <J extends Job> void rescheduleJob(Class<J> jobClass, String cronExpression) throws QSchedulerException {
+  public <J extends Job> void rescheduleJob(Class<J> jobClass, String cronExpression)
+      throws QSchedulerException {
     try {
       scheduler.rescheduleJob(TriggerKey.triggerKey(getTriggerName(jobClass)),
           TriggerBuilder
