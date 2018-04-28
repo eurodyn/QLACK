@@ -9,7 +9,7 @@ public class JWTClaimsRequestDTO extends JWTTokenDTO {
 
   // The amount of seconds local and remote clocks can drift to still consider the expiration
   // of the JWT valid.
-  private long allowedTimeSkew = 0;
+  private long allowedTimeSkew = 60;
 
   public JWTClaimsRequestDTO(String jwt, String secret) {
     super();

@@ -7,6 +7,7 @@ import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.codec.binary.Base64;
 
@@ -17,6 +18,8 @@ import java.util.Date;
  * A utility class to generate and valiate JSON Web Tokens.
  */
 public class JWTUtil {
+  private static final String HEADER_STRING = "Authorization";
+  private static final String TOKEN_PREFIX = "Bearer";
 
   private JWTUtil() {
   }
@@ -73,8 +76,8 @@ public class JWTUtil {
 
     try {
       response.setClaims(
-          Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(
-              Base64.encodeBase64String(request.getSecret().getBytes())))
+          Jwts.parser().setSigningKey(
+              Base64.encodeBase64String(request.getSecret().getBytes()))
               .setAllowedClockSkewSeconds(request.getAllowedTimeSkew())
               .parseClaimsJws(request.getJwt()).getBody());
       response.setValid(true);
@@ -98,7 +101,8 @@ public class JWTUtil {
   }
 
   /**
-   * Parses a JWT token (compact or normal) and returns its String representation.
+   * Parses a JWT token (compact or normal) and returns its String representation while it is also
+   * validating the token.
    *
    * @param jwt The JWT to decode.
    * @param secret The secret used to sign the JWT.
@@ -107,5 +111,14 @@ public class JWTUtil {
   public static String tokenToString(String jwt, String secret) {
     return Jwts.parser().setSigningKey(Base64.encodeBase64String(secret.getBytes())).parse(jwt)
         .toString();
+  }
+
+  public static String getRawToken(HttpServletRequest request) {
+    final String token = request.getHeader(HEADER_STRING);
+    if (token != null) {
+      return token.replace(TOKEN_PREFIX, "");
+    } else {
+      return null;
+    }
   }
 }
