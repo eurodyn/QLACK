@@ -47,23 +47,23 @@ public class JWTClaimsResponseDTO {
   }
 
   public String getIssuer() {
-    return (String)claims.get(Claims.ISSUER);
+    return claims != null ? (String)claims.get(Claims.ISSUER) : null;
   }
 
   public String getId() {
-    return (String)claims.get(Claims.ID);
+    return claims != null ? (String)claims.get(Claims.ID) : null;
   }
 
   public Date getIssuedAt() {
-    return new Date((int)claims.get(Claims.ISSUED_AT) * 1000l);
+    return claims != null ? new Date((int)claims.get(Claims.ISSUED_AT) * 1000l) : null;
   }
 
   public Date getExpiresAt() {
-    return new Date((int)claims.get(Claims.EXPIRATION) * 1000l);
+    return claims != null ? new Date((int)claims.get(Claims.EXPIRATION) * 1000l) : null;
   }
 
   public String getSubject() {
-    return (String)claims.get(Claims.SUBJECT);
+    return claims != null ? (String)claims.get(Claims.SUBJECT) : null;
   }
 
 }

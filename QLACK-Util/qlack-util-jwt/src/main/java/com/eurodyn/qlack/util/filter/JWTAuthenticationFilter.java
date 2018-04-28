@@ -5,11 +5,13 @@ import static java.util.Collections.emptyList;
 
 import com.eurodyn.qlack.util.JWTUtil;
 import com.eurodyn.qlack.util.dto.JWTClaimsRequestDTO;
+import com.eurodyn.qlack.util.dto.JWTClaimsResponseDTO;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,12 +28,14 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
   }
 
   private Authentication getAuthentication(HttpServletRequest request) {
-    String user = JWTUtil.getClaims(new JWTClaimsRequestDTO(JWTUtil.getRawToken(request), secret))
-        .getSubject();
-
-    return user != null ?
-        new UsernamePasswordAuthenticationToken(user, null, emptyList()) :
-        null;
+    final JWTClaimsResponseDTO jwtClaimsResponseDTO = JWTUtil
+        .getClaims(new JWTClaimsRequestDTO(JWTUtil.getRawToken(request), secret));
+    if (jwtClaimsResponseDTO != null && StringUtils.isNotBlank(jwtClaimsResponseDTO.getSubject())) {
+      return new UsernamePasswordAuthenticationToken(jwtClaimsResponseDTO.getSubject(), null,
+          emptyList());
+    } else {
+      return null;
+    }
   }
 
   @Override
