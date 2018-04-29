@@ -97,7 +97,12 @@ public class JWTUtil {
    * @return The calue of the requested claim.
    */
   public static Object getClaimValue(JWTClaimsRequestDTO jwtClaimsRequest, String claim) {
-    return getClaims(jwtClaimsRequest).getClaims().get(claim);
+    final JWTClaimsResponseDTO claims = getClaims(jwtClaimsRequest);
+    if (claims != null && claims.getClaims() != null && claims.getClaims().containsKey(claim)) {
+      return claims.getClaims().get(claim);
+    } else {
+      return null;
+    }
   }
 
   /**
