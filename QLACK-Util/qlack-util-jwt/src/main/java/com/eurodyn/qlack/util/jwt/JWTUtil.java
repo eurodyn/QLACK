@@ -1,8 +1,8 @@
-package com.eurodyn.qlack.util;
+package com.eurodyn.qlack.util.jwt;
 
-import com.eurodyn.qlack.util.dto.JWTClaimsRequestDTO;
-import com.eurodyn.qlack.util.dto.JWTClaimsResponseDTO;
-import com.eurodyn.qlack.util.dto.JWTGenerateRequestDTO;
+import com.eurodyn.qlack.util.jwt.dto.JWTClaimsRequestDTO;
+import com.eurodyn.qlack.util.jwt.dto.JWTClaimsResponseDTO;
+import com.eurodyn.qlack.util.jwt.dto.JWTGenerateRequestDTO;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.util.dto;
+package com.eurodyn.qlack.util.jwt.dto;
 
 /**
  * A placeholder for an encoded JWT.

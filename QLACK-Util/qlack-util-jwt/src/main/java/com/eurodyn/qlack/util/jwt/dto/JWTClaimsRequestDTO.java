@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.util.dto;
+package com.eurodyn.qlack.util.jwt.dto;
 
 /**
  * A class encapsulating all data necessary to verify a JWT.
