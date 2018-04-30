@@ -3,6 +3,7 @@ package com.eurodyn.qlack.fuse.aaa.service;
 import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.aaa.dto.SessionAttributeDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.SessionDTO;
+import com.eurodyn.qlack.fuse.aaa.mappers.SessionDTOMapper;
 import com.eurodyn.qlack.fuse.aaa.model.QSession;
 import com.eurodyn.qlack.fuse.aaa.model.QSessionAttribute;
 import com.eurodyn.qlack.fuse.aaa.model.Session;
@@ -28,6 +29,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,12 +58,15 @@ public class AccountingService {
   // Service references
   private SessionRepository sessionRepository;
   private SessionAttributeRepository sessionAttributeRepository;
+  private SessionDTOMapper sessionDTOMapper;
 
   @Autowired
   public AccountingService(SessionRepository sessionRepository,
-      SessionAttributeRepository sessionAttributeRepository) {
+      SessionAttributeRepository sessionAttributeRepository,
+      SessionDTOMapper sessionDTOMapper) {
     this.sessionRepository = sessionRepository;
     this.sessionAttributeRepository = sessionAttributeRepository;
+    this.sessionDTOMapper = sessionDTOMapper;
   }
 
   public String createSession(SessionDTO session) {
@@ -80,9 +85,9 @@ public class AccountingService {
 
 
   public void terminateSession(String sessionID) {
-    Session sessionEntity = sessionRepository.findById(sessionID).get();
-    if (sessionEntity != null) {
-      sessionEntity.setTerminatedOn(Instant.now().toEpochMilli());
+    final Optional<Session> session = sessionRepository.findById(sessionID);
+    if (session.isPresent()) {
+      session.get().setTerminatedOn(Instant.now().toEpochMilli());
     } else {
       LOGGER
           .log(Level.WARNING,
@@ -105,11 +110,9 @@ public class AccountingService {
     }
   }
 
-
   public SessionDTO getSession(String sessionID) {
     return ConverterUtil.sessionToSessionDTO(sessionRepository.findById(sessionID).get());
   }
-
 
   public Long getSessionDuration(String sessionID) {
     Session session = sessionRepository.findById(sessionID).get();
@@ -238,5 +241,9 @@ public class AccountingService {
 
   public void deleteExpiredSessions(Date expiryDate) {
     sessionRepository.deleteByCreatedOnBefore(expiryDate);
+  }
+
+  public List<SessionDTO> getSessions(String userId) {
+    return sessionDTOMapper.fromSessions(sessionRepository.findByUserId(userId));
   }
 }
