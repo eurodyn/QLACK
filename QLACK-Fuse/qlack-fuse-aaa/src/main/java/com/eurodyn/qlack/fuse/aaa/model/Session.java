@@ -2,6 +2,7 @@ package com.eurodyn.qlack.fuse.aaa.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -42,7 +43,7 @@ public class Session implements Serializable {
   private User user;
 
   //bi-directional many-to-one association to SessionAttribute
-  @OneToMany(mappedBy = "session")
+  @OneToMany(mappedBy = "session", fetch = FetchType.EAGER)
   private List<SessionAttribute> sessionAttributes;
 
   public Session() {
