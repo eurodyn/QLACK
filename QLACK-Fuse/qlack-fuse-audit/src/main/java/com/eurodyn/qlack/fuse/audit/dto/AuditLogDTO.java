@@ -23,7 +23,6 @@ public class AuditLogDTO implements Serializable {
 
   public Date getCreatedOn() {
     return createdOn;
-
   }
 
   public void setCreatedOn(Date createdOn) {

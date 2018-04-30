@@ -26,6 +26,14 @@ public class AuditLevelDTO implements Serializable {
   }
 
   /**
+   * parameterized Constructor
+   */
+  public AuditLevelDTO(String id, String name) {
+    this.setName(name);
+    this.setId(id);
+  }
+
+  /**
    * Get the audit level description
    */
   public String getDescription() {
