@@ -83,7 +83,6 @@ public class AccountingService {
     return entity.getId();
   }
 
-
   public void terminateSession(String sessionID) {
     final Optional<Session> session = sessionRepository.findById(sessionID);
     if (session.isPresent()) {

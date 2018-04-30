@@ -202,7 +202,9 @@ public class UserService {
     if (terminateOtherSessions) {
       if (user.getSessions() != null) {
         for (Session session : user.getSessions()) {
-          accountingService.terminateSession(session.getId());
+          if (session.getTerminatedOn() == null) {
+            accountingService.terminateSession(session.getId());
+          }
         }
       }
     }
