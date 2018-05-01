@@ -18,6 +18,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -242,7 +244,7 @@ public class AccountingService {
     sessionRepository.deleteByCreatedOnBefore(expiryDate);
   }
 
-  public List<SessionDTO> getSessions(String userId) {
-    return sessionDTOMapper.fromSessions(sessionRepository.findByUserId(userId));
+  public Page<SessionDTO> getSessions(String userId, Pageable pageable) {
+    return sessionDTOMapper.fromSessions(sessionRepository.findByUserId(userId, pageable));
   }
 }

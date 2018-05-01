@@ -5,8 +5,7 @@ import com.eurodyn.qlack.fuse.aaa.model.Session;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
     uses = SessionAttributeDTOMapper.class)
@@ -15,5 +14,8 @@ public interface SessionDTOMapper {
   @Mapping(source = "sessionAttributes", target = "attributes")
   SessionDTO fromSession(Session session);
 
-  List<SessionDTO> fromSessions(List<Session> sessions);
+  default Page<SessionDTO> fromSessions(Page<Session> sessions) {
+    return sessions.map(this::fromSession);
+  }
+
 }
