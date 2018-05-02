@@ -240,8 +240,13 @@ public class AccountingService {
     return count == 0;
   }
 
-  public void deleteExpiredSessions(Date expiryDate) {
-    sessionRepository.deleteByCreatedOnBefore(expiryDate);
+  public void deleteSessionsBeforeDate(Date date) {
+    sessionRepository.deleteByCreatedOnBefore(date);
+  }
+
+  public void terminateSessionsBeforeDate(Date date) {
+    final List<Session> sessions = sessionRepository.findByCreatedOnBeforeAndTerminatedOnNotNull(date);
+    sessions.stream().forEach(o -> terminateSession(o.getId()));
   }
 
   public Page<SessionDTO> getSessions(String userId, Pageable pageable) {
