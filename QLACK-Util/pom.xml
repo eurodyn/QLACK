@@ -5,6 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <modules>
     <module>qlack-util-jwt</module>
+    <module>qlack-util-querydsl</module>
   </modules>
 
   <parent>

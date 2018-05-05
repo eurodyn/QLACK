@@ -1,11 +1,10 @@
 package com.eurodyn.qlack.fuse.audit.dto;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class AuditLogDTO implements Serializable {
+public class AuditLogDTO {
 
   private String id;
   private String level;

@@ -17,6 +17,10 @@
       <groupId>com.eurodyn.qlack.common</groupId>
       <artifactId>qlack-common</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.eurodyn.qlack.util</groupId>
+      <artifactId>qlack-util-querydsl</artifactId>
+    </dependency>
 
     <!-- Spring dependencies -->
     <dependency>
@@ -48,6 +52,10 @@
     <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct-jdk8</artifactId>
     </dependency>
   </dependencies>
 
