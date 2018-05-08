@@ -5,8 +5,8 @@ import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.settings.dto.GroupDTO;
 import com.eurodyn.qlack.fuse.settings.dto.SettingDTO;
 import com.eurodyn.qlack.fuse.settings.mappers.SettingMapper;
+import com.eurodyn.qlack.fuse.settings.model.QSetting;
 import com.eurodyn.qlack.fuse.settings.model.Setting;
-import com.eurodyn.qlack.fuse.settings.model.QQFSSetting;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import javax.persistence.EntityManager;
@@ -34,7 +34,7 @@ public class SettingsService {
 
   // Service references.
   private SettingMapper settingMapper;
-  private QQFSSetting qsetting = QQFSSetting.qFSSetting;
+  private QSetting qsetting = QSetting.setting;
 
   @Autowired
   public SettingsService(SettingMapper settingMapper) {
