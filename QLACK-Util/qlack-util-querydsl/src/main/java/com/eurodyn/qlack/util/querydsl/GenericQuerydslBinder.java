@@ -18,7 +18,7 @@ import java.util.Optional;
 public interface GenericQuerydslBinder<T extends EntityPath<?>> extends
     QuerydslBinderCustomizer<T> {
 
-  default void addGenericBindings(QuerydslBindings bindings, T entity) {
+  default void addGenericBindings(QuerydslBindings bindings) {
     // Ignore-case for strings.
     bindings.bind(String.class)
         .first((SingleValueBinding<StringPath, String>) StringExpression::containsIgnoreCase);
