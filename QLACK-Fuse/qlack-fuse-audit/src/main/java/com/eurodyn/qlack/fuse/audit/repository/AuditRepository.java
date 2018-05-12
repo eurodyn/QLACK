@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @Repository
 public interface AuditRepository extends PagingAndSortingRepository<Audit, String>,
-    QuerydslPredicateExecutor<Audit>, GenericQuerydslBinder<QAudit> {
+    QuerydslPredicateExecutor<Audit>, GenericQuerydslBinder<QAudit>, AuditRepositoryExt {
 
   @Override
   default void customize(QuerydslBindings bindings, QAudit audit) {

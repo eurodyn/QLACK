@@ -252,4 +252,5 @@ public class AccountingService {
   public Page<SessionDTO> getSessions(String userId, Pageable pageable) {
     return sessionDTOMapper.fromSessions(sessionRepository.findByUserId(userId, pageable));
   }
+
 }

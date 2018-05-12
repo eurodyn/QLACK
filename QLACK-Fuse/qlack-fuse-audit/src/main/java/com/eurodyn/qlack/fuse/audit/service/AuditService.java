@@ -179,4 +179,7 @@ public class AuditService {
     return auditMapper.toAuditLogDTO(auditRepository.findAll(predicate, pageable));
   }
 
+  public List<String> getDistinctEventsForReferenceId(String referenceId) {
+    return auditRepository.findDistinctEventsByReferenceId(referenceId);
+  }
 }

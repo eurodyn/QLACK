@@ -16,4 +16,5 @@ public interface AuditMapper {
   default Page<AuditLogDTO> toAuditLogDTO(Page<Audit> audits) {
     return audits.map(this::toAuditLogDTO);
   }
+
 }
