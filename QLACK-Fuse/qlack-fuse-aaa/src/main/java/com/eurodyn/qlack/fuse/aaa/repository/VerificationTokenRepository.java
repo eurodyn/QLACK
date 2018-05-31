@@ -5,11 +5,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
-
 @Repository
 public interface VerificationTokenRepository extends CrudRepository<VerificationToken, String> {
 
   @Modifying
-  void deleteByExpiresOnBefore(Date expiryDate);
+  void deleteByExpiresOnBefore(long expiryDate);
 }

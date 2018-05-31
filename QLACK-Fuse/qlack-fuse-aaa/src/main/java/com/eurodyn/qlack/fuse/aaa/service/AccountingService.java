@@ -241,11 +241,12 @@ public class AccountingService {
   }
 
   public void deleteSessionsBeforeDate(Date date) {
-    sessionRepository.deleteByCreatedOnBefore(date);
+    sessionRepository.deleteByCreatedOnBefore(date.getTime());
   }
 
   public void terminateSessionsBeforeDate(Date date) {
-    final List<Session> sessions = sessionRepository.findByCreatedOnBeforeAndTerminatedOnNotNull(date);
+    final List<Session> sessions = sessionRepository.findByCreatedOnBeforeAndTerminatedOnNull(
+        date.getTime());
     sessions.stream().forEach(o -> terminateSession(o.getId()));
   }
 

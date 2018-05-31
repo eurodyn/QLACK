@@ -61,14 +61,11 @@ public class VerificationService {
   }
 
   public void deleteExpired() {
-    verificationTokenRepository.deleteByExpiresOnBefore(new Date());
+    verificationTokenRepository.deleteByExpiresOnBefore(new Date().getTime());
   }
 
   public void deleteToken(String tokenID) {
     verificationTokenRepository.deleteById(tokenID);
-
-    // Each time a token is deleted perform some housekeeping to also delete any other expired
-    // tokens.
   }
 
   public String getTokenPayload(String tokenID) {
