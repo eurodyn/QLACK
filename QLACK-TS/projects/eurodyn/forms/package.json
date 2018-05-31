@@ -1,0 +1,19 @@
+{
+  "name": "@eurodyn/forms",
+  "version": "1.2.2",
+  "description": "Utility package to work with Angular forms.",
+  "homepage": "https://github.com/eurodyn/qlack2",
+  "bug": "https://github.com/eurodyn/qlack2/issues",
+  "license": "EUPL-1.2",
+  "private": false,
+  "semantic-release": "semantic-release",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@angular/common": "^6.0.0",
+    "@angular/core": "^6.0.0",
+    "lodash": "4.17.10",
+    "@types/lodash": "4.14.108"
+  }
+}
