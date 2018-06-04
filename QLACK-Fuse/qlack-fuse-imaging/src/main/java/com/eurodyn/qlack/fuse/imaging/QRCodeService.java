@@ -20,7 +20,7 @@ import java.util.HashMap;
 
 @Service
 @Validated
-public class QRCodeServiceImpl {
+public class QRCodeService {
 
   // Default width for QR code.
   public static final int DEFAULT_WIDTH = 125;

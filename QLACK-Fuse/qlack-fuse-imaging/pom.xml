@@ -13,6 +13,7 @@
 
   <properties>
     <twelvemonkeys.version>3.3.2</twelvemonkeys.version>
+    <batik.version>1.9.1</batik.version>
   </properties>
 
   <dependencies>
@@ -165,6 +166,59 @@
       <groupId>com.twelvemonkeys.imageio</groupId>
       <artifactId>imageio-batik</artifactId>
       <version>${twelvemonkeys.version}</version>
+    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.apache.xmlgraphics</groupId>-->
+      <!--<artifactId>batik-rasterizer-ext</artifactId>-->
+      <!--<version>${batik.version}</version>-->
+      <!--<exclusions>-->
+        <!--<exclusion>-->
+          <!--<groupId>org.apache.xmlgraphics</groupId>-->
+          <!--<artifactId>batik-extensions</artifactId>-->
+        <!--</exclusion>-->
+      <!--</exclusions>-->
+    <!--</dependency>-->
+
+    <!--<dependency>-->
+      <!--<groupId>org.apache.xmlgraphics</groupId>-->
+      <!--<artifactId>batik-extension</artifactId>-->
+      <!--<version>${batik.version}</version>-->
+    <!--</dependency>-->
+
+    <!--<dependency>-->
+      <!--<groupId>org.apache.xmlgraphics</groupId>-->
+      <!--<artifactId>xmlgraphics-commons</artifactId>-->
+      <!--<version>2.0.1</version>-->
+    <!--</dependency>-->
+
+    <!--<dependency>-->
+      <!--<groupId>org.apache.xmlgraphics</groupId>-->
+      <!--<artifactId>batik-anim</artifactId>-->
+      <!--<version>${batik.version}</version>-->
+    <!--</dependency>-->
+
+    <!--<dependency>-->
+      <!--<groupId>org.apache.xmlgraphics</groupId>-->
+      <!--<artifactId>batik-svggen</artifactId>-->
+      <!--<version>${batik.version}</version>-->
+    <!--</dependency>-->
+
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-transcoder</artifactId>
+      <version>${batik.version}</version>
+
+      <!--
+      There seems to be some weirdness in the
+      Batik/FOP poms (Batik depends on FOP 0.20-5) that screws things up,
+      making everything end up depending on Batik 1.5, not 1.6
+      -->
+      <exclusions>
+        <exclusion>
+          <groupId>fop</groupId>
+          <artifactId>fop</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 

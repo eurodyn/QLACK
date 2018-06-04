@@ -347,7 +347,9 @@ public class UserService {
 
   public void deleteAttribute(String userID, String attributeName) {
     UserAttribute attribute = User.findAttribute(userID, attributeName, em);
-    em.remove(attribute);
+    if (attribute != null) {
+      em.remove(attribute);
+    }
   }
 
   public UserAttributeDTO getAttribute(String userID, String attributeName) {

@@ -44,7 +44,7 @@ import java.util.List;
 
 @Service
 @Validated
-public class ImagingServiceImpl {
+public class ImagingService {
 
   /**
    * Resamples an image to the new dimensions using one of the available resampling algorithms.
