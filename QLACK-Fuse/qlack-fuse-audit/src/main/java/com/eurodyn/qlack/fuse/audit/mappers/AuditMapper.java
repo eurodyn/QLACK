@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 public interface AuditMapper {
 
   @Mapping(expression = "java(new java.util.Date(audit.getCreatedOn()))", target = "createdOn")
+  @Mapping(expression = "java(audit.getLevelId().getName())", target = "level")
   AuditLogDTO toAuditLogDTO(Audit audit);
 
   default Page<AuditLogDTO> toAuditLogDTO(Page<Audit> audits) {
