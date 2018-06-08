@@ -18,5 +18,6 @@
   <modules>
     <module>qlack-util-jwt</module>
     <module>qlack-util-querydsl</module>
+    <module>qlack-util-reflection</module>
   </modules>
 </project>

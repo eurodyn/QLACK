@@ -4,11 +4,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.0.1.RELEASE</version>
-  </parent>
+  <!--<parent>-->
+    <!--<groupId>org.springframework.boot</groupId>-->
+    <!--<artifactId>spring-boot-starter-parent</artifactId>-->
+    <!--<version>2.0.2.RELEASE</version>-->
+  <!--</parent>-->
 
   <groupId>com.eurodyn.qlack</groupId>
   <artifactId>qlack</artifactId>
@@ -21,8 +21,21 @@
     <module>QLACK-Fuse</module>
   </modules>
 
+  <properties>
+    <spring.boot.version>2.0.2.RELEASE</spring.boot.version>
+  </properties>
+
   <dependencyManagement>
     <dependencies>
+      <!-- Spring Boot -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring.boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
       <!-- QLACK dependencies -->
       <dependency>
         <groupId>com.eurodyn.qlack.common</groupId>
@@ -32,9 +45,6 @@
         <groupId>com.eurodyn.qlack.util</groupId>
         <artifactId>qlack-util-querydsl</artifactId>
       </dependency>
-
-      <!-- Spring dependencies -->
-
 
       <!-- Other dependencies -->
       <dependency>
