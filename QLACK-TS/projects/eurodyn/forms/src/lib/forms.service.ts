@@ -63,18 +63,22 @@ export class QFormsService {
    */
   appendPagingToFilter(filter: string, page: number, size: number, sort: string,
                        sortDirection: string): string {
-    if (page) {
-      filter += filter ? '&' : '?';
+    if (!filter) {
+      filter = "";
+    }
+
+    if (page > -1) {
+      filter += filter === "" ? '' : "&";
       filter += 'page=' + page;
     }
 
     if (size) {
-      filter += filter ? '&' : '?';
+      filter += filter === "" ? '' : "&";
       filter += 'size=' + size;
     }
 
     if (sort && sortDirection) {
-      filter += filter ? '&' : '?';
+      filter += filter === "" ? '' : "&";
       filter += 'sort=' + sort + ',' + sortDirection;
     }
 
