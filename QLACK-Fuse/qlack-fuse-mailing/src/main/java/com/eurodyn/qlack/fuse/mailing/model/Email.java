@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -26,6 +27,7 @@ public class Email implements java.io.Serializable {
   private String subject;
 
   @Column(name = "body", length = 65535)
+  @Lob
   private String body;
 
   @Column(name = "from_email")

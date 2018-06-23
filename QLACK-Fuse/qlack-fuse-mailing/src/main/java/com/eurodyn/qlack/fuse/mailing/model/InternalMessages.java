@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TypedQuery;
@@ -26,6 +27,7 @@ public class InternalMessages implements java.io.Serializable {
   private String subject;
 
   @Column(name = "message", nullable = false, length = 65535)
+  @Lob
   private String message;
 
   @Column(name = "mail_from", nullable = false, length = 36)

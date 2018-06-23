@@ -208,7 +208,8 @@ public class UserSearchCriteria {
     }
 
     /**
-     * Specify a collection of IDs in which the IDs of the retrieved users groups should be contained.
+     * Specify a collection of IDs in which the IDs of the retrieved users groups should be
+     * contained.
      */
     public UserSearchCriteriaBuilder withGroupIdIn(Collection<String> ids) {
       criteria.setIncludeGroupIds(ids);
@@ -216,7 +217,8 @@ public class UserSearchCriteria {
     }
 
     /**
-     * Specify a collection of IDs in which the IDs of the retrieved users groups should not be contained.
+     * Specify a collection of IDs in which the IDs of the retrieved users groups should not be
+     * contained.
      */
     public UserSearchCriteriaBuilder withGroupIdNotIn(Collection<String> ids) {
       criteria.setExcludeGroupIds(ids);
@@ -224,7 +226,8 @@ public class UserSearchCriteria {
     }
 
     /**
-     * Specify a collection of statuses in which the status of the retrieved users should be contained.
+     * Specify a collection of statuses in which the status of the retrieved users should be
+     * contained.
      *
      * @param statuses The list of statuses.
      */
@@ -234,7 +237,8 @@ public class UserSearchCriteria {
     }
 
     /**
-     * Specify a collection of statuses in which the status of the retrieved users should not be contained.
+     * Specify a collection of statuses in which the status of the retrieved users should not be
+     * contained.
      *
      * @param statuses The list of statuses.
      */
@@ -252,10 +256,10 @@ public class UserSearchCriteria {
     }
 
     /**
-     * Specify the attributes the retrieved users should have. This method is intended to be
-     * called in conjuction with the and and or static methods which are used to specify
-     * the relationship between the different criteria, for example:
-     * UserSearchCriteriaBuilder.createCriteria().withAttributes(and(and(att1, att2, att3), or (att4, att5), or(att6, att7)))
+     * Specify the attributes the retrieved users should have. This method is intended to be called
+     * in conjuction with the and and or static methods which are used to specify the relationship
+     * between the different criteria, for example: UserSearchCriteriaBuilder.createCriteria().withAttributes(and(and(att1,
+     * att2, att3), or (att4, att5), or(att6, att7)))
      */
     public UserSearchCriteriaBuilder withAttributes(UserAttributeCriteria attCriteria) {
       criteria.setAttributeCriteria(attCriteria);

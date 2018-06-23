@@ -13,7 +13,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
-
 /**
  * The persistent class for the aaa_group_has_operation database table.
  */
