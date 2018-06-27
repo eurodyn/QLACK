@@ -123,13 +123,15 @@ public class MailQueueMonitor {
   /**
    * Check for QUEUED emails and send them.
    */
-  @Scheduled(initialDelay = 30000, fixedDelay = 10000)
+  @Scheduled(initialDelay = 30000, fixedDelay = 5000)
   public void checkAndSendQueued() {
-    List<Email> emails = Email.findQueued(em, mailingProperties.getMaxTries());
-    LOGGER.log(Level.FINEST, "Found {0} email(s) to be sent.", emails.size());
+    if (mailingProperties.isPolling()) {
+      List<Email> emails = Email.findQueued(em, mailingProperties.getMaxTries());
+      LOGGER.log(Level.FINEST, "Found {0} email(s) to be sent.", emails.size());
 
-    for (Email email : emails) {
-      send(email);
+      for (Email email : emails) {
+        send(email);
+      }
     }
   }
 

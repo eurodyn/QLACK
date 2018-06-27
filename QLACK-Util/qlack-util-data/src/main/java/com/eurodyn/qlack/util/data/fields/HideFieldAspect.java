@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.util.reflection;
+package com.eurodyn.qlack.util.data.fields;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -15,6 +15,11 @@ import java.util.List;
  * A utility aspect nullifying a list of fields within an object or a list of objects. Use this
  * aspect (and the respective {@link HideField} annotation with care as reflection can be slow in
  * large datasets.
+ *
+ * This is aspect is useful around REST endpoints where your back-end service may return more data
+ * that you care to send to your front-end. Note that an alternative way to do such data hiding is
+ * using JsonViews, however this aspect can be modified on a per-method level (where otherwise you
+ * would require a large number of JsonViews).
  */
 @Aspect
 @Component
@@ -47,7 +52,7 @@ public class HideFieldAspect {
   }
 
   @Around("@annotation(hideField)")
-  public Object test(ProceedingJoinPoint pjp, HideField hideField) throws Throwable {
+  public Object hide(ProceedingJoinPoint pjp, HideField hideField) throws Throwable {
     // Get result from original method.
     Object reply = pjp.proceed();
     Object data = reply;

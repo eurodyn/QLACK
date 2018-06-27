@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.util.reflection;
+package com.eurodyn.qlack.util.data.fields;
 
 import static java.lang.annotation.ElementType.METHOD;
 
@@ -12,6 +12,6 @@ import java.lang.annotation.Target;
 @Target(METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface HideField {
-
+  // The list of fields to hide.
   String[] value();
 }

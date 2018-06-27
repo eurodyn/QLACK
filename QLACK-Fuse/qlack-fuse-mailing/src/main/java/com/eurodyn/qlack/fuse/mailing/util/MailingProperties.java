@@ -16,6 +16,7 @@ public class MailingProperties {
   private String serverUsername;
   private String serverPassword;
   private boolean startTls;
+  private boolean polling;
 
   public boolean isDebug() {
     return debug;
@@ -71,5 +72,13 @@ public class MailingProperties {
 
   public void setMaxTries(byte maxTries) {
     this.maxTries = maxTries;
+  }
+
+  public boolean isPolling() {
+    return polling;
+  }
+
+  public void setPolling(boolean polling) {
+    this.polling = polling;
   }
 }
