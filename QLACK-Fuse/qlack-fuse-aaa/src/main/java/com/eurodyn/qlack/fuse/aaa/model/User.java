@@ -1,5 +1,6 @@
 package com.eurodyn.qlack.fuse.aaa.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -9,6 +10,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -51,10 +54,12 @@ public class User implements Serializable {
 
   //bi-directional many-to-one association to UserHasOperation
   @OneToMany(mappedBy = "user")
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private List<UserHasOperation> userHasOperations;
 
   //bi-directional many-to-one association to Session
   @OneToMany(mappedBy = "user")
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private List<Session> sessions;
 
   //bi-directional many-to-many association to Group
@@ -63,10 +68,12 @@ public class User implements Serializable {
 
   //bi-directional many-to-one association to UserAttribute
   @OneToMany(mappedBy = "user")
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private List<UserAttribute> userAttributes;
 
   // bi-directional many-to-one association to VerificationToken.
   @OneToMany(mappedBy = "user")
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private List<VerificationToken> verificationTokens;
 
   public User() {

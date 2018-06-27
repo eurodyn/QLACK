@@ -12,6 +12,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -51,6 +53,7 @@ public class Group implements Serializable {
 
   //bi-directional many-to-one association to GroupHasOperation
   @OneToMany(mappedBy = "group")
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private List<GroupHasOperation> groupHasOperations;
 
   //bi-directional many-to-many association to Group
