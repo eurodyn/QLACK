@@ -164,10 +164,14 @@ public class JSONConfigService {
 
   @PostConstruct
   public void init() {
+    initWithFile("qlack-aaa-config.json");
+  }
+
+  public void initWithFile(String configFile) {
     // Find AAA configurations.
     try {
       Enumeration<URL> entries = this.getClass().getClassLoader()
-          .getResources("qlack-aaa-config.json");
+          .getResources(configFile);
       if (entries != null) {
         while (entries.hasMoreElements()) {
           parseConfig(entries.nextElement());
