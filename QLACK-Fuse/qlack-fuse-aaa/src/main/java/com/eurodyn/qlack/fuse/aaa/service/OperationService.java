@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 /**
  * @author European Dynamics SA
@@ -624,17 +625,21 @@ public class OperationService {
     return retVal;
   }
 
-  public Set<ResourceDTO> getResourceForOperation(String userID, String operationName,
-      boolean getAllowed) {
-    return getResourceForOperation(userID, operationName, getAllowed, false);
+  public Set<ResourceDTO> getResourceForOperation(String userID, String... operations) {
+    return getResourceForOperation(userID, true, false, operations);
   }
 
-  public Set<ResourceDTO> getResourceForOperation(String userID, String operationName,
-      boolean getAllowed, boolean checkUserGroups) {
+  public Set<ResourceDTO> getResourceForOperation(String userID,
+      boolean getAllowed, String... operations) {
+    return getResourceForOperation(userID, getAllowed, false, operations);
+  }
+
+  public Set<ResourceDTO> getResourceForOperation(String userID,
+      boolean getAllowed, boolean checkUserGroups, String... operations) {
     Set<ResourceDTO> resourceDTOList = new HashSet<>();
     User user = User.find(userID, em);
     for (UserHasOperation uho : user.getUserHasOperations()) {
-      if (uho.isDeny() != getAllowed && uho.getOperation().getName().equals(operationName)) {
+      if (uho.isDeny() != getAllowed && Stream.of(operations).anyMatch(o -> o.equals(uho.getOperation().getName()))) {
         resourceDTOList
             .add(ConverterUtil
                 .resourceToResourceDTO(Resource.find(uho.getResource().getId(), em)));
@@ -644,7 +649,7 @@ public class OperationService {
     if (checkUserGroups) {
       for (Group group : user.getGroups()) {
         for (GroupHasOperation gho : group.getGroupHasOperations()) {
-          if (gho.isDeny() != getAllowed && gho.getOperation().getName().equals(operationName)) {
+          if (gho.isDeny() != getAllowed && Stream.of(operations).anyMatch(o -> o.equals(gho.getOperation().getName()))) {
             resourceDTOList.add(
                 ConverterUtil
                     .resourceToResourceDTO(Resource.find(gho.getResource().getId(), em)));
