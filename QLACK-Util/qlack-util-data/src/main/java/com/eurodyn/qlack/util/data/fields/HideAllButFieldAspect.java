@@ -6,12 +6,14 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * A utility aspect nullifying a list of fields within an object or a list of objects. Use this
- * aspect (and the respective {@link HideField} annotation with care as reflection can be slow in
- * large datasets.
+ * aspect (and the respective {@link HideAllButField} annotation with care as reflection can be slow
+ * in large datasets.
  *
  * This aspect is useful around REST endpoints where your back-end service may return more data that
  * you care to send to your front-end. Note that an alternative way to do such data hiding is using
@@ -23,10 +25,19 @@ import java.util.List;
  */
 @Aspect
 @Component
-public class HideFieldAspect {
+public class HideAllButFieldAspect {
 
-  @Around("@annotation(hideField)")
-  public Object hide(ProceedingJoinPoint pjp, HideField hideField) throws Throwable {
+  private void hide(Object object, String[] fieldsToNotHide)
+      throws NoSuchFieldException, IllegalAccessException {
+    for (Field field : object.getClass().getDeclaredFields()) {
+      if (Stream.of(fieldsToNotHide).noneMatch(o -> o.equals(field.getName()))) {
+        HideFieldUtil.nullifyField(object, field.getName());
+      }
+    }
+  }
+
+  @Around("@annotation(hideAllButField)")
+  public Object hide(ProceedingJoinPoint pjp, HideAllButField hideAllButField) throws Throwable {
     // Get result from original method.
     Object reply = pjp.proceed();
     Object data = reply;
@@ -41,14 +52,10 @@ public class HideFieldAspect {
     if (data instanceof List) {
       List dataList = (List) data;
       for (Object dataListItem : dataList) {
-        for (String fieldToNullify : hideField.value()) {
-          HideFieldUtil.nullifyField(dataListItem, fieldToNullify);
-        }
+        hide(dataListItem, hideAllButField.value());
       }
     } else { // Treat this as a generic object.
-      for (String fieldToNullify : hideField.value()) {
-        HideFieldUtil.nullifyField(data, fieldToNullify);
-      }
+      hide(data, hideAllButField.value());
     }
 
     return reply;
