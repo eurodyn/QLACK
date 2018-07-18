@@ -7,11 +7,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * An annotation to use together with {@link HideAllButFieldAspect}.
+ * Method-level annotation to filter JSON replies using https://github.com/bohnman/squiggly-java.
  */
 @Target(METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface HideAllButField {
-  // The list of fields to hide.
-  String[] value();
+public @interface ReplyFilter {
+
+  // The filter to apply.
+  String value();
 }
