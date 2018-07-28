@@ -24,6 +24,11 @@
       <groupId>com.github.bohnman</groupId>
       <artifactId>squiggly-filter-jackson</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.eurodyn.qlack.common</groupId>
+      <artifactId>qlack-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
 </project>

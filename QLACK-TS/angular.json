@@ -42,7 +42,46 @@
           }
         }
       }
+    },
+    "@eurodyn/errorhandler": {
+      "root": "projects/eurodyn/errorhandler",
+      "sourceRoot": "projects/eurodyn/errorhandler/src",
+      "projectType": "library",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/eurodyn/errorhandler/tsconfig.lib.json",
+            "project": "projects/eurodyn/errorhandler/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "project": "projects/eurodyn/errorhandler/ng-package.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/eurodyn/errorhandler/src/test.ts",
+            "tsConfig": "projects/eurodyn/errorhandler/tsconfig.spec.json",
+            "karmaConfig": "projects/eurodyn/errorhandler/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/eurodyn/errorhandler/tsconfig.lib.json",
+              "projects/eurodyn/errorhandler/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
-  },
-  "defaultProject": "@eurodyn/forms"
+  }
 }
