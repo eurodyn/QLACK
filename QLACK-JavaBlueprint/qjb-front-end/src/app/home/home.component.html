@@ -1,0 +1,23 @@
+<div fxLayout="column">
+  <mat-card>
+    <mat-card-title>Forms</mat-card-title>
+    <mat-card-content>
+      <button mat-button="primary" (click)="showDemo('forms1')">1. Basic form submission</button>
+      <button mat-button="primary" (click)="showDemo('forms2')">2. Form submission with data validation</button>
+      <button mat-button="primary" (click)="showDemo('formsf3')">3. Form submission with file upload</button>
+    </mat-card-content>
+  </mat-card>
+  <mat-card>
+    <mat-card-title>CRUD</mat-card-title>
+    <button mat-button="primary" (click)="showDemo('crud1')">1. CU example with single form</button>
+    <button mat-button="primary" (click)="showDemo('crud2')">2. Simple table</button>
+    <button mat-button="primary" (click)="showDemo('crud3')">3. Table with pagination</button>
+    <button mat-button="primary" (click)="showDemo('crud4')">4. Table with pagination and filtering</button>
+  </mat-card>
+  <mat-card>
+    <mat-card-title>Database</mat-card-title>
+    <button mat-button="primary" (click)="showDemo('db1')">1. Simple repository usage</button>
+    <button mat-button="primary" (click)="showDemo('db2')">2. Custom-implementation repository usage</button>
+    <button mat-button="primary" (click)="showDemo('db3')">3. QueryDSL-enhanced repository usage</button>
+  </mat-card>
+</div>

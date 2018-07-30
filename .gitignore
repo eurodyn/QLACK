@@ -11,3 +11,6 @@ QLACK-Util/qlack-util-jwt/target
 /target/
 QLACK-Fuse/qlack-fuse-audit/target
 QLACK-Util/qlack-util-querydsl/target
+QLACK-JavaBlueprint/qjb-back-end/target
+QLACK-JavaBlueprint/qjb-front-end/target
+QLACK-Util/qlack-util-data/target
