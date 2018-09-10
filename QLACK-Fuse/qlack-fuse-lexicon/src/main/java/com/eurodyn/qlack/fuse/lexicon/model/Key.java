@@ -12,9 +12,13 @@ import javax.persistence.Version;
 
 import java.util.List;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "lex_key")
+@Getter
+@Setter
 public class Key {
 
   @Id
@@ -57,38 +61,6 @@ public class Key {
   public static List<Key> getAllKeys(EntityManager em) {
     Query query = em.createQuery("SELECT k FROM Key k");
     return query.getResultList();
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public Group getGroup() {
-    return group;
-  }
-
-  public void setGroup(Group group) {
-    this.group = group;
-  }
-
-  public List<Data> getData() {
-    return data;
-  }
-
-  public void setData(List<Data> data) {
-    this.data = data;
   }
 
 }

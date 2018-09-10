@@ -9,12 +9,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "lex_data")
+@Getter
+@Setter
 public class Data {
 
   @Id
@@ -101,46 +105,6 @@ public class Data {
       query.setParameter("locale", locale);
     }
     return query.getResultList();
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public Key getKey() {
-    return key;
-  }
-
-  public void setKey(Key key) {
-    this.key = key;
-  }
-
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
-  }
-
-  public Language getLanguage() {
-    return language;
-  }
-
-  public void setLanguage(Language language) {
-    this.language = language;
-  }
-
-  public long getLastUpdatedOn() {
-    return lastUpdatedOn;
-  }
-
-  public void setLastUpdatedOn(long lastUpdatedOn) {
-    this.lastUpdatedOn = lastUpdatedOn;
   }
 
 }

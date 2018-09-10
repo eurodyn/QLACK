@@ -9,9 +9,13 @@ import javax.persistence.Version;
 
 import java.util.List;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "lex_group")
+@Getter
+@Setter
 public class Group {
 
   @Id
@@ -29,38 +33,6 @@ public class Group {
 
   public static Group find(String groupID, EntityManager em) {
     return em.find(Group.class, groupID);
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public List<Key> getKeys() {
-    return keys;
-  }
-
-  public void setKeys(List<Key> keys) {
-    this.keys = keys;
   }
 
 }

@@ -2,7 +2,11 @@ package com.eurodyn.qlack.fuse.lexicon.dto;
 
 import java.io.Serializable;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class KeyDTO implements Serializable {
 
   private String id;
@@ -12,35 +16,4 @@ public class KeyDTO implements Serializable {
   // the language ID while the map value is the actual translation.
   private Map<String, String> translations;
 
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getGroupId() {
-    return groupId;
-  }
-
-  public void setGroupId(String groupId) {
-    this.groupId = groupId;
-  }
-
-  public Map<String, String> getTranslations() {
-    return translations;
-  }
-
-  public void setTranslations(Map<String, String> translations) {
-    this.translations = translations;
-  }
 }

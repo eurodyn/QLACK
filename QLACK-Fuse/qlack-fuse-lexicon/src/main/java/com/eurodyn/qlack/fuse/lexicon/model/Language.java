@@ -10,9 +10,13 @@ import javax.persistence.Version;
 
 import java.util.List;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "lex_language")
+@Getter
+@Setter
 public class Language {
 
   @Id
@@ -54,54 +58,6 @@ public class Language {
     Query query = em
         .createQuery("SELECT l FROM Language l WHERE l.active = true ORDER BY l.name ASC");
     return query.getResultList();
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getLocale() {
-    return locale;
-  }
-
-  public void setLocale(String locale) {
-    this.locale = locale;
-  }
-
-  public boolean isActive() {
-    return active;
-  }
-
-  public void setActive(boolean active) {
-    this.active = active;
-  }
-
-  public List<Data> getData() {
-    return data;
-  }
-
-  public void setData(List<Data> data) {
-    this.data = data;
-  }
-
-  public List<Template> getTemplates() {
-    return templates;
-  }
-
-  public void setTemplates(List<Template> templates) {
-    this.templates = templates;
   }
 
 }
