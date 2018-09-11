@@ -1,5 +1,8 @@
 package com.eurodyn.qlack.fuse.search.dto.queries;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * A query performing a query string against ES. A query that uses a query parser in order to parse its content
  * Multiple fields can be specified
@@ -18,11 +21,12 @@ package com.eurodyn.qlack.fuse.search.dto.queries;
  * https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-match-
  * query.html
  */
+@Getter
+@Setter
 public class QueryStringSpecField extends QuerySpec {
 
   // The field to execute the search against.
   private String field;
-
   // The value to lookup.
   private Object value;
   // The field to execute the search against.
@@ -40,48 +44,6 @@ public class QueryStringSpecField extends QuerySpec {
     this.operator = operator;
 
     return this;
-  }
-
-  /**
-   * @return the field
-   */
-  public String getField() {
-    return field;
-  }
-
-  /**
-   * @param field the field to set
-   */
-  public void setField(String field) {
-    this.field = field;
-  }
-
-  /**
-   * @return the value
-   */
-  public Object getValue() {
-    return value;
-  }
-
-  /**
-   * @param value the value to set
-   */
-  public void setValue(Object value) {
-    this.value = value;
-  }
-
-  /**
-   * @return the operator
-   */
-  public String getOperator() {
-    return operator;
-  }
-
-  /**
-   * @param operator the value to set
-   */
-  public void setOperator(String operator) {
-    this.operator = operator;
   }
 
 }

@@ -9,9 +9,15 @@ import javax.persistence.FetchType;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "flu_file")
+@Getter
+@Setter
+@NoArgsConstructor
 public class DBFile {
 
   @EmbeddedId
@@ -35,10 +41,6 @@ public class DBFile {
   @Version
   private long dbversion;
 
-  public DBFile() {
-
-  }
-
   public DBFile(DBFilePK id) {
     super();
     this.id = id;
@@ -46,66 +48,6 @@ public class DBFile {
 
   public DBFilePK getId() {
     return id;
-  }
-
-  public void setId(DBFilePK id) {
-    this.id = id;
-  }
-
-  public long getExpectedChunks() {
-    return expectedChunks;
-  }
-
-  public void setExpectedChunks(long expectedChunks) {
-    this.expectedChunks = expectedChunks;
-  }
-
-  public long getFileSize() {
-    return fileSize;
-  }
-
-  public void setFileSize(long fileSize) {
-    this.fileSize = fileSize;
-  }
-
-  public String getUploadedBy() {
-    return uploadedBy;
-  }
-
-  public void setUploadedBy(String uploadedBy) {
-    this.uploadedBy = uploadedBy;
-  }
-
-  public String getFileName() {
-    return fileName;
-  }
-
-  public void setFileName(String fileName) {
-    this.fileName = fileName;
-  }
-
-  public long getUploadedAt() {
-    return uploadedAt;
-  }
-
-  public void setUploadedAt(long uploadedAt) {
-    this.uploadedAt = uploadedAt;
-  }
-
-  public byte[] getChunkData() {
-    return chunkData;
-  }
-
-  public void setChunkData(byte[] chunkData) {
-    this.chunkData = chunkData;
-  }
-
-  public long getChunkSize() {
-    return chunkSize;
-  }
-
-  public void setChunkSize(long chunkSize) {
-    this.chunkSize = chunkSize;
   }
 
   public static DBFile getChunk(String id, long chunkOrder, EntityManager em) {

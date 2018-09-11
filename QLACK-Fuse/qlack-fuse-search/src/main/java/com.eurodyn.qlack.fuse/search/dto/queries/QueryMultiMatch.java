@@ -1,5 +1,7 @@
 package com.eurodyn.qlack.fuse.search.dto.queries;
 
+import lombok.Getter;
+
 /**
  * Similar to {@link QueryMatch}, a query performing a match against ES but on
  * multiple fields. Example:
@@ -18,6 +20,7 @@ package com.eurodyn.qlack.fuse.search.dto.queries;
  * https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-multi-
  * match-query.html
  */
+@Getter
 public class QueryMultiMatch extends QuerySpec {
 
   // The list of fields to search against.
@@ -37,20 +40,6 @@ public class QueryMultiMatch extends QuerySpec {
     this.fields = fields;
 
     return this;
-  }
-
-  /**
-   * @return the fields
-   */
-  public String[] getFields() {
-    return fields;
-  }
-
-  /**
-   * @return the value
-   */
-  public Object getValue() {
-    return value;
   }
 
 }

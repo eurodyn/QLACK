@@ -21,9 +21,6 @@ import com.eurodyn.qlack.fuse.aaa.model.Session;
 import com.eurodyn.qlack.fuse.aaa.model.SessionAttribute;
 import com.eurodyn.qlack.fuse.aaa.model.User;
 import com.eurodyn.qlack.fuse.aaa.model.UserAttribute;
-import javax.persistence.EntityManager;
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,6 +28,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.persistence.EntityManager;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Utility class to convert
@@ -62,7 +61,7 @@ public class ConverterUtil {
     dto.setUsername(entity.getUsername());
     dto.setStatus(entity.getStatus());
     dto.setSuperadmin(entity.isSuperadmin());
-    dto.setExternal(entity.isExternal() != null && entity.isExternal());
+    dto.setExternal(entity.getExternal() != null && entity.getExternal());
 
     Set<UserAttributeDTO> userAttributeDtos = userAttributesToUserAttributeDTOSet(
         entity.getUserAttributes());

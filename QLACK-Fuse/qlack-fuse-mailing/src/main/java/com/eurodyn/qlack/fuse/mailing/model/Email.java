@@ -1,6 +1,11 @@
 package com.eurodyn.qlack.fuse.mailing.model;
 
 import com.eurodyn.qlack.fuse.mailing.util.MailConstants.EMAIL_STATUS;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -9,15 +14,13 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "mai_email")
+@Getter
+@Setter
 public class Email implements java.io.Serializable {
 
   @Id
@@ -122,136 +125,6 @@ public class Email implements java.io.Serializable {
     String jpql = sb.toString();
 
     return em.createQuery(jpql, Email.class).getResultList();
-  }
-
-  // -- Accessors
-
-  public String getId() {
-    return this.id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getSubject() {
-    return this.subject;
-  }
-
-  public void setSubject(String subject) {
-    this.subject = subject;
-  }
-
-  public String getBody() {
-    return this.body;
-  }
-
-  public void setBody(String body) {
-    this.body = body;
-  }
-
-  public String getFromEmail() {
-    return this.fromEmail;
-  }
-
-  public void setFromEmail(String fromEmail) {
-    this.fromEmail = fromEmail;
-  }
-
-  public String getToEmails() {
-    return this.toEmails;
-  }
-
-  public void setToEmails(String toEmails) {
-    this.toEmails = toEmails;
-  }
-
-  public String getCcEmails() {
-    return this.ccEmails;
-  }
-
-  public void setCcEmails(String ccEmails) {
-    this.ccEmails = ccEmails;
-  }
-
-  public String getBccEmails() {
-    return this.bccEmails;
-  }
-
-  public void setBccEmails(String bccEmails) {
-    this.bccEmails = bccEmails;
-  }
-
-  public String getReplyToEmails() {
-    return replyToEmails;
-  }
-
-  public void setReplyToEmails(String replyToEmails) {
-    this.replyToEmails = replyToEmails;
-  }
-
-  public String getStatus() {
-    return this.status;
-  }
-
-  public void setStatus(String status) {
-    this.status = status;
-  }
-
-  public String getServerResponse() {
-    return this.serverResponse;
-  }
-
-  public void setServerResponse(String serverResponse) {
-    this.serverResponse = serverResponse;
-  }
-
-  public Long getServerResponseDate() {
-    return this.serverResponseDate;
-  }
-
-  public void setServerResponseDate(Long serverResponseDate) {
-    this.serverResponseDate = serverResponseDate;
-  }
-
-  public String getEmailType() {
-    return this.emailType;
-  }
-
-  public void setEmailType(String emailType) {
-    this.emailType = emailType;
-  }
-
-  public Long getDateSent() {
-    return this.dateSent;
-  }
-
-  public void setDateSent(Long dateSent) {
-    this.dateSent = dateSent;
-  }
-
-  public long getAddedOnDate() {
-    return this.addedOnDate;
-  }
-
-  public void setAddedOnDate(long addedOnDate) {
-    this.addedOnDate = addedOnDate;
-  }
-
-  public byte getTries() {
-    return this.tries;
-  }
-
-  public void setTries(byte tries) {
-    this.tries = tries;
-  }
-
-  public Set<Attachment> getAttachments() {
-    return this.attachments;
-  }
-
-  public void setAttachments(Set<Attachment> attachments) {
-    this.attachments = attachments;
   }
 
 }

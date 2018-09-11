@@ -1,12 +1,18 @@
 package com.eurodyn.qlack.fuse.aaa.dto;
 
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * User attributes DTO
  *
  * @author European Dynamics
  */
+@Getter
+@Setter
+@NoArgsConstructor
 public class UserAttributeDTO implements Serializable {
 
   private String id;
@@ -15,9 +21,6 @@ public class UserAttributeDTO implements Serializable {
   private String userId;
   private byte[] binData;
   private String contentType;
-
-  public UserAttributeDTO() {
-  }
 
   public UserAttributeDTO(String name, String data) {
     this.name = name;
@@ -37,66 +40,6 @@ public class UserAttributeDTO implements Serializable {
     this.userId = userID;
     this.data = columnData;
     this.contentType = contentType;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getData() {
-    return data;
-  }
-
-  public void setData(String data) {
-    this.data = data;
-  }
-
-  public byte[] getBinData() {
-    return binData;
-  }
-
-  public void setBinData(byte[] binData) {
-    this.binData = binData;
-  }
-
-  /**
-   * @return the userId
-   */
-  public String getUserId() {
-    return userId;
-  }
-
-  /**
-   * @param userId the userId to set
-   */
-  public void setUserId(String userId) {
-    this.userId = userId;
-  }
-
-  /**
-   * @return the contentType
-   */
-  public String getContentType() {
-    return contentType;
-  }
-
-  /**
-   * @param contentType the contentType to set
-   */
-  public void setContentType(String contentType) {
-    this.contentType = contentType;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
   }
 
 }

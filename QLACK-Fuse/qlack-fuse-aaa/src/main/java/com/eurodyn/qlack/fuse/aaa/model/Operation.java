@@ -1,5 +1,9 @@
 package com.eurodyn.qlack.fuse.aaa.model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -9,17 +13,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * The persistent class for the aaa_operation database table.
  */
 @Entity
 @Table(name = "aaa_operation")
+@Getter
+@Setter
 public class Operation implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -78,54 +81,6 @@ public class Operation implements Serializable {
     return q.getResultList();
   }
 
-  public String getId() {
-    return this.id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getDescription() {
-    return this.description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public boolean isDynamic() {
-    return dynamic;
-  }
-
-  public void setDynamic(boolean dynamic) {
-    this.dynamic = dynamic;
-  }
-
-  public String getDynamicCode() {
-    return this.dynamicCode;
-  }
-
-  public void setDynamicCode(String dynamicCode) {
-    this.dynamicCode = dynamicCode;
-  }
-
-  public String getName() {
-    return this.name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public List<GroupHasOperation> getGroupHasOperations() {
-    return this.groupHasOperations;
-  }
-
-  public void setGroupHasOperations(List<GroupHasOperation> groupHasOperations) {
-    this.groupHasOperations = groupHasOperations;
-  }
-
   public GroupHasOperation addGroupHasOperation(GroupHasOperation groupHasOperation) {
     if (getGroupHasOperations() == null) {
       setGroupHasOperations(new ArrayList<GroupHasOperation>());
@@ -141,14 +96,6 @@ public class Operation implements Serializable {
     groupHasOperation.setOperation(null);
 
     return groupHasOperation;
-  }
-
-  public List<OpTemplateHasOperation> getOpTemplateHasOperations() {
-    return this.opTemplateHasOperations;
-  }
-
-  public void setOpTemplateHasOperations(List<OpTemplateHasOperation> opTemplateHasOperations) {
-    this.opTemplateHasOperations = opTemplateHasOperations;
   }
 
   public OpTemplateHasOperation addOpTemplateHasOperation(
@@ -170,14 +117,6 @@ public class Operation implements Serializable {
     return opTemplateHasOperation;
   }
 
-  public List<UserHasOperation> getUserHasOperations() {
-    return userHasOperations;
-  }
-
-  public void setUserHasOperations(List<UserHasOperation> userHasOperations) {
-    this.userHasOperations = userHasOperations;
-  }
-
   public UserHasOperation addUserHasOperation(UserHasOperation userHasOperation) {
     getUserHasOperations().add(userHasOperation);
     userHasOperation.setOperation(this);
@@ -191,4 +130,5 @@ public class Operation implements Serializable {
 
     return userHasOperation;
   }
+
 }

@@ -3,7 +3,11 @@ package com.eurodyn.qlack.fuse.aaa.dto;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class UserDTO implements Serializable {
 
   private String id;
@@ -16,86 +20,6 @@ public class UserDTO implements Serializable {
   // The session Id created for this user. Expect this to be populated, only, when attempting to
   // login the user.
   private String sessionId;
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  /**
-   * @return the username
-   */
-  public String getUsername() {
-    return username;
-  }
-
-  /**
-   * @param username the username to set
-   */
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  /**
-   * @return the password
-   */
-  public String getPassword() {
-    return password;
-  }
-
-  /**
-   * @param password the password to set
-   */
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  /**
-   * @return the status
-   */
-  public byte getStatus() {
-    return status;
-  }
-
-  /**
-   * @param status the status to set
-   */
-  public void setStatus(byte status) {
-    this.status = status;
-  }
-
-  public boolean isSuperadmin() {
-    return superadmin;
-  }
-
-  public void setSuperadmin(boolean superadmin) {
-    this.superadmin = superadmin;
-  }
-
-  public boolean isExternal() {
-    return external;
-  }
-
-  public void setExternal(boolean external) {
-    this.external = external;
-  }
-
-  /**
-   * @return Set of UserAttributeDTO
-   */
-  public Set<UserAttributeDTO> getUserAttributes() {
-    return userAttributes;
-  }
-
-  /**
-   * @param userAttributes The list of attributes to set.
-   */
-  public void setUserAttributes(Set<UserAttributeDTO> userAttributes) {
-    this.userAttributes = userAttributes;
-  }
 
   public UserAttributeDTO getAttribute(String name) {
     UserAttributeDTO retVal = null;
@@ -170,11 +94,4 @@ public class UserDTO implements Serializable {
     }
   }
 
-  public String getSessionId() {
-    return sessionId;
-  }
-
-  public void setSessionId(String sessionId) {
-    this.sessionId = sessionId;
-  }
 }

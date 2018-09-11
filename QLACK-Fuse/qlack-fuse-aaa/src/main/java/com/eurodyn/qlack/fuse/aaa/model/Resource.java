@@ -1,5 +1,9 @@
 package com.eurodyn.qlack.fuse.aaa.model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -8,18 +12,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * The persistent class for the aaa_resource database table.
  */
 @Entity
 @Table(name = "aaa_resource")
+@Getter
+@Setter
 public class Resource implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -70,46 +72,6 @@ public class Resource implements Serializable {
     return retVal;
   }
 
-  public String getId() {
-    return this.id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getDescription() {
-    return this.description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getName() {
-    return this.name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getObjectId() {
-    return this.objectId;
-  }
-
-  public void setObjectId(String objectId) {
-    this.objectId = objectId;
-  }
-
-  public List<UserHasOperation> getUserHasOperations() {
-    return userHasOperations;
-  }
-
-  public void setUserHasOperations(List<UserHasOperation> userHasOperations) {
-    this.userHasOperations = userHasOperations;
-  }
-
   public UserHasOperation addUserHasOperation(UserHasOperation userHasOperation) {
     if (getUserHasOperations() == null) {
       setUserHasOperations(new ArrayList<UserHasOperation>());
@@ -127,14 +89,6 @@ public class Resource implements Serializable {
     return userHasOperation;
   }
 
-  public List<GroupHasOperation> getGroupHasOperations() {
-    return groupHasOperations;
-  }
-
-  public void setGroupHasOperations(List<GroupHasOperation> groupHasOperations) {
-    this.groupHasOperations = groupHasOperations;
-  }
-
   public GroupHasOperation addGroupHasOperation(GroupHasOperation groupHasOperation) {
     if (getGroupHasOperations() == null) {
       setGroupHasOperations(new ArrayList<GroupHasOperation>());
@@ -150,15 +104,6 @@ public class Resource implements Serializable {
     groupHasOperation.setResource(null);
 
     return groupHasOperation;
-  }
-
-  public List<OpTemplateHasOperation> getOpTemplateHasOperations() {
-    return opTemplateHasOperations;
-  }
-
-  public void setOpTemplateHasOperations(
-      List<OpTemplateHasOperation> opTemplateHasOperations) {
-    this.opTemplateHasOperations = opTemplateHasOperations;
   }
 
   public OpTemplateHasOperation addOpTemplateHasOperation(

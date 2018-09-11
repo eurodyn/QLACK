@@ -1,5 +1,7 @@
 package com.eurodyn.qlack.fuse.search.dto.queries;
 
+import lombok.Getter;
+
 /**
  * 22/01/2018 : The term query finds documents that contain the exact term specified in the
  * inverted index. In addition to the simple Query Term this query searches directly in the nested objects.
@@ -20,6 +22,7 @@ package com.eurodyn.qlack.fuse.search.dto.queries;
  * https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-term-
  * query.html
  */
+@Getter
 public class QueryTermNested extends QuerySpec {
 
   private String field;
@@ -36,28 +39,6 @@ public class QueryTermNested extends QuerySpec {
     this.docvalueFields = docvalueFields;
 
     return this;
-  }
-
-  public String getField() {
-    return field;
-  }
-
-  public Object getValue() {
-    return value;
-  }
-
-  /**
-   * @return path
-   */
-  public String getPath() {
-    return path;
-  }
-
-  /**
-   * @return DocValueFields
-   */
-  public String getDocvalueFields() {
-    return docvalueFields;
   }
 
 }

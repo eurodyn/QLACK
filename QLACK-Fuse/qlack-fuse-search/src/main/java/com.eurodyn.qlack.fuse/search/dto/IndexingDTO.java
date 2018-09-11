@@ -1,8 +1,10 @@
 package com.eurodyn.qlack.fuse.search.dto;
 
 import com.eurodyn.qlack.fuse.search.IndexingService;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Holds a document to be indexed. The source object to be indexed is specified
@@ -10,6 +12,9 @@ import java.io.Serializable;
  * string by the underling methods of {@link IndexingService} when convertToJSON
  * is true.
  */
+@Getter
+@Setter
+@NoArgsConstructor
 public class IndexingDTO extends ESDocumentIdentifierDTO implements Serializable {
 
   /**
@@ -22,9 +27,6 @@ public class IndexingDTO extends ESDocumentIdentifierDTO implements Serializable
    */
   private boolean convertToJSON = true;
 
-  public IndexingDTO() {
-  }
-
   public IndexingDTO(String index, String type, String id, Object sourceObject) {
     this(index, type, id, sourceObject, false);
   }
@@ -35,25 +37,4 @@ public class IndexingDTO extends ESDocumentIdentifierDTO implements Serializable
     this.sourceObject = sourceObject;
   }
 
-  /**
-   * @return the sourceObject
-   */
-  public Object getSourceObject() {
-    return sourceObject;
-  }
-
-  /**
-   * @param sourceObject the sourceObject to set
-   */
-  public void setSourceObject(Object sourceObject) {
-    this.sourceObject = sourceObject;
-  }
-
-  public boolean isConvertToJSON() {
-    return convertToJSON;
-  }
-
-  public void setConvertToJSON(boolean convertToJSON) {
-    this.convertToJSON = convertToJSON;
-  }
 }

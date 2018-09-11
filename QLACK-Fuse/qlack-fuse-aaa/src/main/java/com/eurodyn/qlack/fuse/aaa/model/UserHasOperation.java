@@ -1,5 +1,8 @@
 package com.eurodyn.qlack.fuse.aaa.model;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.UUID;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
@@ -8,17 +11,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.UUID;
-
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * The persistent class for the aaa_group_has_operation database table.
  */
 @Entity
 @Table(name = "aaa_user_has_operation")
+@Getter
+@Setter
 public class UserHasOperation implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -98,46 +100,6 @@ public class UserHasOperation implements Serializable {
     Query q = em.createQuery("SELECT o FROM com.eurodyn.qlack.fuse.aaa.model.UserHasOperation o WHERE o.user.id = :userID");
     q.setParameter("userID", userID);
     return q.getResultList();
-  }
-
-  public String getId() {
-    return this.id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public User getUser() {
-    return user;
-  }
-
-  public void setUser(User user) {
-    this.user = user;
-  }
-
-  public Operation getOperation() {
-    return this.operation;
-  }
-
-  public void setOperation(Operation operation) {
-    this.operation = operation;
-  }
-
-  public Resource getResource() {
-    return resource;
-  }
-
-  public void setResource(Resource resource) {
-    this.resource = resource;
-  }
-
-  public boolean isDeny() {
-    return deny;
-  }
-
-  public void setDeny(boolean deny) {
-    this.deny = deny;
   }
 
 }

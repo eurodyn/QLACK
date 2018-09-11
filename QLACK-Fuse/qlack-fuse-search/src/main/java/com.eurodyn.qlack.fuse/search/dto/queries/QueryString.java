@@ -1,5 +1,7 @@
 package com.eurodyn.qlack.fuse.search.dto.queries;
 
+import lombok.Getter;
+
 /**
  * A query that uses a query parser in order to parse its content. Example:
  *
@@ -21,16 +23,10 @@ package com.eurodyn.qlack.fuse.search.dto.queries;
  * https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-query-
  * string-query.html
  */
+@Getter
 public class QueryString extends QuerySpec {
 
   private String queryString;
-
-  /**
-   * @return the queryString
-   */
-  public String getQueryString() {
-    return queryString;
-  }
 
   public QueryString setQueryString(String queryString) {
     this.queryString = queryString;

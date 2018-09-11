@@ -1,5 +1,11 @@
 package com.eurodyn.qlack.fuse.aaa.model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -12,21 +18,18 @@ import javax.persistence.OneToMany;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * The persistent class for the aaa_group database table.
  */
 @Entity
 @Table(name = "aaa_group")
+@Getter
+@Setter
 public class Group implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -107,46 +110,6 @@ public class Group implements Serializable {
     return retVal;
   }
 
-  public String getId() {
-    return this.id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getDescription() {
-    return this.description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getName() {
-    return this.name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getObjectId() {
-    return this.objectId;
-  }
-
-  public void setObjectId(String objectId) {
-    this.objectId = objectId;
-  }
-
-  public List<GroupHasOperation> getGroupHasOperations() {
-    return this.groupHasOperations;
-  }
-
-  public void setGroupHasOperations(List<GroupHasOperation> groupHasOperations) {
-    this.groupHasOperations = groupHasOperations;
-  }
-
   public GroupHasOperation addGroupHasOperation(GroupHasOperation groupHasOperation) {
     if (getGroupHasOperations() == null) {
       setGroupHasOperations(new ArrayList<GroupHasOperation>());
@@ -162,30 +125,6 @@ public class Group implements Serializable {
     groupHasOperation.setGroup(null);
 
     return groupHasOperation;
-  }
-
-  public List<User> getUsers() {
-    return this.users;
-  }
-
-  public void setUsers(List<User> users) {
-    this.users = users;
-  }
-
-  public Group getParent() {
-    return parent;
-  }
-
-  public void setParent(Group parent) {
-    this.parent = parent;
-  }
-
-  public List<Group> getChildren() {
-    return children;
-  }
-
-  public void setChildren(List<Group> children) {
-    this.children = children;
   }
 
 }

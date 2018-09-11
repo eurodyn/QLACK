@@ -3,10 +3,14 @@ package com.eurodyn.qlack.fuse.mailing.dto;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author European Dynamics SA
  */
+@Getter
+@Setter
 public class AttributeDTO implements Serializable {
 
   private Map<String, Object> attribute = new HashMap<String, Object>();
@@ -21,14 +25,6 @@ public class AttributeDTO implements Serializable {
 
   public void setAttribute(String key, Object value) {
     this.getAttribute().put(key, value);
-  }
-
-  public Map<String, Object> getAttribute() {
-    return attribute;
-  }
-
-  public void setAttribute(Map<String, Object> attribute) {
-    this.attribute = attribute;
   }
 
 }

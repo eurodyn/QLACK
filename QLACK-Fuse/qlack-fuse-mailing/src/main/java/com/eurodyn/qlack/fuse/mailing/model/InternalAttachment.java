@@ -1,5 +1,6 @@
 package com.eurodyn.qlack.fuse.mailing.model;
 
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -9,11 +10,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NoResultException;
 import javax.persistence.Table;
-
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "mai_internal_attachment")
+@Getter
+@Setter
 public class InternalAttachment implements java.io.Serializable {
 
   @Id
@@ -59,56 +62,6 @@ public class InternalAttachment implements java.io.Serializable {
 
     return em.createQuery(jpql, InternalAttachment.class).setParameter("messageId", messageId)
         .getResultList();
-  }
-
-  // -- Accessors
-
-  public String getId() {
-    return this.id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public InternalMessages getMessages() {
-    return this.messages;
-  }
-
-  public void setMessages(InternalMessages messages) {
-    this.messages = messages;
-  }
-
-  public String getFilename() {
-    return this.filename;
-  }
-
-  public void setFilename(String filename) {
-    this.filename = filename;
-  }
-
-  public String getContentType() {
-    return this.contentType;
-  }
-
-  public void setContentType(String contentType) {
-    this.contentType = contentType;
-  }
-
-  public byte[] getData() {
-    return this.data;
-  }
-
-  public void setData(byte[] data) {
-    this.data = data;
-  }
-
-  public String getFormat() {
-    return this.format;
-  }
-
-  public void setFormat(String format) {
-    this.format = format;
   }
 
 }

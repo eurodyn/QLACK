@@ -1,5 +1,10 @@
 package com.eurodyn.qlack.fuse.mailing.model;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -9,15 +14,13 @@ import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TypedQuery;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "mai_internal_messages")
+@Getter
+@Setter
 public class InternalMessages implements java.io.Serializable {
 
   @Id
@@ -116,88 +119,6 @@ public class InternalMessages implements java.io.Serializable {
     }
 
     return q.getSingleResult();
-  }
-
-  // -- Accessors
-
-  public String getId() {
-    return this.id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getSubject() {
-    return this.subject;
-  }
-
-  public void setSubject(String subject) {
-    this.subject = subject;
-  }
-
-  public String getMessage() {
-    return this.message;
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
-  }
-
-  public String getMailFrom() {
-    return this.mailFrom;
-  }
-
-  public void setMailFrom(String mailFrom) {
-    this.mailFrom = mailFrom;
-  }
-
-  public String getMailTo() {
-    return this.mailTo;
-  }
-
-  public void setMailTo(String mailTo) {
-    this.mailTo = mailTo;
-  }
-
-  public Long getDateSent() {
-    return this.dateSent;
-  }
-
-  public void setDateSent(Long dateSent) {
-    this.dateSent = dateSent;
-  }
-
-  public Long getDateReceived() {
-    return this.dateReceived;
-  }
-
-  public void setDateReceived(Long dateReceived) {
-    this.dateReceived = dateReceived;
-  }
-
-  public String getStatus() {
-    return this.status;
-  }
-
-  public void setStatus(String status) {
-    this.status = status;
-  }
-
-  public String getDeleteType() {
-    return this.deleteType;
-  }
-
-  public void setDeleteType(String deleteType) {
-    this.deleteType = deleteType;
-  }
-
-  public Set<InternalAttachment> getAttachments() {
-    return this.attachments;
-  }
-
-  public void setAttachments(Set<InternalAttachment> attachments) {
-    this.attachments = attachments;
   }
 
 }

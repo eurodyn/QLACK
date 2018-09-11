@@ -1,21 +1,23 @@
 package com.eurodyn.qlack.fuse.aaa.model;
 
+import java.io.Serializable;
+import java.util.UUID;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
-
-import java.io.Serializable;
-import java.util.UUID;
-
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * The persistent class for the aaa_session_attributes database table.
  */
 @Entity
 @Table(name = "aaa_session_attributes")
+@Getter
+@Setter
 public class SessionAttribute implements Serializable {
 
   private static final long serialVersionUID = 1L;

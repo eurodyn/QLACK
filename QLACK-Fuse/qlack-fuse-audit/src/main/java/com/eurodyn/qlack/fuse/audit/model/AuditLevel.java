@@ -2,19 +2,22 @@ package com.eurodyn.qlack.fuse.audit.model;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.Query;
 import javax.persistence.Table;
-
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "al_audit_level")
+@Getter
+@Setter
 public class AuditLevel {
 
   private static Cache<String, String> cache = CacheBuilder.newBuilder().build();
@@ -31,46 +34,6 @@ public class AuditLevel {
 
   public AuditLevel() {
     id = java.util.UUID.randomUUID().toString();
-  }
-
-  public String getId() {
-    return this.id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return this.name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getDescription() {
-    return this.description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getPrinSessionId() {
-    return this.prinSessionId;
-  }
-
-  public void setPrinSessionId(String prinSessionId) {
-    this.prinSessionId = prinSessionId;
-  }
-
-  public Long getCreatedOn() {
-    return this.createdOn;
-  }
-
-  public void setCreatedOn(Long createdOn) {
-    this.createdOn = createdOn;
   }
 
   public static AuditLevel findByName(EntityManager em, String name) {

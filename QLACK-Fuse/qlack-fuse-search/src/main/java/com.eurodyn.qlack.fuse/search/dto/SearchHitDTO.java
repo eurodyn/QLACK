@@ -1,9 +1,14 @@
 package com.eurodyn.qlack.fuse.search.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Represents a specific hit within a set of hits held by {@link SearchResultDTO}. 23/01/2018 The
  * Adding the innerHits for the nested Objects in the Search Hit DTO
  */
+@Getter
+@Setter
 public class SearchHitDTO {
 
   // The source representation of this hit as a JSON object. This property
@@ -24,74 +29,6 @@ public class SearchHitDTO {
   private String type;
 
   private String id;
-
-  /**
-   * @return the source
-   */
-  public String getSource() {
-    return source;
-  }
-
-  /**
-   * @param source the source to set
-   */
-  public void setSource(String source) {
-    this.source = source;
-  }
-
-  /**
-   * @return the innerHits
-   */
-  public String getInnerHits() {
-    return innerHits;
-  }
-
-  /**
-   * @param innerHits the innerHits to set
-   */
-  public void setInnerHits(String innerHits) {
-    this.innerHits = innerHits;
-  }
-
-  /**
-   * @return the score
-   */
-  public float getScore() {
-    return score;
-  }
-
-  /**
-   * @param score the score to set
-   */
-  public void setScore(float score) {
-    this.score = score;
-  }
-
-  /**
-   * @return the type
-   */
-  public String getType() {
-    return type;
-  }
-
-  /**
-   * @param type the type to set
-   */
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  /**
-   * @return the id
-   */
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
 
   @Override
   public String toString() {

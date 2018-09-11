@@ -8,9 +8,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "al_audit")
+@Getter
+@Setter
 public class Audit {
 
   @Id
@@ -46,107 +50,4 @@ public class Audit {
     id = java.util.UUID.randomUUID().toString();
   }
 
-  public String getId() {
-    return this.id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public AuditLevel getLevelId() {
-    return this.levelId;
-  }
-
-  public void setLevelId(AuditLevel levelId) {
-    this.levelId = levelId;
-  }
-
-  public AuditTrace getTraceId() {
-    return this.traceId;
-  }
-
-  public void setTraceId(AuditTrace traceId) {
-    this.traceId = traceId;
-  }
-
-  public String getPrinSessionId() {
-    return this.prinSessionId;
-  }
-
-  public void setPrinSessionId(String prinSessionId) {
-    this.prinSessionId = prinSessionId;
-  }
-
-  public String getShortDescription() {
-    return this.shortDescription;
-  }
-
-  public void setShortDescription(String shortDescription) {
-    this.shortDescription = shortDescription;
-  }
-
-  public String getEvent() {
-    return this.event;
-  }
-
-  public void setEvent(String event) {
-    this.event = event;
-  }
-
-  public Long getCreatedOn() {
-    return this.createdOn;
-  }
-
-  public void setCreatedOn(Long createdOn) {
-    this.createdOn = createdOn;
-  }
-
-  public String getReferenceId() {
-    return this.referenceId;
-  }
-
-  public void setReferenceId(String referenceId) {
-    this.referenceId = referenceId;
-  }
-
-  public String getGroupName() {
-    return this.groupName;
-  }
-
-  public void setGroupName(String groupName) {
-    this.groupName = groupName;
-  }
-
-  public String getCorrelationId() {
-    return correlationId;
-  }
-
-  public void setCorrelationId(String correlationId) {
-    this.correlationId = correlationId;
-  }
-
-  public String getOpt1() {
-    return opt1;
-  }
-
-  public void setOpt1(String opt1) {
-    this.opt1 = opt1;
-  }
-
-  public String getOpt2() {
-    return opt2;
-  }
-
-  public void setOpt2(String opt2) {
-    this.opt2 = opt2;
-  }
-
-  public String getOpt3() {
-    return opt3;
-  }
-
-  public void setOpt3(String opt3) {
-    this.opt3 = opt3;
-  }
 }

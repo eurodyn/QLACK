@@ -1,6 +1,11 @@
 package com.eurodyn.qlack.fuse.aaa.model;
 
-import javax.persistence.CascadeType;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -10,22 +15,18 @@ import javax.persistence.OneToMany;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
 
 /**
  * The persistent class for the aaa_user database table.
  */
 @Entity
 @Table(name = "aaa_user")
+@Getter
+@Setter
 public class User implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -129,70 +130,6 @@ public class User implements Serializable {
     return retVal;
   }
 
-  public String getId() {
-    return this.id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getPassword() {
-    return this.password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  public String getSalt() {
-    return salt;
-  }
-
-  public void setSalt(String salt) {
-    this.salt = salt;
-  }
-
-  public byte getStatus() {
-    return this.status;
-  }
-
-  public void setStatus(byte status) {
-    this.status = status;
-  }
-
-  public String getUsername() {
-    return this.username;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  public List<UserHasOperation> getUserHasOperations() {
-    return this.userHasOperations;
-  }
-
-  public void setUserHasOperations(List<UserHasOperation> userHasOperations) {
-    this.userHasOperations = userHasOperations;
-  }
-
-  public boolean isSuperadmin() {
-    return superadmin;
-  }
-
-  public void setSuperadmin(boolean superadmin) {
-    this.superadmin = superadmin;
-  }
-
-  public Boolean isExternal() {
-    return external;
-  }
-
-  public void setExternal(Boolean external) {
-    this.external = external;
-  }
-
   public UserHasOperation addUserHasOperation(UserHasOperation userHasOperations) {
     if (getUserHasOperations() == null) {
       setUserHasOperations(new ArrayList<UserHasOperation>());
@@ -210,14 +147,6 @@ public class User implements Serializable {
     return userHasOperations;
   }
 
-  public List<Session> getSessions() {
-    return this.sessions;
-  }
-
-  public void setSessions(List<Session> sessions) {
-    this.sessions = sessions;
-  }
-
   public Session addSession(Session session) {
     getSessions().add(session);
     session.setUser(this);
@@ -230,31 +159,6 @@ public class User implements Serializable {
     session.setUser(null);
 
     return session;
-  }
-
-  public List<Group> getGroups() {
-    return this.groups;
-  }
-
-  public void setGroups(List<Group> groups) {
-    this.groups = groups;
-  }
-
-  public List<UserAttribute> getUserAttributes() {
-    return this.userAttributes;
-  }
-
-  public void setUserAttributes(List<UserAttribute> userAttributes) {
-    this.userAttributes = userAttributes;
-  }
-
-  public List<VerificationToken> getVerificationTokens() {
-    return verificationTokens;
-  }
-
-  public void setVerificationTokens(
-      List<VerificationToken> verificationTokens) {
-    this.verificationTokens = verificationTokens;
   }
 
   public UserAttribute addUserAttribute(UserAttribute userAttribute) {

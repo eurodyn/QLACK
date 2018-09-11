@@ -1,5 +1,8 @@
 package com.eurodyn.qlack.fuse.search.dto.queries;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 23/01/2018 : A query performing a query string against ES. A query that uses a query parser in
  * order to parse its content Multiple fields can be specified. In addition to the simple Query
@@ -19,11 +22,12 @@ package com.eurodyn.qlack.fuse.search.dto.queries;
  * See also:<br> https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-match-
  * query.html
  */
+@Getter
+@Setter
 public class QueryStringSpecFieldNested extends QuerySpec {
 
   // The field to execute the search against.
   private String field;
-
   // The value to lookup.
   private Object value;
   // The field to execute the search against.
@@ -48,76 +52,6 @@ public class QueryStringSpecFieldNested extends QuerySpec {
     this.docvalueFields = docvalueFields;
 
     return this;
-  }
-
-  /**
-   * @return the field
-   */
-  public String getField() {
-    return field;
-  }
-
-  /**
-   * @param field the field to set
-   */
-  public void setField(String field) {
-    this.field = field;
-  }
-
-  /**
-   * @return the value
-   */
-  public Object getValue() {
-    return value;
-  }
-
-  /**
-   * @param value the value to set
-   */
-  public void setValue(Object value) {
-    this.value = value;
-  }
-
-  /**
-   * @return the operator
-   */
-  public String getOperator() {
-    return operator;
-  }
-
-  /**
-   * @param operator the value to set
-   */
-  public void setOperator(String operator) {
-    this.operator = operator;
-  }
-
-  /**
-   * @return the path
-   */
-  public String getPath() {
-    return path;
-  }
-
-  /**
-   * @param path the value to set
-   */
-  public void setPath(String path) {
-    this.path = path;
-  }
-
-  /**
-   * @return the docvalueFields
-   */
-  public String getDocvalueFields() {
-    return docvalueFields;
-  }
-
-  /**
-   * @param docvalueFields the value to set
-   */
-  public void setDocvalueFields(String docvalueFields) {
-    this.docvalueFields = docvalueFields;
   }
 
 }

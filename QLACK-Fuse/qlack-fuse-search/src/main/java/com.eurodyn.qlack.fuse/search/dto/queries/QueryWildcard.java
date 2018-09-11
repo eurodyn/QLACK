@@ -1,5 +1,7 @@
 package com.eurodyn.qlack.fuse.search.dto.queries;
 
+import lombok.Getter;
+
 /**
  * Matches documents that have fields matching a wildcard expression (not
  * analyzed). Supported wildcards are *, which matches any character sequence
@@ -22,6 +24,7 @@ package com.eurodyn.qlack.fuse.search.dto.queries;
  * https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-
  * wildcard-query.html
  */
+@Getter
 public class QueryWildcard extends QuerySpec {
 
   private String field;
@@ -32,14 +35,6 @@ public class QueryWildcard extends QuerySpec {
     this.wildcard = wildcard;
 
     return this;
-  }
-
-  public String getField() {
-    return field;
-  }
-
-  public String getWildcard() {
-    return wildcard;
   }
 
 }

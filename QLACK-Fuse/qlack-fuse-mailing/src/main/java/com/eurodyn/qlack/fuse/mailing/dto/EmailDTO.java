@@ -1,17 +1,20 @@
 package com.eurodyn.qlack.fuse.mailing.dto;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * DTO for Email data.
  */
+@Getter
+@Setter
 public class EmailDTO implements Serializable {
 
   private String id;
@@ -34,54 +37,6 @@ public class EmailDTO implements Serializable {
     this.emailType = EMAIL_TYPE.TEXT;
   }
 
-  // -- Constructors
-
-  public String getId() {
-    return id;
-  }
-
-  // -- Accessors
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getMessageId() {
-    return messageId;
-  }
-
-  public void setMessageId(String messageId) {
-    this.messageId = messageId;
-  }
-
-  public String getSubject() {
-    return subject;
-  }
-
-  public void setSubject(String subject) {
-    this.subject = subject;
-  }
-
-  public String getBody() {
-    return body;
-  }
-
-  public void setBody(String body) {
-    this.body = body;
-  }
-
-  public String getFrom() {
-    return from;
-  }
-
-  public void setFrom(String from) {
-    this.from = from;
-  }
-
-  public List<String> getToContact() {
-    return toContact;
-  }
-
   public void setToContact(List<String> toContact) {
     this.toContact = toContact;
   }
@@ -92,54 +47,6 @@ public class EmailDTO implements Serializable {
     setToContact(l);
   }
 
-  public List<String> getCcContact() {
-    return ccContact;
-  }
-
-  public void setCcContact(List<String> ccContact) {
-    this.ccContact = ccContact;
-  }
-
-  public List<String> getBccContact() {
-    return bccContact;
-  }
-
-  public void setBccContact(List<String> bccContact) {
-    this.bccContact = bccContact;
-  }
-
-  public List<String> getReplyToContact() {
-    return replyToContact;
-  }
-
-  public void setReplyToContact(List<String> replyToContact) {
-    this.replyToContact = replyToContact;
-  }
-
-  public EMAIL_TYPE getEmailType() {
-    return emailType;
-  }
-
-  public void setEmailType(EMAIL_TYPE emailType) {
-    this.emailType = emailType;
-  }
-
-  public String getStatus() {
-    return status;
-  }
-
-  public void setStatus(String status) {
-    this.status = status;
-  }
-
-  public List<AttachmentDTO> getAttachments() {
-    return attachments;
-  }
-
-  public void setAttachments(List<AttachmentDTO> attachment) {
-    this.attachments = attachment;
-  }
-
   public void addAttachment(AttachmentDTO attachmentDTO) {
     if (attachments == null) {
       attachments = new ArrayList<>();
@@ -147,22 +54,10 @@ public class EmailDTO implements Serializable {
     attachments.add(attachmentDTO);
   }
 
-  public Date getDateSent() {
-    return dateSent;
-  }
-
   public void setDateSent(Long dateSent) {
     if (dateSent != null) {
       this.dateSent = new Date(dateSent);
     }
-  }
-
-  public String getServerResponse() {
-    return serverResponse;
-  }
-
-  public void setServerResponse(String serverResponse) {
-    this.serverResponse = serverResponse;
   }
 
   public void resetAllRecipients() {
@@ -195,4 +90,5 @@ public class EmailDTO implements Serializable {
   public static enum EMAIL_TYPE {
     TEXT, HTML
   }
+
 }

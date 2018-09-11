@@ -1,11 +1,17 @@
 package com.eurodyn.qlack.fuse.search.dto;
 
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Holds the minimum necessary information to uniquely identify a document in
  * ES.
  */
+@Getter
+@Setter
+@NoArgsConstructor
 public class ESDocumentIdentifierDTO implements Serializable {
 
   private static final long serialVersionUID = 3216613727616909251L;
@@ -30,10 +36,6 @@ public class ESDocumentIdentifierDTO implements Serializable {
    */
   protected boolean refresh;
 
-  public ESDocumentIdentifierDTO() {
-    super();
-  }
-
   public ESDocumentIdentifierDTO(String index, String type, String id) {
     this(index, type, id, false);
   }
@@ -46,53 +48,4 @@ public class ESDocumentIdentifierDTO implements Serializable {
     this.refresh = refresh;
   }
 
-  /**
-   * @return the index
-   */
-  public String getIndex() {
-    return index;
-  }
-
-  /**
-   * @param index the index to set
-   */
-  public void setIndex(String index) {
-    this.index = index;
-  }
-
-  /**
-   * @return the type
-   */
-  public String getType() {
-    return type;
-  }
-
-  /**
-   * @param type the type to set
-   */
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  /**
-   * @return the id
-   */
-  public String getId() {
-    return id;
-  }
-
-  /**
-   * @param id the id to set
-   */
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public boolean isRefresh() {
-    return refresh;
-  }
-
-  public void setRefresh(boolean refresh) {
-    this.refresh = refresh;
-  }
 }

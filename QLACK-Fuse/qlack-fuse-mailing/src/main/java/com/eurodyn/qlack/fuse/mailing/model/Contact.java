@@ -1,5 +1,7 @@
 package com.eurodyn.qlack.fuse.mailing.model;
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,12 +10,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-
-import java.util.HashSet;
-import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "mai_contact")
+@Getter
+@Setter
 public class Contact implements java.io.Serializable {
 
   @Id
@@ -49,64 +52,6 @@ public class Contact implements java.io.Serializable {
 
   public Contact() {
     this.id = java.util.UUID.randomUUID().toString();
-  }
-
-  // -- Accessors
-
-  public String getId() {
-    return this.id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getEmail() {
-    return this.email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  public String getFirstName() {
-    return this.firstName;
-  }
-
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
-
-  public String getLastName() {
-    return this.lastName;
-  }
-
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
-  }
-
-  public String getLocale() {
-    return this.locale;
-  }
-
-  public void setLocale(String locale) {
-    this.locale = locale;
-  }
-
-  public String getUserId() {
-    return this.userId;
-  }
-
-  public void setUserId(String userId) {
-    this.userId = userId;
-  }
-
-  public Set<DistributionList> getDistributionLists() {
-    return this.distributionLists;
-  }
-
-  public void setDistributionLists(Set<DistributionList> distributionLists) {
-    this.distributionLists = distributionLists;
   }
 
 }

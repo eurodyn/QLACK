@@ -2,24 +2,24 @@ package com.eurodyn.qlack.fuse.mailing.dto;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * DTO for Attachment.
  *
  * @author European Dynamics SA.
  */
+@Getter
+@Setter
+@NoArgsConstructor
 public class AttachmentDTO implements Serializable {
 
   private String id;
   private String filename;
   private String contentType;
   private byte[] data;
-
-  /**
-   * Default Constructor
-   */
-  public AttachmentDTO() {
-  }
 
   /**
    * Parameterized Constructor
@@ -32,38 +32,6 @@ public class AttachmentDTO implements Serializable {
     this.id = id;
     this.filename = filename;
     this.contentType = contentType;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getFilename() {
-    return filename;
-  }
-
-  public void setFilename(String filename) {
-    this.filename = filename;
-  }
-
-  public String getContentType() {
-    return contentType;
-  }
-
-  public void setContentType(String contentType) {
-    this.contentType = contentType;
-  }
-
-  public byte[] getData() {
-    return data;
-  }
-
-  public void setData(byte[] data) {
-    this.data = data;
   }
 
   @Override

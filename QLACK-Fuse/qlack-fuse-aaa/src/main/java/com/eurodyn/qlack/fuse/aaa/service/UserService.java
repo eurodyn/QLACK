@@ -13,6 +13,14 @@ import com.eurodyn.qlack.fuse.aaa.model.UserAttribute;
 import com.eurodyn.qlack.fuse.aaa.util.ConverterUtil;
 import com.eurodyn.qlack.fuse.aaa.util.UserSearchHelper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -34,15 +42,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
 
 @Service
 @Validated
@@ -165,7 +164,7 @@ public class UserService {
 
   public boolean isExternal(String userID) {
     User user = User.find(userID, em);
-    return user.isExternal() != null && user.isExternal();
+    return user.getExternal() != null && user.getExternal();
   }
 
   public String canAuthenticate(String username, String password) {
@@ -179,7 +178,7 @@ public class UserService {
      * authenticated with LDAP, a new user will also be created/duplicated in AAA as an external
      * user.
      */
-    if (user != null && BooleanUtils.isFalse(user.isExternal())) {
+    if (user != null && BooleanUtils.isFalse(user.getExternal())) {
       /** Generate password hash to compare with password stored in the DB. */
       String checkPassword = DigestUtils.md5Hex(user.getSalt() + password);
       if (checkPassword.equals(user.getPassword())) {

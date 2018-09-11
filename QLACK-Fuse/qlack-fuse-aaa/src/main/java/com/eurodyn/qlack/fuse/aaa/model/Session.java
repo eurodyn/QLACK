@@ -1,5 +1,8 @@
 package com.eurodyn.qlack.fuse.aaa.model;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,16 +12,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * The persistent class for the aaa_session database table.
  */
 @Entity
 @Table(name = "aaa_session")
+@Getter
+@Setter
 public class Session implements Serializable {
 
   @Id
@@ -47,54 +50,6 @@ public class Session implements Serializable {
 
   public Session() {
     id = UUID.randomUUID().toString();
-  }
-  
-  public String getId() {
-    return this.id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getApplicationSessionId() {
-    return this.applicationSessionId;
-  }
-
-  public void setApplicationSessionId(String applicationSessionId) {
-    this.applicationSessionId = applicationSessionId;
-  }
-
-  public long getCreatedOn() {
-    return createdOn;
-  }
-
-  public void setCreatedOn(long createdOn) {
-    this.createdOn = createdOn;
-  }
-
-  public Long getTerminatedOn() {
-    return terminatedOn;
-  }
-
-  public void setTerminatedOn(Long terminatedOn) {
-    this.terminatedOn = terminatedOn;
-  }
-
-  public User getUser() {
-    return this.user;
-  }
-
-  public void setUser(User user) {
-    this.user = user;
-  }
-
-  public List<SessionAttribute> getSessionAttributes() {
-    return this.sessionAttributes;
-  }
-
-  public void setSessionAttributes(List<SessionAttribute> sessionAttributes) {
-    this.sessionAttributes = sessionAttributes;
   }
 
 }

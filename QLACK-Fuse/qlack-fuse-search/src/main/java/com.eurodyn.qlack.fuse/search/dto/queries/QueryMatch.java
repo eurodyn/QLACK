@@ -1,5 +1,8 @@
 package com.eurodyn.qlack.fuse.search.dto.queries;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * A query performing a match against ES. The default match query is of type
  * boolean. The value provided is analyzed and the analysis process constructs a
@@ -19,6 +22,8 @@ package com.eurodyn.qlack.fuse.search.dto.queries;
  * https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-match-
  * query.html
  */
+@Getter
+@Setter
 public class QueryMatch extends QuerySpec {
 
   // The field to execute the search against.
@@ -38,34 +43,6 @@ public class QueryMatch extends QuerySpec {
     this.value = value;
 
     return this;
-  }
-
-  /**
-   * @return the field
-   */
-  public String getField() {
-    return field;
-  }
-
-  /**
-   * @param field the field to set
-   */
-  public void setField(String field) {
-    this.field = field;
-  }
-
-  /**
-   * @return the value
-   */
-  public Object getValue() {
-    return value;
-  }
-
-  /**
-   * @param value the value to set
-   */
-  public void setValue(Object value) {
-    this.value = value;
   }
 
 }

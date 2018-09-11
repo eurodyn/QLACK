@@ -2,6 +2,7 @@ package com.eurodyn.qlack.fuse.search.dto.queries;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.Getter;
 
 /**
  * A query performing a match against ES. The default match query is of type
@@ -22,6 +23,7 @@ import java.util.Map;
  * https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-match-
  * query.html
  */
+@Getter
 public class QuerySort {
 
   // The fields to order against.
@@ -40,7 +42,4 @@ public class QuerySort {
     return this;
   }
 
-  public Map<String, String> getSortMap() {
-    return sortMap;
-  }
 }

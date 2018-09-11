@@ -1,5 +1,8 @@
 package com.eurodyn.qlack.fuse.mailing.model;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -9,13 +12,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "mai_distribution_list")
+@Getter
+@Setter
 public class DistributionList implements java.io.Serializable {
 
   @Id
@@ -63,56 +66,6 @@ public class DistributionList implements java.io.Serializable {
 
     return em.createQuery(jpql, DistributionList.class).setParameter("name", name)
         .getResultList();
-  }
-
-  // -- Accessors
-
-  public String getId() {
-    return this.id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return this.name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getDescription() {
-    return this.description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getCreatedBy() {
-    return this.createdBy;
-  }
-
-  public void setCreatedBy(String createdBy) {
-    this.createdBy = createdBy;
-  }
-
-  public Long getCreatedOn() {
-    return this.createdOn;
-  }
-
-  public void setCreatedOn(Long createdOn) {
-    this.createdOn = createdOn;
-  }
-
-  public Set<Contact> getContacts() {
-    return this.contacts;
-  }
-
-  public void setContacts(Set<Contact> contacts) {
-    this.contacts = contacts;
   }
 
 }

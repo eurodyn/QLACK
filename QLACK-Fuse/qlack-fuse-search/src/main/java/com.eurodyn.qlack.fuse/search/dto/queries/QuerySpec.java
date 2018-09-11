@@ -3,12 +3,14 @@ package com.eurodyn.qlack.fuse.search.dto.queries;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import lombok.Getter;
 
 /**
  * The superclass of all different types of queries supported by this module. It
  * provides commonly used properties between all subclasses as well as it allows
  * to tune the number and type of search results.
  */
+@Getter
 public abstract class QuerySpec {
 
   protected QuerySort querySort;
@@ -68,27 +70,6 @@ public abstract class QuerySpec {
   }
 
   /**
-   * @return the indices
-   */
-  public List<String> getIndices() {
-    return indices;
-  }
-
-  /**
-   * @return the types
-   */
-  public List<String> getTypes() {
-    return types;
-  }
-
-  /**
-   * @return the startRecord
-   */
-  public int getStartRecord() {
-    return startRecord;
-  }
-
-  /**
    * Sets the first record from which search results are paginated.
    *
    * @param startRecord The number of record to start from.
@@ -96,13 +77,6 @@ public abstract class QuerySpec {
   public QuerySpec setStartRecord(int startRecord) {
     this.startRecord = startRecord;
     return this;
-  }
-
-  /**
-   * @return the pageSize
-   */
-  public int getPageSize() {
-    return pageSize;
   }
 
   /**
@@ -116,13 +90,6 @@ public abstract class QuerySpec {
   }
 
   /**
-   * @return the explain
-   */
-  public boolean isExplain() {
-    return explain;
-  }
-
-  /**
    * Sets whether ES explain info is included in the results.
    *
    * @param explain Whether to enable or disable the ES explain info.
@@ -130,20 +97,6 @@ public abstract class QuerySpec {
   public QuerySpec setExplain(boolean explain) {
     this.explain = explain;
     return this;
-  }
-
-  /**
-   * @return the includeAllSource
-   */
-  public boolean isIncludeAllSource() {
-    return includeAllSource;
-  }
-
-  /**
-   * @return the includeResults
-   */
-  public boolean isIncludeResults() {
-    return includeResults;
   }
 
   /**
@@ -162,17 +115,9 @@ public abstract class QuerySpec {
     return this;
   }
 
-  public QuerySort getQuerySort() {
-    return querySort;
-  }
-
   public QuerySpec setQuerySort(QuerySort querySort) {
     this.querySort = querySort;
     return this;
-  }
-
-  public boolean isCountOnly() {
-    return countOnly;
   }
 
   public QuerySpec setCountOnly(boolean countOnly) {
@@ -180,26 +125,14 @@ public abstract class QuerySpec {
     return this;
   }
 
-  public Integer getScroll() {
-    return scroll;
-  }
-
   public QuerySpec setScroll(Integer scroll) {
     this.scroll = scroll;
     return this;
   }
 
-  public String getAggregate() {
-    return aggregate;
-  }
-
   public QuerySpec setAggregate(String aggregate) {
     this.aggregate = aggregate;
     return this;
-  }
-
-  public int getAggregateSize() {
-    return aggregateSize;
   }
 
   public QuerySpec setAggregateSize(int aggregateSize) {

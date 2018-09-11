@@ -4,9 +4,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "al_audit_trace")
+@Getter
+@Setter
 public class AuditTrace {
 
   @Id
@@ -16,22 +20,6 @@ public class AuditTrace {
 
   public AuditTrace() {
     id = java.util.UUID.randomUUID().toString();
-  }
-
-  public String getId() {
-    return this.id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getTraceData() {
-    return this.traceData;
-  }
-
-  public void setTraceData(String traceData) {
-    this.traceData = traceData;
   }
 
 }
