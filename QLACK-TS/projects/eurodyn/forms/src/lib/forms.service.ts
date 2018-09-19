@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import * as _ from "lodash";
-import {FormGroup} from "@angular/forms";
-import {QFilterAlias} from "./filter-alias";
+import * as _ from 'lodash';
+import {FormGroup} from '@angular/forms';
+import {QFilterAlias} from './filter-alias';
 
 /**
  * Utilities working with forms and the resulting HTTPClient requests taking into account the
@@ -28,8 +28,8 @@ export class QFormsService {
    * @returns Returns the query string, e.g. userId=123&sessionId=456&status=1
    */
   formGroupToQueryString(fb: FormGroup, aliases: QFilterAlias[], includeEmpty: boolean): string {
-    let query: string = '';
-    for (let filter in fb.value) {
+    let query = '';
+    for (const filter in fb.value) {
       // Skip empty fields if requested to not include them.
       if (!fb.value[filter] && !includeEmpty) {
         continue;
@@ -37,19 +37,25 @@ export class QFormsService {
 
       // Set the name of the field taking into account aliases.
       let fieldName: string = filter;
-      let alias = _.find(aliases, {source: filter});
+      const alias = _.find(aliases, {source: filter});
       if (alias) {
         fieldName = alias.target;
       }
 
       // Set query string.
-      let prefix: string = query.length > 0 ? '&' : '';
-      let value: any = typeof fb.value[filter] === 'string' ? fb.value[filter].replace(/=/g,
-        '%3D').replace(/&/g, '%26') : fb.value[filter];
-      query += prefix + fieldName + "=" + value;
+      const prefix: string = query.length > 0 ? '&' : '';
+      let value: any;
+
+      if (fb.value[filter]._isAMomentObject) {
+        value = fb.value[filter].toISOString();
+      } else {
+        value = fb.value[filter];
+      }
+
+      query += prefix + fieldName + '=' + value;
     }
 
-    return query;
+    return encodeURI(query);
   }
 
   /**
@@ -64,21 +70,21 @@ export class QFormsService {
   appendPagingToFilter(filter: string, page: number, size: number, sort: string,
                        sortDirection: string): string {
     if (!filter) {
-      filter = "";
+      filter = '';
     }
 
     if (page > -1) {
-      filter += filter === "" ? '' : "&";
+      filter += filter === '' ? '' : '&';
       filter += 'page=' + page;
     }
 
     if (size) {
-      filter += filter === "" ? '' : "&";
+      filter += filter === '' ? '' : '&';
       filter += 'size=' + size;
     }
 
     if (sort && sortDirection) {
-      filter += filter === "" ? '' : "&";
+      filter += filter === '' ? '' : '&';
       filter += 'sort=' + sort + ',' + sortDirection;
     }
 
