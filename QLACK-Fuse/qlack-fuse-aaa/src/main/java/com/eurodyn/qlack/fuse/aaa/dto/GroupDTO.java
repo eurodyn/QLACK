@@ -16,7 +16,7 @@ public class GroupDTO extends BaseDTO {
   private String name;
   private String objectID;
   private String description;
-  private GroupDTO parent;
+  private String parentId;
   private Set<GroupDTO> children;
 
   public GroupDTO(String id) {

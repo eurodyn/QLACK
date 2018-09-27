@@ -6,22 +6,18 @@ import com.eurodyn.qlack.fuse.aaa.dto.OpTemplateDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.OperationDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
-
 import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 @Service
 @Validated
@@ -85,10 +81,10 @@ public class JSONConfigService {
       }
       groupDTO.setDescription(g.getDescription());
       groupDTO.setName(g.getName());
-      if (StringUtils.isNotBlank(g.getParentGroupName())) {
-        GroupDTO parentGroup = groupService.getGroupByName(g.getParentGroupName(), true);
-        groupDTO.setParent(new GroupDTO(parentGroup.getId()));
-      }
+//      if (StringUtils.isNotBlank(g.getParentGroupName())) {
+//        GroupDTO parentGroup = groupService.getGroupByName(g.getParentGroupName(), true);
+//        groupDTO.setParent(new GroupDTO(parentGroup.getId()));
+//      }
       if (isNew) {
         groupService.createGroup(groupDTO);
       } else {

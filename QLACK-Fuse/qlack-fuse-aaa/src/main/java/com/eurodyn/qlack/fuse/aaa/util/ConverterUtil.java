@@ -2,7 +2,6 @@ package com.eurodyn.qlack.fuse.aaa.util;
 
 
 import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
-import com.eurodyn.qlack.fuse.aaa.dto.GroupDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.GroupHasOperationDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.OpTemplateDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.OperationAccessDTO;
@@ -12,7 +11,6 @@ import com.eurodyn.qlack.fuse.aaa.dto.SessionAttributeDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.SessionDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserAttributeDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserDTO;
-import com.eurodyn.qlack.fuse.aaa.model.Group;
 import com.eurodyn.qlack.fuse.aaa.model.GroupHasOperation;
 import com.eurodyn.qlack.fuse.aaa.model.OpTemplate;
 import com.eurodyn.qlack.fuse.aaa.model.OpTemplateHasOperation;
@@ -26,10 +24,8 @@ import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 
@@ -243,98 +239,98 @@ public class ConverterUtil {
     return entities;
   }
 
-  public static GroupDTO groupToGroupDTO(Group entity, boolean lazyRelatives) {
-    return groupToGroupDTO(entity, lazyRelatives, lazyRelatives);
-  }
+//  public static GroupDTO groupToGroupDTO(Group entity, boolean lazyRelatives) {
+//    return groupToGroupDTO(entity, lazyRelatives, lazyRelatives);
+//  }
 
   /*
    * Separate lazy parent from lazy children in order to allow specifying lazyChildren = true
    * when getting a node's parent since in any other case we will get a stack overflow.
    * For consistency reasons we also specify lazyParent = true when getting a node's children
    */
-  private static GroupDTO groupToGroupDTO(Group entity, boolean lazyParent,
-      boolean lazyChildren) {
-    if (entity == null) {
-      return null;
-    }
+//  private static GroupDTO groupToGroupDTO(Group entity, boolean lazyParent,
+//      boolean lazyChildren) {
+//    if (entity == null) {
+//      return null;
+//    }
+//
+//    GroupDTO dto = new GroupDTO();
+//    dto.setId(entity.getId());
+//    dto.setDescription(entity.getDescription());
+//    dto.setName(entity.getName());
+//    dto.setObjectID(entity.getObjectId());
+//
+//    if (!lazyParent) {
+//      dto.setParent(groupToGroupDTO(entity.getParent(), false, true));
+//    }
+//    if (!lazyChildren) {
+//      dto.setChildren(new HashSet<GroupDTO>());
+//      for (Group child : entity.getChildren()) {
+//        dto.getChildren().add(groupToGroupDTO(child, true, false));
+//      }
+//    }
+//
+//    return dto;
+//  }
 
-    GroupDTO dto = new GroupDTO();
-    dto.setId(entity.getId());
-    dto.setDescription(entity.getDescription());
-    dto.setName(entity.getName());
-    dto.setObjectID(entity.getObjectId());
-
-    if (!lazyParent) {
-      dto.setParent(groupToGroupDTO(entity.getParent(), false, true));
-    }
-    if (!lazyChildren) {
-      dto.setChildren(new HashSet<GroupDTO>());
-      for (Group child : entity.getChildren()) {
-        dto.getChildren().add(groupToGroupDTO(child, true, false));
-      }
-    }
-
-    return dto;
-  }
-
-  public static List<GroupDTO> groupToGroupDTOList(Collection<Group> groups,
-      boolean lazyRelatives) {
-    if (groups == null) {
-      return null;
-    }
-
-    List<GroupDTO> retVal = new ArrayList<>(groups.size());
-
-    // Use a HashSet as index in order to provide efficient indexing of
-    // processed groups in the case where we need to re-use them as
-    // other groups' relatives (if lazyRelatives = false).
-    Map<String, GroupDTO> groupIndex = new HashMap<>();
-    for (Group group : groups) {
-      // If the group has already been processed as a parent/child of another
-      // group then use the GroupDTO instance already created; otherwise create
-      // a new GroupDTO instance for this group.
-      GroupDTO dto = groupIndex.get(group.getId());
-      if (dto == null) {
-        // Do not handle lazyRelatives in the groupToGroupDTO method since
-        // we will handle them in this method in order to only create one
-        // GroupDTO instance for each group and use this instance wherever
-        // the group is referenced (as parent, child, etc.).
-        dto = groupToGroupDTO(group, true);
-      }
-
-      if (!lazyRelatives) {
-        if (!groupIndex.containsKey(dto.getId())) {
-          groupIndex.put(dto.getId(), dto);
-        }
-
-        // If the group has a parent check if it has already been processed in
-        // order to use the already existing instance, otherwise process it
-        // and add it to the groupIndex to be used later. Same for the group
-        // children.
-        if (group.getParent() != null) {
-          GroupDTO parent = groupIndex.get(group.getParent().getId());
-          if (parent == null) {
-            parent = groupToGroupDTO(group.getParent(), false);
-            groupIndex.put(parent.getId(), parent);
-          }
-          dto.setParent(parent);
-        }
-        dto.setChildren(new HashSet<GroupDTO>());
-        for (Group child : group.getChildren()) {
-          GroupDTO childDTO = groupIndex.get(child.getId());
-          if (childDTO == null) {
-            childDTO = groupToGroupDTO(child, false);
-            groupIndex.put(childDTO.getId(), childDTO);
-          }
-          dto.getChildren().add(childDTO);
-        }
-      }
-
-      retVal.add(dto);
-    }
-
-    return retVal;
-  }
+//  public static List<GroupDTO> groupToGroupDTOList(Collection<Group> groups,
+//      boolean lazyRelatives) {
+//    if (groups == null) {
+//      return null;
+//    }
+//
+//    List<GroupDTO> retVal = new ArrayList<>(groups.size());
+//
+//    // Use a HashSet as index in order to provide efficient indexing of
+//    // processed groups in the case where we need to re-use them as
+//    // other groups' relatives (if lazyRelatives = false).
+//    Map<String, GroupDTO> groupIndex = new HashMap<>();
+//    for (Group group : groups) {
+//      // If the group has already been processed as a parent/child of another
+//      // group then use the GroupDTO instance already created; otherwise create
+//      // a new GroupDTO instance for this group.
+//      GroupDTO dto = groupIndex.get(group.getId());
+//      if (dto == null) {
+//        // Do not handle lazyRelatives in the groupToGroupDTO method since
+//        // we will handle them in this method in order to only create one
+//        // GroupDTO instance for each group and use this instance wherever
+//        // the group is referenced (as parent, child, etc.).
+//        dto = groupToGroupDTO(group, true);
+//      }
+//
+//      if (!lazyRelatives) {
+//        if (!groupIndex.containsKey(dto.getId())) {
+//          groupIndex.put(dto.getId(), dto);
+//        }
+//
+//        // If the group has a parent check if it has already been processed in
+//        // order to use the already existing instance, otherwise process it
+//        // and add it to the groupIndex to be used later. Same for the group
+//        // children.
+//        if (group.getParent() != null) {
+//          GroupDTO parent = groupIndex.get(group.getParent().getId());
+//          if (parent == null) {
+//            parent = groupToGroupDTO(group.getParent(), false);
+//            groupIndex.put(parent.getId(), parent);
+//          }
+//          dto.setParent(parent);
+//        }
+//        dto.setChildren(new HashSet<GroupDTO>());
+//        for (Group child : group.getChildren()) {
+//          GroupDTO childDTO = groupIndex.get(child.getId());
+//          if (childDTO == null) {
+//            childDTO = groupToGroupDTO(child, false);
+//            groupIndex.put(childDTO.getId(), childDTO);
+//          }
+//          dto.getChildren().add(childDTO);
+//        }
+//      }
+//
+//      retVal.add(dto);
+//    }
+//
+//    return retVal;
+//  }
 
 
   public static OperationDTO operationToOperationDTO(Operation entity) {
@@ -427,22 +423,22 @@ public class ConverterUtil {
     }
 
     List<GroupHasOperationDTO> dtos = new ArrayList<>();
-    for (GroupHasOperation entity : entities) {
-      dtos.add(groupHasOperationToGroupHasOperationDTO(entity));
-    }
+//    for (GroupHasOperation entity : entities) {
+//      dtos.add(groupHasOperationToGroupHasOperationDTO(entity));
+//    }
     return dtos;
   }
 
-  public static GroupHasOperationDTO groupHasOperationToGroupHasOperationDTO(
-      GroupHasOperation entity) {
-    if (entity == null) {
-      return null;
-    }
-    GroupHasOperationDTO dto = new GroupHasOperationDTO();
-    dto.setId(entity.getId());
-    dto.setGroupDTO(groupToGroupDTO(entity.getGroup(), false));
-    dto.setResourceDTO(resourceToResourceDTO(entity.getResource()));
-    dto.setOperationDTO(operationToOperationDTO(entity.getOperation()));
-    return dto;
-  }
+//  public static GroupHasOperationDTO groupHasOperationToGroupHasOperationDTO(
+//      GroupHasOperation entity) {
+//    if (entity == null) {
+//      return null;
+//    }
+//    GroupHasOperationDTO dto = new GroupHasOperationDTO();
+//    dto.setId(entity.getId());
+//    dto.setGroupDTO(groupToGroupDTO(entity.getGroup(), false));
+//    dto.setResourceDTO(resourceToResourceDTO(entity.getResource()));
+//    dto.setOperationDTO(operationToOperationDTO(entity.getOperation()));
+//    return dto;
+//  }
 }

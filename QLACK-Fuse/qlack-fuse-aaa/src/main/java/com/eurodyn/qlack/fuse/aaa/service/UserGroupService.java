@@ -2,12 +2,12 @@ package com.eurodyn.qlack.fuse.aaa.service;
 
 import com.eurodyn.qlack.fuse.aaa.dto.GroupDTO;
 import com.eurodyn.qlack.fuse.aaa.exception.InvalidGroupHierarchyException;
+import com.eurodyn.qlack.fuse.aaa.mappers.GroupMapper;
 import com.eurodyn.qlack.fuse.aaa.model.Group;
 import com.eurodyn.qlack.fuse.aaa.model.QGroup;
 import com.eurodyn.qlack.fuse.aaa.model.User;
 import com.eurodyn.qlack.fuse.aaa.repository.GroupRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
-import com.eurodyn.qlack.fuse.aaa.util.ConverterUtil;
 import com.querydsl.core.types.Predicate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,23 +36,27 @@ public class UserGroupService {
 
   private final UserRepository userRepository;
 
+  private final GroupMapper groupMapper;
+
   public UserGroupService(GroupRepository groupRepository,
-      UserRepository userRepository) {
+      UserRepository userRepository, GroupMapper groupMapper) {
     this.groupRepository = groupRepository;
     this.userRepository = userRepository;
+    this.groupMapper = groupMapper;
   }
 
   public String createGroup(GroupDTO groupDTO) {
-    Group group = new Group();
-    if (groupDTO.getId() != null) {
-      group.setId(groupDTO.getId());
-    }
-    group.setName(groupDTO.getName());
-    group.setDescription(groupDTO.getDescription());
-    group.setObjectId(groupDTO.getObjectID());
-    if (groupDTO.getParent() != null) {
+//    Group group = new Group();
+//    if (groupDTO.getId() != null) {
+//      group.setId(groupDTO.getId());
+//    }
+//    group.setName(groupDTO.getName());
+//    group.setDescription(groupDTO.getDescription());
+//    group.setObjectId(groupDTO.getObjectID());
+    Group group = groupMapper.mapToEntity(groupDTO);
+    if (groupDTO.getParentId() != null) {
 //      group.setParent(Group.find(groupDTO.getParent().getId(), em));
-      group.setParent(groupRepository.fetchById(groupDTO.getParent().getId()));
+      group.setParent(groupRepository.fetchById(groupDTO.getParentId()));
     }
 //    em.persist(group);
     groupRepository.save(group);
@@ -97,7 +101,7 @@ public class UserGroupService {
 
   public GroupDTO getGroupByID(String groupID, boolean lazyRelatives) {
 //    return ConverterUtil.groupToGroupDTO(Group.find(groupID, em), lazyRelatives);
-    return ConverterUtil.groupToGroupDTO(groupRepository.fetchById(groupID), lazyRelatives);
+    return groupMapper.mapToDTO(groupRepository.fetchById(groupID));
   }
 
   public List<GroupDTO> getGroupsByID(Collection<String> groupIds, boolean lazyRelatives) {
@@ -107,16 +111,16 @@ public class UserGroupService {
 //    return ConverterUtil.groupToGroupDTOList(query.getResultList(), lazyRelatives);
     Predicate predicate = qGroup.id.in(groupIds);
 
-    return ConverterUtil.groupToGroupDTOList(
-        groupRepository.findAll(predicate, Sort.by("name").ascending()), lazyRelatives);
+    return groupMapper.mapToDTO(
+        groupRepository.findAll(predicate, Sort.by("name").ascending()));
 
   }
 
   public GroupDTO getGroupByName(String groupName, boolean lazyRelatives) {
 //    return ConverterUtil.groupToGroupDTO(
 //        Group.findByName(groupName, em), lazyRelatives);
-    return ConverterUtil.groupToGroupDTO(
-        groupRepository.findByName(groupName), lazyRelatives);
+    return groupMapper.mapToDTO(
+        groupRepository.findByName(groupName));
   }
 
   public List<GroupDTO> getGroupByNames(List<String> groupNames, boolean lazyRelatives) {
@@ -125,22 +129,22 @@ public class UserGroupService {
 //        .where(qGroup.name.in(groupNames)).fetch();
     Predicate predicate = qGroup.name.in(groupNames);
 
-    return ConverterUtil.groupToGroupDTOList(groupRepository.findAll(predicate), lazyRelatives);
+    return groupMapper.mapToDTO(groupRepository.findAll(predicate));
   }
 
   public GroupDTO getGroupByObjectId(String objectId, boolean lazyRelatives) {
 //    return ConverterUtil.groupToGroupDTO(
 //        Group.findByObjectId(objectId, em), lazyRelatives);
-    return ConverterUtil.groupToGroupDTO(
-        groupRepository.findByObjectId(objectId), lazyRelatives);
+    return groupMapper.mapToDTO(
+        groupRepository.findByObjectId(objectId));
   }
 
   public List<GroupDTO> listGroups() {
 //    Query query = em.createQuery("SELECT g FROM com.eurodyn.qlack.fuse.aaa.model.Group g ORDER BY g.name ASC");
 //    return ConverterUtil.groupToGroupDTOList(
 //        query.getResultList(), true);
-    return ConverterUtil.groupToGroupDTOList(
-        groupRepository.findAll(Sort.by("name").ascending()), true);
+    return groupMapper.mapToDTO(
+        groupRepository.findAll(Sort.by("name").ascending()));
   }
 
   public List<GroupDTO> listGroupsAsTree() {
@@ -150,14 +154,14 @@ public class UserGroupService {
 //        query.getResultList(), false);
     Predicate predicate = qGroup.parent.isNull();
 
-    return ConverterUtil.groupToGroupDTOList(groupRepository.findAll(
-        predicate, Sort.by("name").ascending()), false);
+    return groupMapper.mapToDTO(groupRepository.findAll(
+        predicate, Sort.by("name").ascending()));
   }
 
   public GroupDTO getGroupParent(String groupID) {
 //    Group group = Group.find(groupID, em);
     Group group = groupRepository.fetchById(groupID);
-    return ConverterUtil.groupToGroupDTO(group.getParent(), true);
+    return groupMapper.mapToDTO(group.getParent());
   }
 
   public List<GroupDTO> getGroupChildren(String groupID) {
@@ -175,8 +179,8 @@ public class UserGroupService {
     }
 //    return ConverterUtil.groupToGroupDTOList(
 //        query.getResultList(), true);
-    return ConverterUtil.groupToGroupDTOList(groupRepository.findAll(
-        predicate, Sort.by("name").ascending()), true);
+    return groupMapper.mapToDTO(groupRepository.findAll(
+        predicate, Sort.by("name").ascending()));
 
   }
 
