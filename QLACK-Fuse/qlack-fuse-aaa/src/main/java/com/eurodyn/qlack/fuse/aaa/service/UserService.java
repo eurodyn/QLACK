@@ -6,6 +6,7 @@ import com.eurodyn.qlack.fuse.aaa.criteria.UserSearchCriteria.UserAttributeCrite
 import com.eurodyn.qlack.fuse.aaa.dto.SessionDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserAttributeDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserDTO;
+import com.eurodyn.qlack.fuse.aaa.mappers.UserMapper;
 import com.eurodyn.qlack.fuse.aaa.model.Group;
 import com.eurodyn.qlack.fuse.aaa.model.QSession;
 import com.eurodyn.qlack.fuse.aaa.model.QUser;
@@ -63,38 +64,44 @@ public class UserService {
 
   private final GroupRepository groupRepository;
 
+  private final UserMapper mapper;
+
   private QUser qUser = QUser.user;
 
   private QSession qSession = QSession.session;
 
   public UserService(AccountingService accountingService, LdapUserUtil ldapUserUtil,
       UserRepository userRepository, UserAttributeRepository userAttributeRepository,
-      SessionRepository sessionRepository,
-      GroupRepository groupRepository) {
+      SessionRepository sessionRepository, GroupRepository groupRepository, UserMapper mapper) {
     this.accountingService = accountingService;
     this.ldapUserUtil = ldapUserUtil;
     this.userRepository = userRepository;
     this.userAttributeRepository = userAttributeRepository;
     this.sessionRepository = sessionRepository;
     this.groupRepository = groupRepository;
+    this.mapper = mapper;
   }
 
   public String createUser(UserDTO dto) {
-    User user = ConverterUtil.userDTOToUser(dto);
-
+//    User user = ConverterUtil.userDTOToUser(dto);
+    User user = mapper.mapToEntity(dto);
     // Generate salt and hash password
     user.setSalt(RandomStringUtils.randomAlphanumeric(saltLength));
     String password = user.getSalt() + dto.getPassword();
     user.setPassword(DigestUtils.md5Hex(password));
 
+    for(UserAttribute attribute: user.getUserAttributes()){
+      attribute.setUser(user);
+    }
 //    em.persist(user);
     userRepository.save(user);
-    if (user.getUserAttributes() != null) {
-      for (UserAttribute attribute : user.getUserAttributes()) {
-//        em.persist(attribute);
-        userAttributeRepository.save(attribute);
-      }
-    }
+//    if (user.getUserAttributes() != null) {
+//      for (UserAttribute attribute : user.getUserAttributes()) {
+////        em.persist(attribute);
+//        attribute.setUser(user);
+//        userAttributeRepository.save(attribute);
+//      }
+//    }
 
     return user.getId();
   }

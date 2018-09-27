@@ -57,10 +57,10 @@ public class AccountingService {
 //  private EntityManager em;
 
   // Service references
-  private SessionRepository sessionRepository;
-  private UserRepository userRepository;
-  private SessionAttributeRepository sessionAttributeRepository;
-  private SessionDTOMapper sessionDTOMapper;
+  private final SessionRepository sessionRepository;
+  private final UserRepository userRepository;
+  private final SessionAttributeRepository sessionAttributeRepository;
+  private final SessionDTOMapper sessionDTOMapper;
 
   @Autowired
   public AccountingService(SessionRepository sessionRepository,

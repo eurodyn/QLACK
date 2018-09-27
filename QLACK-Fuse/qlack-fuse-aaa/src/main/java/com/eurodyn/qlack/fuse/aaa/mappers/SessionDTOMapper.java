@@ -9,13 +9,15 @@ import org.springframework.data.domain.Page;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
     uses = SessionAttributeDTOMapper.class)
-public interface SessionDTOMapper {
+public interface SessionDTOMapper extends AAAMapper<Session, SessionDTO> {
 
+  @Override
   @Mapping(source = "sessionAttributes", target = "attributes")
-  SessionDTO fromSession(Session session);
+//  SessionDTO fromSession(Session session);
+  SessionDTO mapToDTO(Session session);
 
   default Page<SessionDTO> fromSessions(Page<Session> sessions) {
-    return sessions.map(this::fromSession);
+    return sessions.map(this::mapToDTO);
   }
 
 }

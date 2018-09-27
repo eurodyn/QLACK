@@ -6,6 +6,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface SessionAttributeDTOMapper {
-  SessionAttributeDTO fromSessionAttribute(SessionAttribute sessionAttribute);
+public interface SessionAttributeDTOMapper extends AAAMapper<SessionAttribute, SessionAttributeDTO> {
+//  SessionAttributeDTO fromSessionAttribute(SessionAttribute sessionAttribute);
 }

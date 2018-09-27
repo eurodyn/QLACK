@@ -1,6 +1,5 @@
 package com.eurodyn.qlack.fuse.aaa.dto;
 
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,9 +10,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OperationDTO implements Serializable {
+public class OperationDTO extends BaseDTO {
 
-  private String id;
   private String name;
   private boolean dynamic;
   private String dynamicCode;

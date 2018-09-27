@@ -1,6 +1,5 @@
 package com.eurodyn.qlack.fuse.aaa.dto;
 
-import java.io.Serializable;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,9 +11,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class GroupDTO implements Serializable {
+public class GroupDTO extends BaseDTO {
 
-  private String id;
   private String name;
   private String objectID;
   private String description;
@@ -22,7 +20,7 @@ public class GroupDTO implements Serializable {
   private Set<GroupDTO> children;
 
   public GroupDTO(String id) {
-    this.id = id;
+    setId(id);
   }
 
 }

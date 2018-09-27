@@ -1,6 +1,5 @@
 package com.eurodyn.qlack.fuse.aaa.dto;
 
-import java.io.Serializable;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,9 +11,8 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class SessionDTO implements Serializable {
+public class SessionDTO extends BaseDTO {
 
-  private String id;
   private String userId;
   private long createdOn;
   private Long terminatedOn;
