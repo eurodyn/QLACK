@@ -6,7 +6,12 @@ import com.eurodyn.qlack.fuse.aaa.dto.UserAttributeDTO;
 
 import java.util.Arrays;
 import java.util.Collection;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.domain.Pageable;
 
+@Getter
+@Setter
 public class UserSearchCriteria {
 
   private Collection<String> includeIds;
@@ -18,117 +23,118 @@ public class UserSearchCriteria {
   private String username;
   private UserAttributeCriteria attributeCriteria;
   private Boolean superadmin;
-  private String sortColumn;
-  private String sortAttribute;
-  private boolean ascending = true;
-  private PagingParams paging;
+//  private String sortColumn;
+//  private String sortAttribute;
+//  private boolean ascending = true;
+//  private PagingParams paging;
+  private Pageable pageable;
 
   private UserSearchCriteria() {
   }
 
-  public Collection<String> getIncludeIds() {
-    return includeIds;
-  }
-
-  private void setIncludeIds(Collection<String> includeIds) {
-    this.includeIds = includeIds;
-  }
-
-  public Collection<String> getExcludeIds() {
-    return excludeIds;
-  }
-
-  private void setExcludeIds(Collection<String> excludeIds) {
-    this.excludeIds = excludeIds;
-  }
-
-  public Collection<String> getIncludeGroupIds() {
-    return includeGroupIds;
-  }
-
-  private void setIncludeGroupIds(Collection<String> includeGroupIds) {
-    this.includeGroupIds = includeGroupIds;
-  }
-
-  public Collection<String> getExcludeGroupIds() {
-    return excludeGroupIds;
-  }
-
-  private void setExcludeGroupIds(Collection<String> excludeGroupIds) {
-    this.excludeGroupIds = excludeGroupIds;
-  }
-
-  public Collection<Byte> getIncludeStatuses() {
-    return includeStatuses;
-  }
-
-  private void setIncludeStatuses(Collection<Byte> includeStatuses) {
-    this.includeStatuses = includeStatuses;
-  }
-
-  public Collection<Byte> getExcludeStatuses() {
-    return excludeStatuses;
-  }
-
-  private void setExcludeStatuses(Collection<Byte> excludeStatuses) {
-    this.excludeStatuses = excludeStatuses;
-  }
-
-  public String getUsername() {
-    return username;
-  }
-
-  private void setUsername(String username) {
-    this.username = username;
-  }
-
-  public UserAttributeCriteria getAttributeCriteria() {
-    return attributeCriteria;
-  }
-
-  private void setAttributeCriteria(UserAttributeCriteria attributeCriteria) {
-    this.attributeCriteria = attributeCriteria;
-  }
-
-  public Boolean getSuperadmin() {
-    return superadmin;
-  }
-
-  private void setSuperadmin(Boolean superadmin) {
-    this.superadmin = superadmin;
-  }
-
-  public String getSortColumn() {
-    return sortColumn;
-  }
-
-  private void setSortColumn(String sortColumn) {
-    this.sortColumn = sortColumn;
-  }
-
-  public String getSortAttribute() {
-    return sortAttribute;
-  }
-
-  private void setSortAttribute(String sortAttribute) {
-    this.sortAttribute = sortAttribute;
-  }
-
-  public boolean isAscending() {
-    return ascending;
-  }
-
-  private void setAscending(boolean ascending) {
-    this.ascending = ascending;
-  }
-
-  public PagingParams getPaging() {
-    return paging;
-  }
-
-  private void setPaging(PagingParams paging) {
-    this.paging = paging;
-  }
+//  public Collection<String> getIncludeIds() {
+//    return includeIds;
+//  }
+//
+//  private void setIncludeIds(Collection<String> includeIds) {
+//    this.includeIds = includeIds;
+//  }
+//
+//  public Collection<String> getExcludeIds() {
+//    return excludeIds;
+//  }
+//
+//  private void setExcludeIds(Collection<String> excludeIds) {
+//    this.excludeIds = excludeIds;
+//  }
+//
+//  public Collection<String> getIncludeGroupIds() {
+//    return includeGroupIds;
+//  }
+//
+//  private void setIncludeGroupIds(Collection<String> includeGroupIds) {
+//    this.includeGroupIds = includeGroupIds;
+//  }
+//
+//  public Collection<String> getExcludeGroupIds() {
+//    return excludeGroupIds;
+//  }
+//
+//  private void setExcludeGroupIds(Collection<String> excludeGroupIds) {
+//    this.excludeGroupIds = excludeGroupIds;
+//  }
+//
+//  public Collection<Byte> getIncludeStatuses() {
+//    return includeStatuses;
+//  }
+//
+//  private void setIncludeStatuses(Collection<Byte> includeStatuses) {
+//    this.includeStatuses = includeStatuses;
+//  }
+//
+//  public Collection<Byte> getExcludeStatuses() {
+//    return excludeStatuses;
+//  }
+//
+//  private void setExcludeStatuses(Collection<Byte> excludeStatuses) {
+//    this.excludeStatuses = excludeStatuses;
+//  }
+//
+//  public String getUsername() {
+//    return username;
+//  }
+//
+//  private void setUsername(String username) {
+//    this.username = username;
+//  }
+//
+//  public UserAttributeCriteria getAttributeCriteria() {
+//    return attributeCriteria;
+//  }
+//
+//  private void setAttributeCriteria(UserAttributeCriteria attributeCriteria) {
+//    this.attributeCriteria = attributeCriteria;
+//  }
+//
+//  public Boolean getSuperadmin() {
+//    return superadmin;
+//  }
+//
+//  private void setSuperadmin(Boolean superadmin) {
+//    this.superadmin = superadmin;
+//  }
+//
+//  public String getSortColumn() {
+//    return sortColumn;
+//  }
+//
+//  private void setSortColumn(String sortColumn) {
+//    this.sortColumn = sortColumn;
+//  }
+//
+//  public String getSortAttribute() {
+//    return sortAttribute;
+//  }
+//
+//  private void setSortAttribute(String sortAttribute) {
+//    this.sortAttribute = sortAttribute;
+//  }
+//
+//  public boolean isAscending() {
+//    return ascending;
+//  }
+//
+//  private void setAscending(boolean ascending) {
+//    this.ascending = ascending;
+//  }
+//
+//  public PagingParams getPaging() {
+//    return paging;
+//  }
+//
+//  private void setPaging(PagingParams paging) {
+//    this.paging = paging;
+//  }
 
   public enum SortColumn {
     USERNAME,
@@ -184,10 +190,10 @@ public class UserSearchCriteria {
 
     public UserSearchCriteria build() {
       // Default sorting if none was specified
-      if ((criteria.getSortColumn() == null) && (criteria.getSortAttribute() == null)) {
-        criteria.setSortColumn("username");
-      }
-      criteria.setPaging(paging);
+//      if ((criteria.getSortColumn() == null) && (criteria.getSortAttribute() == null)) {
+//        criteria.setSortColumn("username");
+//      }
+//      criteria.setPaging(paging);
       return criteria;
     }
 
@@ -285,40 +291,40 @@ public class UserSearchCriteria {
       return retVal;
     }
 
-    public UserSearchCriteriaBuilder sortByColumn(SortColumn column, SortType type) {
-      switch (column) {
-        case USERNAME:
-          criteria.setSortColumn("username");
-          break;
-        case STATUS:
-          criteria.setSortColumn("status");
-          break;
-        case ATTRIBUTE:
-          break;
-      }
-      switch (type) {
-        case ASCENDING:
-          criteria.setAscending(true);
-          break;
-        case DESCENDING:
-          criteria.setAscending(false);
-          break;
-      }
-      return this;
-    }
-
-    public UserSearchCriteriaBuilder sortByAttribute(String attributeName, SortType type) {
-      criteria.setSortAttribute(attributeName);
-      switch (type) {
-        case ASCENDING:
-          criteria.setAscending(true);
-          break;
-        case DESCENDING:
-          criteria.setAscending(false);
-          break;
-      }
-      return this;
-    }
+//    public UserSearchCriteriaBuilder sortByColumn(SortColumn column, SortType type) {
+//      switch (column) {
+//        case USERNAME:
+//          criteria.setSortColumn("username");
+//          break;
+//        case STATUS:
+//          criteria.setSortColumn("status");
+//          break;
+//        case ATTRIBUTE:
+//          break;
+//      }
+//      switch (type) {
+//        case ASCENDING:
+//          criteria.setAscending(true);
+//          break;
+//        case DESCENDING:
+//          criteria.setAscending(false);
+//          break;
+//      }
+//      return this;
+//    }
+//
+//    public UserSearchCriteriaBuilder sortByAttribute(String attributeName, SortType type) {
+//      criteria.setSortAttribute(attributeName);
+//      switch (type) {
+//        case ASCENDING:
+//          criteria.setAscending(true);
+//          break;
+//        case DESCENDING:
+//          criteria.setAscending(false);
+//          break;
+//      }
+//      return this;
+//    }
 
     public UserSearchCriteriaBuilder withPageSize(int pageSize) {
       if (paging == null) {

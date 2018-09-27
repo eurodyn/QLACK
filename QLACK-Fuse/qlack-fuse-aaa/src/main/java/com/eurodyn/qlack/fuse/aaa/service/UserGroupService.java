@@ -5,20 +5,19 @@ import com.eurodyn.qlack.fuse.aaa.exception.InvalidGroupHierarchyException;
 import com.eurodyn.qlack.fuse.aaa.model.Group;
 import com.eurodyn.qlack.fuse.aaa.model.QGroup;
 import com.eurodyn.qlack.fuse.aaa.model.User;
+import com.eurodyn.qlack.fuse.aaa.repository.GroupRepository;
+import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
 import com.eurodyn.qlack.fuse.aaa.util.ConverterUtil;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
-
+import com.querydsl.core.types.Predicate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * @author European Dynamics SA
@@ -30,8 +29,18 @@ public class UserGroupService {
 
   // QueryDSL helpers.
   private static QGroup qGroup = QGroup.group;
-  @PersistenceContext
-  private EntityManager em;
+//  @PersistenceContext
+//  private EntityManager em;
+
+  private final GroupRepository groupRepository;
+
+  private final UserRepository userRepository;
+
+  public UserGroupService(GroupRepository groupRepository,
+      UserRepository userRepository) {
+    this.groupRepository = groupRepository;
+    this.userRepository = userRepository;
+  }
 
   public String createGroup(GroupDTO groupDTO) {
     Group group = new Group();
@@ -42,28 +51,34 @@ public class UserGroupService {
     group.setDescription(groupDTO.getDescription());
     group.setObjectId(groupDTO.getObjectID());
     if (groupDTO.getParent() != null) {
-      group.setParent(Group.find(groupDTO.getParent().getId(), em));
+//      group.setParent(Group.find(groupDTO.getParent().getId(), em));
+      group.setParent(groupRepository.fetchById(groupDTO.getParent().getId()));
     }
-    em.persist(group);
+//    em.persist(group);
+    groupRepository.save(group);
 
     return group.getId();
   }
 
   public void updateGroup(GroupDTO groupDTO) {
-    Group group = Group.find(groupDTO.getId(), em);
+//    Group group = Group.find(groupDTO.getId(), em);
+    Group group = groupRepository.fetchById(groupDTO.getId());
     group.setName(groupDTO.getName());
     group.setDescription(groupDTO.getDescription());
     group.setObjectId(groupDTO.getObjectID());
   }
 
   public void deleteGroup(String groupID) {
-    em.remove(Group.find(groupID, em));
+//    em.remove(Group.find(groupID, em));
+    groupRepository.delete(groupRepository.fetchById(groupID));
   }
 
   public void moveGroup(String groupID, String newParentId)
       throws InvalidGroupHierarchyException {
-    Group group = Group.find(groupID, em);
-    Group newParent = Group.find(newParentId, em);
+//    Group group = Group.find(groupID, em);
+    Group group = groupRepository.fetchById(groupID);
+//    Group newParent = Group.find(newParentId, em);
+    Group newParent = groupRepository.fetchById(newParentId);
 
     // Check the moving the group under the new parent will not
     // create a cyclic dependency.
@@ -81,64 +96,87 @@ public class UserGroupService {
   }
 
   public GroupDTO getGroupByID(String groupID, boolean lazyRelatives) {
-    return ConverterUtil.groupToGroupDTO(Group.find(groupID, em), lazyRelatives);
+//    return ConverterUtil.groupToGroupDTO(Group.find(groupID, em), lazyRelatives);
+    return ConverterUtil.groupToGroupDTO(groupRepository.fetchById(groupID), lazyRelatives);
   }
 
   public List<GroupDTO> getGroupsByID(Collection<String> groupIds, boolean lazyRelatives) {
-    Query query = em
-        .createQuery("SELECT g FROM com.eurodyn.qlack.fuse.aaa.model.Group g WHERE g.id in (:groupIds) ORDER BY g.name ASC");
-    query.setParameter("groupIds", groupIds);
-    return ConverterUtil.groupToGroupDTOList(query.getResultList(), lazyRelatives);
+//    Query query = em
+//        .createQuery("SELECT g FROM com.eurodyn.qlack.fuse.aaa.model.Group g WHERE g.id in (:groupIds) ORDER BY g.name ASC");
+//    query.setParameter("groupIds", groupIds);
+//    return ConverterUtil.groupToGroupDTOList(query.getResultList(), lazyRelatives);
+    Predicate predicate = qGroup.id.in(groupIds);
+
+    return ConverterUtil.groupToGroupDTOList(
+        groupRepository.findAll(predicate, Sort.by("name").ascending()), lazyRelatives);
+
   }
 
   public GroupDTO getGroupByName(String groupName, boolean lazyRelatives) {
+//    return ConverterUtil.groupToGroupDTO(
+//        Group.findByName(groupName, em), lazyRelatives);
     return ConverterUtil.groupToGroupDTO(
-        Group.findByName(groupName, em), lazyRelatives);
+        groupRepository.findByName(groupName), lazyRelatives);
   }
 
   public List<GroupDTO> getGroupByNames(List<String> groupNames, boolean lazyRelatives) {
-    final List<Group> groups = new JPAQueryFactory(em)
-        .selectFrom(qGroup)
-        .where(qGroup.name.in(groupNames)).fetch();
+//    final List<Group> groups = new JPAQueryFactory(em)
+//        .selectFrom(qGroup)
+//        .where(qGroup.name.in(groupNames)).fetch();
+    Predicate predicate = qGroup.name.in(groupNames);
 
-    return ConverterUtil.groupToGroupDTOList(groups, lazyRelatives);
+    return ConverterUtil.groupToGroupDTOList(groupRepository.findAll(predicate), lazyRelatives);
   }
 
   public GroupDTO getGroupByObjectId(String objectId, boolean lazyRelatives) {
+//    return ConverterUtil.groupToGroupDTO(
+//        Group.findByObjectId(objectId, em), lazyRelatives);
     return ConverterUtil.groupToGroupDTO(
-        Group.findByObjectId(objectId, em), lazyRelatives);
+        groupRepository.findByObjectId(objectId), lazyRelatives);
   }
 
   public List<GroupDTO> listGroups() {
-    Query query = em.createQuery("SELECT g FROM com.eurodyn.qlack.fuse.aaa.model.Group g ORDER BY g.name ASC");
+//    Query query = em.createQuery("SELECT g FROM com.eurodyn.qlack.fuse.aaa.model.Group g ORDER BY g.name ASC");
+//    return ConverterUtil.groupToGroupDTOList(
+//        query.getResultList(), true);
     return ConverterUtil.groupToGroupDTOList(
-        query.getResultList(), true);
+        groupRepository.findAll(Sort.by("name").ascending()), true);
   }
 
   public List<GroupDTO> listGroupsAsTree() {
-    Query query = em
-        .createQuery("SELECT g FROM com.eurodyn.qlack.fuse.aaa.model.Group g WHERE g.parent IS NULL ORDER BY g.name ASC");
-    return ConverterUtil.groupToGroupDTOList(
-        query.getResultList(), false);
+//    Query query = em
+//        .createQuery("SELECT g FROM com.eurodyn.qlack.fuse.aaa.model.Group g WHERE g.parent IS NULL ORDER BY g.name ASC");
+//    return ConverterUtil.groupToGroupDTOList(
+//        query.getResultList(), false);
+    Predicate predicate = qGroup.parent.isNull();
+
+    return ConverterUtil.groupToGroupDTOList(groupRepository.findAll(
+        predicate, Sort.by("name").ascending()), false);
   }
 
   public GroupDTO getGroupParent(String groupID) {
-    Group group = Group.find(groupID, em);
+//    Group group = Group.find(groupID, em);
+    Group group = groupRepository.fetchById(groupID);
     return ConverterUtil.groupToGroupDTO(group.getParent(), true);
   }
 
   public List<GroupDTO> getGroupChildren(String groupID) {
-    Query query = null;
+//    Query query = null;
+    Predicate predicate;
     if (groupID == null) {
-      query = em.createQuery("SELECT g FROM com.eurodyn.qlack.fuse.aaa.model.Group g WHERE g.parent IS NULL ORDER BY g.name ASC");
+//      query = em.createQuery("SELECT g FROM com.eurodyn.qlack.fuse.aaa.model.Group g WHERE g.parent IS NULL ORDER BY g.name ASC");
+      predicate = qGroup.parent.isNull();
     } else {
-      query = em
-          .createQuery(
-              "SELECT g FROM com.eurodyn.qlack.fuse.aaa.model.Group g WHERE g.parent.id = :parentId ORDER BY g.name ASC");
-      query.setParameter("parentId", groupID);
+//      query = em
+//          .createQuery(
+//              "SELECT g FROM com.eurodyn.qlack.fuse.aaa.model.Group g WHERE g.parent.id = :parentId ORDER BY g.name ASC");
+//      query.setParameter("parentId", groupID);
+      predicate = qGroup.parent.id.eq(groupID);
     }
-    return ConverterUtil.groupToGroupDTOList(
-        query.getResultList(), true);
+//    return ConverterUtil.groupToGroupDTOList(
+//        query.getResultList(), true);
+    return ConverterUtil.groupToGroupDTOList(groupRepository.findAll(
+        predicate, Sort.by("name").ascending()), true);
 
   }
 
@@ -177,7 +215,8 @@ public class UserGroupService {
 
   private void addUsers(Collection<String> userIDs, Group group) {
     for (String userID : userIDs) {
-      User user = User.find(userID, em);
+//      User user = User.find(userID, em);
+      User user = userRepository.fetchById(userID);
       // TODO ask how else we do it
       if (group.getUsers() == null) {
         group.setUsers(new ArrayList<User>());
@@ -197,8 +236,8 @@ public class UserGroupService {
   }
 
   public void addUsers(Collection<String> userIDs, String groupID) {
-    addUsers(userIDs, Group.find(groupID, em));
-
+//    addUsers(userIDs, Group.find(groupID, em));
+    addUsers(userIDs, groupRepository.fetchById(groupID));
   }
 
   public void addUserByGroupName(String userId, String groupName) {
@@ -208,7 +247,8 @@ public class UserGroupService {
   }
 
   public void addUsersByGroupName(Collection<String> userIDs, String groupName) {
-    addUsers(userIDs, Group.findByName(groupName, em));
+//    addUsers(userIDs, Group.findByName(groupName, em));
+    addUsers(userIDs, groupRepository.findByName(groupName));
   }
 
   public void removeUser(String userID, String groupID) {
@@ -218,20 +258,24 @@ public class UserGroupService {
   }
 
   public void removeUsers(Collection<String> userIDs, String groupID) {
-    Group group = Group.find(groupID, em);
+//    Group group = Group.find(groupID, em);
+    Group group = groupRepository.fetchById(groupID);
     for (String userID : userIDs) {
-      User user = User.find(userID, em);
+//      User user = User.find(userID, em);
+      User user = userRepository.fetchById(userID);
       group.getUsers().remove(user);
     }
   }
 
   public Set<String> getGroupUsersIds(String groupID, boolean includeChildren) {
-    Group group = Group.find(groupID, em);
+//    Group group = Group.find(groupID, em);
+    Group group = groupRepository.fetchById(groupID);
     return getGroupHierarchyUsersIds(group, false, includeChildren);
   }
 
   public Set<String> getUserGroupsIds(String userID) {
-    User user = User.find(userID, em);
+//    User user = User.find(userID, em);
+    User user = userRepository.fetchById(userID);
     Set<String> retVal = new HashSet<>();
     if (user.getGroups() != null) {
       for (Group group : user.getGroups()) {

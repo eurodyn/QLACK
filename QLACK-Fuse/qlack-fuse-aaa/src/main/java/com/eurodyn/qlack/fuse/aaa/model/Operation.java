@@ -23,12 +23,9 @@ import lombok.Setter;
 @Table(name = "aaa_operation")
 @Getter
 @Setter
-public class Operation implements Serializable {
+public class Operation extends AAAModel {
 
   private static final long serialVersionUID = 1L;
-
-  @Id
-  private String id;
 
   @Version
   private long dbversion;
@@ -56,30 +53,30 @@ public class Operation implements Serializable {
   private List<UserHasOperation> userHasOperations;
 
   public Operation() {
-    id = UUID.randomUUID().toString();
+    setId(UUID.randomUUID().toString());
   }
 
-  public static Operation find(String operationID, EntityManager em) {
-    return em.find(Operation.class, operationID);
-  }
+//  public static Operation find(String operationID, EntityManager em) {
+//    return em.find(Operation.class, operationID);
+//  }
 
-  public static Operation findByName(String opName, EntityManager em) {
-    Operation retVal = null;
+//  public static Operation findByName(String opName, EntityManager em) {
+//    Operation retVal = null;
+//
+//    Query q = em.createQuery("select o from com.eurodyn.qlack.fuse.aaa.model.Operation o where o.name = :operationName");
+//    q.setParameter("operationName", opName);
+//    List<Operation> l = q.getResultList();
+//    if (!l.isEmpty()) {
+//      retVal = (Operation) l.get(0);
+//    }
+//
+//    return retVal;
+//  }
 
-    Query q = em.createQuery("select o from com.eurodyn.qlack.fuse.aaa.model.Operation o where o.name = :operationName");
-    q.setParameter("operationName", opName);
-    List<Operation> l = q.getResultList();
-    if (!l.isEmpty()) {
-      retVal = (Operation) l.get(0);
-    }
-
-    return retVal;
-  }
-
-  public static List<Operation> findAll(EntityManager em) {
-    Query q = em.createQuery("SELECT o FROM com.eurodyn.qlack.fuse.aaa.model.Operation o");
-    return q.getResultList();
-  }
+//  public static List<Operation> findAll(EntityManager em) {
+//    Query q = em.createQuery("SELECT o FROM com.eurodyn.qlack.fuse.aaa.model.Operation o");
+//    return q.getResultList();
+//  }
 
   public GroupHasOperation addGroupHasOperation(GroupHasOperation groupHasOperation) {
     if (getGroupHasOperations() == null) {

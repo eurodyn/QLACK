@@ -34,8 +34,8 @@ public class JSONConfigService {
   // JSON parser.
   ObjectMapper mapper = new ObjectMapper();
 
-  @PersistenceContext
-  private EntityManager em;
+//  @PersistenceContext
+//  private EntityManager em;
 
   private UserGroupService groupService;
   private OpTemplateService templateService;

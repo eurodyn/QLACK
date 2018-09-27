@@ -1,12 +1,10 @@
 package com.eurodyn.qlack.fuse.aaa.model;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -22,10 +20,7 @@ import lombok.Setter;
 @Table(name = "aaa_session")
 @Getter
 @Setter
-public class Session implements Serializable {
-
-  @Id
-  private String id;
+public class Session extends AAAModel {
 
   @Version
   private long dbversion;
@@ -49,7 +44,7 @@ public class Session implements Serializable {
   private List<SessionAttribute> sessionAttributes;
 
   public Session() {
-    id = UUID.randomUUID().toString();
+    setId(UUID.randomUUID().toString());
   }
 
 }

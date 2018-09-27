@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import lombok.Getter;
@@ -22,12 +20,9 @@ import lombok.Setter;
 @Table(name = "aaa_resource")
 @Getter
 @Setter
-public class Resource implements Serializable {
+public class Resource extends AAAModel {
 
   private static final long serialVersionUID = 1L;
-
-  @Id
-  private String id;
 
   @Version
   private long dbversion;
@@ -52,25 +47,25 @@ public class Resource implements Serializable {
   private List<OpTemplateHasOperation> opTemplateHasOperations;
 
   public Resource() {
-    id = UUID.randomUUID().toString();
+    setId(UUID.randomUUID().toString());
   }
 
-  public static Resource find(String resourceID, EntityManager em) {
-    return em.find(Resource.class, resourceID);
-  }
+//  public static Resource find(String resourceID, EntityManager em) {
+//    return em.find(Resource.class, resourceID);
+//  }
 
-  public static Resource findByObjectID(final String resourceObjectID, final EntityManager em) {
-    Resource retVal = null;
-
-    Query q = em.createQuery("select r from com.eurodyn.qlack.fuse.aaa.model.Resource r where r.objectId = :objectID")
-        .setParameter("objectID", resourceObjectID);
-    List<Resource> l = q.getResultList();
-    if (!l.isEmpty()) {
-      retVal = l.get(0);
-    }
-
-    return retVal;
-  }
+//  public static Resource findByObjectID(final String resourceObjectID, final EntityManager em) {
+//    Resource retVal = null;
+//
+//    Query q = em.createQuery("select r from com.eurodyn.qlack.fuse.aaa.model.Resource r where r.objectId = :objectID")
+//        .setParameter("objectID", resourceObjectID);
+//    List<Resource> l = q.getResultList();
+//    if (!l.isEmpty()) {
+//      retVal = l.get(0);
+//    }
+//
+//    return retVal;
+//  }
 
   public UserHasOperation addUserHasOperation(UserHasOperation userHasOperation) {
     if (getUserHasOperations() == null) {

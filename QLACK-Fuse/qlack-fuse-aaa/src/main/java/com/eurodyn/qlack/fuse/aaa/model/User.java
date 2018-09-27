@@ -1,18 +1,13 @@
 package com.eurodyn.qlack.fuse.aaa.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import lombok.Getter;
@@ -27,12 +22,9 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "aaa_user")
 @Getter
 @Setter
-public class User implements Serializable {
+public class User extends AAAModel {
 
   private static final long serialVersionUID = 1L;
-
-  @Id
-  private String id;
 
   @Version
   private long dbversion;
@@ -68,8 +60,8 @@ public class User implements Serializable {
   private List<Group> groups;
 
   //bi-directional many-to-one association to UserAttribute
-  @OneToMany(mappedBy = "user")
-  @OnDelete(action = OnDeleteAction.CASCADE)
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//  @OnDelete(action = OnDeleteAction.CASCADE)
   private List<UserAttribute> userAttributes;
 
   // bi-directional many-to-one association to VerificationToken.
@@ -78,57 +70,57 @@ public class User implements Serializable {
   private List<VerificationToken> verificationTokens;
 
   public User() {
-    id = UUID.randomUUID().toString();
+    setId(UUID.randomUUID().toString());
   }
 
-  public static User find(String userID, EntityManager em) {
-    return em.find(User.class, userID);
-  }
+//  public static User find(String userID, EntityManager em) {
+//    return em.find(User.class, userID);
+//  }
 
-  public static User findByUsername(String username, EntityManager em) {
-    Query query = em.createQuery(
-        "SELECT u FROM com.eurodyn.qlack.fuse.aaa.model.User u WHERE u.username = :username");
-    query.setParameter("username", username);
-    List<User> resultList = query.getResultList();
+//  public static User findByUsername(String username, EntityManager em) {
+//    Query query = em.createQuery(
+//        "SELECT u FROM com.eurodyn.qlack.fuse.aaa.model.User u WHERE u.username = :username");
+//    query.setParameter("username", username);
+//    List<User> resultList = query.getResultList();
+//
+//    return resultList.isEmpty() ? null : resultList.get(0);
+//  }
 
-    return resultList.isEmpty() ? null : resultList.get(0);
-  }
+//  public static UserAttribute findAttribute(String userId, String attributeName,
+//      EntityManager em) {
+//    UserAttribute retVal = null;
+//    Query query = em.createQuery("SELECT a FROM com.eurodyn.qlack.fuse.aaa.model.UserAttribute a "
+//        + "WHERE a.user.id = :id AND a.name = :name");
+//    query.setParameter("id", userId);
+//    query.setParameter("name", attributeName);
+//    List<UserAttribute> l = query.getResultList();
+//    if (!l.isEmpty()) {
+//      retVal = l.get(0);
+//    }
+//
+//    return retVal;
+//  }
 
-  public static UserAttribute findAttribute(String userId, String attributeName,
-      EntityManager em) {
-    UserAttribute retVal = null;
-    Query query = em.createQuery("SELECT a FROM com.eurodyn.qlack.fuse.aaa.model.UserAttribute a "
-        + "WHERE a.user.id = :id AND a.name = :name");
-    query.setParameter("id", userId);
-    query.setParameter("name", attributeName);
-    List<UserAttribute> l = query.getResultList();
-    if (!l.isEmpty()) {
-      retVal = l.get(0);
-    }
+//  public static Set<String> getAllUserIds(EntityManager em) {
+//    Set<String> retVal = new HashSet<>();
+//    Query query = em.createQuery("SELECT u.id FROM com.eurodyn.qlack.fuse.aaa.model.User u");
+//    retVal.addAll(query.getResultList());
+//    return retVal;
+//  }
 
-    return retVal;
-  }
+//  public static Set<String> getNormalUserIds(EntityManager em) {
+//    Set<String> retVal = new HashSet<>();
+//    Query query = em.createQuery("SELECT u.id FROM com.eurodyn.qlack.fuse.aaa.model.User u WHERE u.superadmin = false");
+//    retVal.addAll(query.getResultList());
+//    return retVal;
+//  }
 
-  public static Set<String> getAllUserIds(EntityManager em) {
-    Set<String> retVal = new HashSet<>();
-    Query query = em.createQuery("SELECT u.id FROM com.eurodyn.qlack.fuse.aaa.model.User u");
-    retVal.addAll(query.getResultList());
-    return retVal;
-  }
-
-  public static Set<String> getNormalUserIds(EntityManager em) {
-    Set<String> retVal = new HashSet<>();
-    Query query = em.createQuery("SELECT u.id FROM com.eurodyn.qlack.fuse.aaa.model.User u WHERE u.superadmin = false");
-    retVal.addAll(query.getResultList());
-    return retVal;
-  }
-
-  public static Set<String> getSuperadminUserIds(EntityManager em) {
-    Set<String> retVal = new HashSet<>();
-    Query query = em.createQuery("SELECT u.id FROM com.eurodyn.qlack.fuse.aaa.model.User u WHERE u.superadmin = true");
-    retVal.addAll(query.getResultList());
-    return retVal;
-  }
+//  public static Set<String> getSuperadminUserIds(EntityManager em) {
+//    Set<String> retVal = new HashSet<>();
+//    Query query = em.createQuery("SELECT u.id FROM com.eurodyn.qlack.fuse.aaa.model.User u WHERE u.superadmin = true");
+//    retVal.addAll(query.getResultList());
+//    return retVal;
+//  }
 
   public UserHasOperation addUserHasOperation(UserHasOperation userHasOperations) {
     if (getUserHasOperations() == null) {

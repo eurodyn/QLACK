@@ -1,9 +1,7 @@
 package com.eurodyn.qlack.fuse.aaa.model;
 
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -14,12 +12,9 @@ import lombok.Setter;
 @Table(name = "aaa_verification")
 @Getter
 @Setter
-public class VerificationToken implements Serializable {
+public class VerificationToken extends AAAModel {
 
   private static final long serialVersionUID = 2487733740070965552L;
-
-  @Id
-  private String id;
 
   @Column(name = "created_on")
   private long createdOn;

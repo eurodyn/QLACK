@@ -1,6 +1,7 @@
 package com.eurodyn.qlack.fuse.aaa.util;
 
 
+import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.aaa.dto.GroupDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.GroupHasOperationDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.OpTemplateDTO;
@@ -21,6 +22,8 @@ import com.eurodyn.qlack.fuse.aaa.model.Session;
 import com.eurodyn.qlack.fuse.aaa.model.SessionAttribute;
 import com.eurodyn.qlack.fuse.aaa.model.User;
 import com.eurodyn.qlack.fuse.aaa.model.UserAttribute;
+import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,7 +31,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.persistence.EntityManager;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -190,7 +192,22 @@ public class ConverterUtil {
     return dtos;
   }
 
-  public static Session sessionDTOToSession(SessionDTO dto, EntityManager em) {
+//  public static Session sessionDTOToSession(SessionDTO dto, EntityManager em) {
+//    if (dto == null) {
+//      return null;
+//    }
+//
+//    Session entity = new Session();
+//    entity.setCreatedOn(dto.getCreatedOn());
+//    entity.setTerminatedOn(dto.getTerminatedOn());
+//    entity.setApplicationSessionId(dto.getApplicationSessionID());
+//    entity.setUser(User.find(dto.getUserId(), em));
+//    entity.setSessionAttributes(sessionAttributeDTOsToSessionAttributeList(
+//        dto.getAttributes(), entity));
+//    return entity;
+//  }
+
+  public static Session sessionDTOToSession(SessionDTO dto, UserRepository repository) {
     if (dto == null) {
       return null;
     }
@@ -199,7 +216,11 @@ public class ConverterUtil {
     entity.setCreatedOn(dto.getCreatedOn());
     entity.setTerminatedOn(dto.getTerminatedOn());
     entity.setApplicationSessionId(dto.getApplicationSessionID());
-    entity.setUser(User.find(dto.getUserId(), em));
+    entity.setUser(repository.findById(dto.getUserId()).orElseThrow(
+        ()-> new QDoesNotExistException(MessageFormat
+            .format("User with user Id {0} could not be found.",
+                dto.getUserId())
+        )));
     entity.setSessionAttributes(sessionAttributeDTOsToSessionAttributeList(
         dto.getAttributes(), entity));
     return entity;

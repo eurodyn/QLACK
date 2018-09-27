@@ -2,20 +2,16 @@ package com.eurodyn.qlack.fuse.aaa.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import lombok.Getter;
@@ -30,12 +26,9 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "aaa_group")
 @Getter
 @Setter
-public class Group implements Serializable {
+public class Group extends  AAAModel {
 
   private static final long serialVersionUID = 1L;
-
-  @Id
-  private String id;
 
   @Version
   private long dbversion;
@@ -72,43 +65,43 @@ public class Group implements Serializable {
   private List<User> users;
 
   public Group() {
-    id = UUID.randomUUID().toString();
+    setId(UUID.randomUUID().toString());
   }
 
-  public static Group find(String groupID, EntityManager em) {
-    return em.find(Group.class, groupID);
-  }
+//  public static Group find(String groupID, EntityManager em) {
+//    return em.find(Group.class, groupID);
+//  }
 
-  public static Group findByName(String name, EntityManager em) {
-    Query q = em.createQuery("SELECT g FROM com.eurodyn.qlack.fuse.aaa.model.Group g WHERE g.name = :groupName");
-    q.setParameter("groupName", name);
-    List<Group> l = q.getResultList();
-    if (l.isEmpty()) {
-      return null;
-    } else {
-      return l.get(0);
-    }
-  }
+//  public static Group findByName(String name, EntityManager em) {
+//    Query q = em.createQuery("SELECT g FROM com.eurodyn.qlack.fuse.aaa.model.Group g WHERE g.name = :groupName");
+//    q.setParameter("groupName", name);
+//    List<Group> l = q.getResultList();
+//    if (l.isEmpty()) {
+//      return null;
+//    } else {
+//      return l.get(0);
+//    }
+//  }
 
-  public static Group findByObjectId(String objectId, EntityManager em) {
-    Group retVal = null;
+//  public static Group findByObjectId(String objectId, EntityManager em) {
+//    Group retVal = null;
+//
+//    Query q = em.createQuery("select g from com.eurodyn.qlack.fuse.aaa.model.Group g where g.objectId = :objectID")
+//        .setParameter("objectID", objectId);
+//    List<Group> l = q.getResultList();
+//    if (!l.isEmpty()) {
+//      retVal = (Group) l.get(0);
+//    }
+//
+//    return retVal;
+//  }
 
-    Query q = em.createQuery("select g from com.eurodyn.qlack.fuse.aaa.model.Group g where g.objectId = :objectID")
-        .setParameter("objectID", objectId);
-    List<Group> l = q.getResultList();
-    if (!l.isEmpty()) {
-      retVal = (Group) l.get(0);
-    }
-
-    return retVal;
-  }
-
-  public static Set<String> getAllGroupIds(EntityManager em) {
-    Set<String> retVal = new HashSet<>();
-    Query query = em.createQuery("SELECT g.id FROM com.eurodyn.qlack.fuse.aaa.model.Group g");
-    retVal.addAll(query.getResultList());
-    return retVal;
-  }
+//  public static Set<String> getAllGroupIds(EntityManager em) {
+//    Set<String> retVal = new HashSet<>();
+//    Query query = em.createQuery("SELECT g.id FROM com.eurodyn.qlack.fuse.aaa.model.Group g");
+//    retVal.addAll(query.getResultList());
+//    return retVal;
+//  }
 
   public GroupHasOperation addGroupHasOperation(GroupHasOperation groupHasOperation) {
     if (getGroupHasOperations() == null) {

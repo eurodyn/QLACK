@@ -1,14 +1,11 @@
 package com.eurodyn.qlack.fuse.aaa.model;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.UUID;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import lombok.Getter;
@@ -21,12 +18,9 @@ import lombok.Setter;
 @Table(name = "aaa_op_template_has_operation")
 @Getter
 @Setter
-public class OpTemplateHasOperation implements Serializable {
+public class OpTemplateHasOperation extends AAAModel {
 
   private static final long serialVersionUID = 1L;
-
-  @Id
-  private String id;
 
   @Version
   private long dbversion;
@@ -49,34 +43,34 @@ public class OpTemplateHasOperation implements Serializable {
   private Resource resource;
 
   public OpTemplateHasOperation() {
-    id = UUID.randomUUID().toString();
+    setId(UUID.randomUUID().toString());
   }
 
-  public static OpTemplateHasOperation findByTemplateIDAndOperationName(String templateID,
-      String operationName, EntityManager em) {
-    Query q = em.createQuery("SELECT o FROM com.eurodyn.qlack.fuse.aaa.model.OpTemplateHasOperation o WHERE "
-        + "o.template.id = :templateID AND o.operation.name = :operationName AND o.resource IS NULL");
-    q.setParameter("templateID", templateID);
-    q.setParameter("operationName", operationName);
-    List<OpTemplateHasOperation> queryResults = q.getResultList();
-    if (queryResults.isEmpty()) {
-      return null;
-    }
-    return queryResults.get(0);
-  }
+//  public static OpTemplateHasOperation findByTemplateIDAndOperationName(String templateID,
+//      String operationName, EntityManager em) {
+//    Query q = em.createQuery("SELECT o FROM com.eurodyn.qlack.fuse.aaa.model.OpTemplateHasOperation o WHERE "
+//        + "o.template.id = :templateID AND o.operation.name = :operationName AND o.resource IS NULL");
+//    q.setParameter("templateID", templateID);
+//    q.setParameter("operationName", operationName);
+//    List<OpTemplateHasOperation> queryResults = q.getResultList();
+//    if (queryResults.isEmpty()) {
+//      return null;
+//    }
+//    return queryResults.get(0);
+//  }
 
-  public static OpTemplateHasOperation findByTemplateAndResourceIDAndOperationName(
-      String templateID, String operationName, String resourceID, EntityManager em) {
-    Query q = em.createQuery("SELECT o FROM com.eurodyn.qlack.fuse.aaa.model.OpTemplateHasOperation o WHERE "
-        + "o.template.id = :templateID AND o.operation.name = :operationName AND o.resource.id = :resourceID");
-    q.setParameter("templateID", templateID);
-    q.setParameter("operationName", operationName);
-    q.setParameter("resourceID", resourceID);
-    List<OpTemplateHasOperation> queryResults = q.getResultList();
-    if (queryResults.isEmpty()) {
-      return null;
-    }
-    return queryResults.get(0);
-  }
+//  public static OpTemplateHasOperation findByTemplateAndResourceIDAndOperationName(
+//      String templateID, String operationName, String resourceID, EntityManager em) {
+//    Query q = em.createQuery("SELECT o FROM com.eurodyn.qlack.fuse.aaa.model.OpTemplateHasOperation o WHERE "
+//        + "o.template.id = :templateID AND o.operation.name = :operationName AND o.resource.id = :resourceID");
+//    q.setParameter("templateID", templateID);
+//    q.setParameter("operationName", operationName);
+//    q.setParameter("resourceID", resourceID);
+//    List<OpTemplateHasOperation> queryResults = q.getResultList();
+//    if (queryResults.isEmpty()) {
+//      return null;
+//    }
+//    return queryResults.get(0);
+//  }
 
 }

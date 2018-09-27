@@ -21,12 +21,9 @@ import lombok.Setter;
 @Table(name = "aaa_op_template")
 @Getter
 @Setter
-public class OpTemplate implements Serializable {
+public class OpTemplate extends AAAModel {
 
   private static final long serialVersionUID = 1L;
-
-  @Id
-  private String id;
 
   @Version
   private long dbversion;
@@ -40,27 +37,27 @@ public class OpTemplate implements Serializable {
   private List<OpTemplateHasOperation> opTemplateHasOperations;
 
   public OpTemplate() {
-    id = UUID.randomUUID().toString();
+    setId(UUID.randomUUID().toString());
   }
 
-  public static OpTemplate find(String opTemplateID, EntityManager em) {
-    return em.find(OpTemplate.class, opTemplateID);
-  }
+//  public static OpTemplate find(String opTemplateID, EntityManager em) {
+//    return em.find(OpTemplate.class, opTemplateID);
+//  }
 
-  public static OpTemplate findByName(final String opTemplateName,
-      final EntityManager em) {
-    OpTemplate retVal = null;
-
-    Query q = em
-        .createQuery("select ot from com.eurodyn.qlack.fuse.aaa.model.OpTemplate ot where ot.name = :opTemplateName");
-    q.setParameter("opTemplateName", opTemplateName);
-    List<OpTemplate> l = q.getResultList();
-    if (!l.isEmpty()) {
-      retVal = l.get(0);
-    }
-
-    return retVal;
-  }
+//  public static OpTemplate findByName(final String opTemplateName,
+//      final EntityManager em) {
+//    OpTemplate retVal = null;
+//
+//    Query q = em
+//        .createQuery("select ot from com.eurodyn.qlack.fuse.aaa.model.OpTemplate ot where ot.name = :opTemplateName");
+//    q.setParameter("opTemplateName", opTemplateName);
+//    List<OpTemplate> l = q.getResultList();
+//    if (!l.isEmpty()) {
+//      retVal = l.get(0);
+//    }
+//
+//    return retVal;
+//  }
 
   public OpTemplateHasOperation addOpTemplateHasOperation(
       OpTemplateHasOperation opTemplateHasOperation) {

@@ -4,6 +4,7 @@ package com.eurodyn.qlack.fuse.aaa.service;
 import com.eurodyn.qlack.fuse.aaa.model.Group;
 import com.eurodyn.qlack.fuse.aaa.model.User;
 import com.eurodyn.qlack.fuse.aaa.model.UserAttribute;
+import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
 import javax.naming.AuthenticationException;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -33,6 +34,12 @@ public class LdapUserUtil {
   private static final Logger LOGGER = Logger.getLogger(LdapUserUtil.class.getName());
 
   private EntityManager em;
+
+  private final UserRepository userRepository;
+
+  public LdapUserUtil(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
   private boolean ldapEnable;
   private String ldapUrl;
@@ -96,7 +103,7 @@ public class LdapUserUtil {
     if (ctx != null) {
       Map<String, List<String>> ldap = ldapSearch(ctx, username);
       if (ldap != null) {
-        User user = User.findByUsername(username, em);
+        User user = userRepository.findByUsername(username);
         if (user == null) {
           String userId = createUserFromLdap(username, ldap);
           ldapUnbind(ctx);
@@ -223,7 +230,7 @@ public class LdapUserUtil {
     List<User> users = group.getUsers();
     users.add(user);
 
-    List<Group> groups = new ArrayList<Group>();
+    List<Group> groups = new ArrayList<>();
     groups.add(group);
     user.setGroups(groups);
 
