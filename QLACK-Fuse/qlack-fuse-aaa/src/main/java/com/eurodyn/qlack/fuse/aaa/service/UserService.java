@@ -56,30 +56,24 @@ public class UserService {
   // Service REFs
   private AccountingService accountingService;
   private LdapUserUtil ldapUserUtil;
-
+  // Repositories
   private final UserRepository userRepository;
-
   private final UserAttributeRepository userAttributeRepository;
-
   private final SessionRepository sessionRepository;
-
   private final GroupRepository groupRepository;
-
+  // Mappers
   private final UserMapper userMapper;
-
   private final SessionMapper sessionMapper;
-
   private final UserAttributeMapper userAttributeMapper;
 
+  //QueryDSL helpers
   private QUser qUser = QUser.user;
-
   private QSession qSession = QSession.session;
 
   public UserService(AccountingService accountingService, LdapUserUtil ldapUserUtil,
       UserRepository userRepository, UserAttributeRepository userAttributeRepository,
       SessionRepository sessionRepository, GroupRepository groupRepository, UserMapper userMapper,
-      SessionMapper sessionMapper,
-      UserAttributeMapper userAttributeMapper) {
+      SessionMapper sessionMapper, UserAttributeMapper userAttributeMapper) {
     this.accountingService = accountingService;
     this.ldapUserUtil = ldapUserUtil;
     this.userRepository = userRepository;
@@ -118,15 +112,16 @@ public class UserService {
   public void updateUser(UserDTO dto, boolean updatePassword) {
 //    User user = User.find(dto.getId(), em);
     User user = userRepository.fetchById(dto.getId());
-    user.setUsername(dto.getUsername());
+//    user.setUsername(dto.getUsername());
     if (updatePassword) {
       user.setSalt(RandomStringUtils.randomAlphanumeric(saltLength));
       String password = user.getSalt() + dto.getPassword();
       user.setPassword(DigestUtils.md5Hex(password));
     }
-    user.setStatus(dto.getStatus());
-    user.setSuperadmin(dto.isSuperadmin());
-    user.setExternal(dto.isExternal());
+//    user.setStatus(dto.getStatus());
+//    user.setSuperadmin(dto.isSuperadmin());
+//    user.setExternal(dto.isExternal());
+    userMapper.mapToExistingEntity(dto, user);
 
     if (dto.getUserAttributes() != null) {
       for (UserAttributeDTO attribute : dto.getUserAttributes()) {
@@ -395,16 +390,17 @@ public class UserService {
   private void mapAttribute(UserAttribute attribute,
       UserAttributeDTO attributeDTO) {
     String userId = attributeDTO.getUserId();
-    String name = attributeDTO.getName();
+//    String name = attributeDTO.getName();
 
 //    User user = User.find(userId, em);
     User user = userRepository.fetchById(userId);
     attribute.setUser(user);
-    attribute.setName(name);
-
-    attribute.setData(attributeDTO.getData());
-    attribute.setBindata(attributeDTO.getBinData());
-    attribute.setContentType(attributeDTO.getContentType());
+    userAttributeMapper.mapToExistingEntity(attributeDTO, attribute);
+//    attribute.setName(name);
+//
+//    attribute.setData(attributeDTO.getData());
+//    attribute.setBindata(attributeDTO.getBinData());
+//    attribute.setContentType(attributeDTO.getContentType());
   }
 
   public void deleteAttribute(String userID, String attributeName) {

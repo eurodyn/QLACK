@@ -31,11 +31,10 @@ public class UserGroupService {
   private static QGroup qGroup = QGroup.group;
 //  @PersistenceContext
 //  private EntityManager em;
-
+  // Repositories
   private final GroupRepository groupRepository;
-
   private final UserRepository userRepository;
-
+  // Mappers
   private final GroupMapper groupMapper;
 
   public UserGroupService(GroupRepository groupRepository,

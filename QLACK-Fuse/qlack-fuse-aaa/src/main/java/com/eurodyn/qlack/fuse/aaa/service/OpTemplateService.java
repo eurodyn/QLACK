@@ -25,14 +25,12 @@ public class OpTemplateService {
 //  @PersistenceContext
 //  private EntityManager em;
 
+  // Repositories
   private final OpTemplateRepository opTemplateRepository;
-
   private final OpTemplateHasOperationRepository opTemplateHasOperationRepository;
-
   private final OperationRepository operationRepository;
-
   private final ResourceRepository resourceRepository;
-
+  // Mappers
   private final OpTemplateMapper opTemplateMapper;
 
   public OpTemplateService(

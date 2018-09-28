@@ -55,21 +55,22 @@ public class AccountingService {
 //  @PersistenceContext
 //  private EntityManager em;
 
-  // Service references
+  // Repositories
   private final SessionRepository sessionRepository;
   private final UserRepository userRepository;
   private final SessionAttributeRepository sessionAttributeRepository;
+  // Mappers
   private final SessionMapper sessionMapper;
   private final SessionAttributeMapper sessionAttributeMapper;
 
   @Autowired
   public AccountingService(SessionRepository sessionRepository,
       SessionAttributeRepository sessionAttributeRepository,
-      SessionMapper SessionMapper, UserRepository userRepository,
+      SessionMapper sessionMapper, UserRepository userRepository,
       SessionAttributeMapper sessionAttributeMapper) {
     this.sessionRepository = sessionRepository;
     this.sessionAttributeRepository = sessionAttributeRepository;
-    this.sessionMapper = SessionMapper;
+    this.sessionMapper = sessionMapper;
     this.userRepository = userRepository;
     this.sessionAttributeMapper = sessionAttributeMapper;
   }

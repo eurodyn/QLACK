@@ -20,8 +20,8 @@ public class ResourceService {
 //  @PersistenceContext
 //  private EntityManager em;
 
+  // Repositories
   private final ResourceRepository resourceRepository;
-
   private final ResourceMapper resourceMapper;
 
   public ResourceService(ResourceRepository resourceRepository, ResourceMapper resourceMapper) {
