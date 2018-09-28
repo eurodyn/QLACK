@@ -3,7 +3,7 @@ package com.eurodyn.qlack.fuse.aaa.service;
 import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.aaa.dto.SessionAttributeDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.SessionDTO;
-import com.eurodyn.qlack.fuse.aaa.mappers.SessionDTOMapper;
+import com.eurodyn.qlack.fuse.aaa.mappers.SessionMapper;
 import com.eurodyn.qlack.fuse.aaa.model.QSession;
 import com.eurodyn.qlack.fuse.aaa.model.QSessionAttribute;
 import com.eurodyn.qlack.fuse.aaa.model.Session;
@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -60,19 +59,19 @@ public class AccountingService {
   private final SessionRepository sessionRepository;
   private final UserRepository userRepository;
   private final SessionAttributeRepository sessionAttributeRepository;
-  private final SessionDTOMapper sessionDTOMapper;
+  private final SessionMapper sessionMapper;
 
   @Autowired
   public AccountingService(SessionRepository sessionRepository,
       SessionAttributeRepository sessionAttributeRepository,
-      SessionDTOMapper sessionDTOMapper, UserRepository userRepository) {
+      SessionMapper SessionMapper, UserRepository userRepository) {
     this.sessionRepository = sessionRepository;
     this.sessionAttributeRepository = sessionAttributeRepository;
-    this.sessionDTOMapper = sessionDTOMapper;
+    this.sessionMapper = SessionMapper;
     this.userRepository = userRepository;
   }
 
-  public String createSession(SessionDTO session) {
+  public String createSession(SessionDTO sessionDTO) {
 //    Session entity = ConverterUtil.sessionDTOToSession(session, em);
 //    if (entity.getCreatedOn() == 0) {
 //      entity.setCreatedOn(Instant.now().toEpochMilli());
@@ -84,13 +83,15 @@ public class AccountingService {
 //      }
 //    }
 //    return entity.getId();
-    Session entity = ConverterUtil.sessionDTOToSession(session, userRepository);
+    Session entity = sessionMapper.mapToEntity(sessionDTO);
     if (entity.getCreatedOn() == 0) {
       entity.setCreatedOn(Instant.now().toEpochMilli());
     }
+    entity.setUser(userRepository.fetchById(sessionDTO.getUserId()));
     sessionRepository.save(entity);
     if (entity.getSessionAttributes() != null) {
       for (SessionAttribute attribute : entity.getSessionAttributes()) {
+        attribute.setSession(entity);
         sessionAttributeRepository.save(attribute);
       }
     }
@@ -133,7 +134,7 @@ public class AccountingService {
 
   public SessionDTO getSession(String sessionID) {
 
-    return ConverterUtil.sessionToSessionDTO(findSession(sessionID));
+    return sessionMapper.mapToDTO(findSession(sessionID));
   }
 
   public Long getSessionDuration(String sessionID) {
@@ -157,7 +158,7 @@ public class AccountingService {
     Predicate predicate = qSession.user.id.eq(userID);
     List<Session> queryResult = sessionRepository
         .findAll(predicate, Sort.by("createdOn").descending());
-    if (CollectionUtils.isEmpty(queryResult)) {
+    if (queryResult.isEmpty()) {
       return null;
     }
 
@@ -176,7 +177,7 @@ public class AccountingService {
     Predicate predicate = qSession.user.id.eq(userID);
     List<Session> queryResult = sessionRepository
         .findAll(predicate, Sort.by("terminatedOn").descending());
-    if (CollectionUtils.isEmpty(queryResult)) {
+    if (queryResult.isEmpty()) {
       return null;
     }
 
@@ -200,7 +201,7 @@ public class AccountingService {
     Predicate predicate = qSession.user.id.eq(userID);
     List<Session> queryResult = sessionRepository
         .findAll(predicate, Sort.by("terminatedOn").descending());
-    if (CollectionUtils.isEmpty(queryResult) || (queryResult.get(0).getTerminatedOn() == null)) {
+    if (queryResult.isEmpty() || (queryResult.get(0).getTerminatedOn() == null)) {
       return null;
     }
     Session session = queryResult.get(0);
@@ -225,11 +226,7 @@ public class AccountingService {
 //            + "AND s.user.id in (:userIDs)");
 //    query.setParameter("userIDs", userIDs);
 //    return new HashSet<String>(query.getResultList());
-    BooleanBuilder builder = new BooleanBuilder();
-    for (String id : userIDs) {
-      builder.or(qSession.user.id.eq(id));
-    }
-    Predicate predicate = qSession.terminatedOn.isNull().and(builder);
+    Predicate predicate = qSession.terminatedOn.isNull().and(qSession.user.id.in(userIDs));
 
     return sessionRepository.findAll(predicate).stream()
         .map(session -> session.getUser().getId())
@@ -332,7 +329,7 @@ public class AccountingService {
   }
 
   public Page<SessionDTO> getSessions(String userId, Pageable pageable) {
-    return sessionDTOMapper.fromSessions(sessionRepository.findByUserId(userId, pageable));
+    return sessionMapper.fromSessions(sessionRepository.findByUserId(userId, pageable));
   }
 
   private Session findSession(String sessionId){

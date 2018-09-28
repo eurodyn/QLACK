@@ -1,9 +1,7 @@
 package com.eurodyn.qlack.fuse.aaa.util;
 
 
-import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.aaa.dto.GroupHasOperationDTO;
-import com.eurodyn.qlack.fuse.aaa.dto.OpTemplateDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.OperationAccessDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.OperationDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.ResourceDTO;
@@ -12,7 +10,6 @@ import com.eurodyn.qlack.fuse.aaa.dto.SessionDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserAttributeDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserDTO;
 import com.eurodyn.qlack.fuse.aaa.model.GroupHasOperation;
-import com.eurodyn.qlack.fuse.aaa.model.OpTemplate;
 import com.eurodyn.qlack.fuse.aaa.model.OpTemplateHasOperation;
 import com.eurodyn.qlack.fuse.aaa.model.Operation;
 import com.eurodyn.qlack.fuse.aaa.model.Resource;
@@ -21,13 +18,11 @@ import com.eurodyn.qlack.fuse.aaa.model.SessionAttribute;
 import com.eurodyn.qlack.fuse.aaa.model.User;
 import com.eurodyn.qlack.fuse.aaa.model.UserAttribute;
 import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Utility class to convert
@@ -106,43 +101,43 @@ public class ConverterUtil {
    * @param dto Transfer object.
    * @return User Entity Object.
    */
-  public static User userDTOToUser(UserDTO dto) {
-    if (dto == null) {
-      return null;
-    }
+//  public static User userDTOToUser(UserDTO dto) {
+//    if (dto == null) {
+//      return null;
+//    }
+//
+//    User entity = new User();
+//    if (StringUtils.isNotBlank(dto.getId())) {
+//      entity.setId(dto.getId());
+//    }
+//    entity.setUsername(dto.getUsername());
+//    entity.setStatus(dto.getStatus());
+//    entity.setSuperadmin(dto.isSuperadmin());
+//    entity.setExternal(dto.isExternal());
+//    entity.setUserAttributes(userAttributeDTOsToUserAttributeList(
+//        dto.getUserAttributes(), entity));
+//    return entity;
+//  }
 
-    User entity = new User();
-    if (StringUtils.isNotBlank(dto.getId())) {
-      entity.setId(dto.getId());
-    }
-    entity.setUsername(dto.getUsername());
-    entity.setStatus(dto.getStatus());
-    entity.setSuperadmin(dto.isSuperadmin());
-    entity.setExternal(dto.isExternal());
-    entity.setUserAttributes(userAttributeDTOsToUserAttributeList(
-        dto.getUserAttributes(), entity));
-    return entity;
-  }
 
-
-  public static List<UserAttribute> userAttributeDTOsToUserAttributeList(
-      Collection<UserAttributeDTO> dtos, User user) {
-    if (dtos == null) {
-      return null;
-    }
-
-    List<UserAttribute> entities = new ArrayList<>();
-    for (UserAttributeDTO dto : dtos) {
-      UserAttribute entity = new UserAttribute();
-      entity.setUser(user);
-      entity.setName(dto.getName());
-      entity.setData(dto.getData());
-      entity.setBindata(dto.getBinData());
-      entity.setContentType(dto.getContentType());
-      entities.add(entity);
-    }
-    return entities;
-  }
+//  public static List<UserAttribute> userAttributeDTOsToUserAttributeList(
+//      Collection<UserAttributeDTO> dtos, User user) {
+//    if (dtos == null) {
+//      return null;
+//    }
+//
+//    List<UserAttribute> entities = new ArrayList<>();
+//    for (UserAttributeDTO dto : dtos) {
+//      UserAttribute entity = new UserAttribute();
+//      entity.setUser(user);
+//      entity.setName(dto.getName());
+//      entity.setData(dto.getData());
+//      entity.setBindata(dto.getBinData());
+//      entity.setContentType(dto.getContentType());
+//      entities.add(entity);
+//    }
+//    return entities;
+//  }
 
 
   public static SessionDTO sessionToSessionDTO(Session entity) {
@@ -155,7 +150,7 @@ public class ConverterUtil {
     dto.setUserId(entity.getUser().getId());
     dto.setCreatedOn(entity.getCreatedOn());
     dto.setTerminatedOn(entity.getTerminatedOn());
-    dto.setAttributes(sessionAttributesToSessionAttributeDTOSet(
+    dto.setSessionAttributes(sessionAttributesToSessionAttributeDTOSet(
         entity.getSessionAttributes()));
     dto.setApplicationSessionID(entity.getApplicationSessionId());
 
@@ -212,13 +207,8 @@ public class ConverterUtil {
     entity.setCreatedOn(dto.getCreatedOn());
     entity.setTerminatedOn(dto.getTerminatedOn());
     entity.setApplicationSessionId(dto.getApplicationSessionID());
-    entity.setUser(repository.findById(dto.getUserId()).orElseThrow(
-        ()-> new QDoesNotExistException(MessageFormat
-            .format("User with user Id {0} could not be found.",
-                dto.getUserId())
-        )));
     entity.setSessionAttributes(sessionAttributeDTOsToSessionAttributeList(
-        dto.getAttributes(), entity));
+        dto.getSessionAttributes(), entity));
     return entity;
   }
 
@@ -360,19 +350,19 @@ public class ConverterUtil {
   }
 
 
-  public static OpTemplateDTO opTemplateToOpTemplateDTO(OpTemplate entity) {
-    if (entity == null) {
-      return null;
-    }
-
-    OpTemplateDTO dto = new OpTemplateDTO();
-    dto.setId(entity.getId());
-    dto.setName(entity.getName());
-    dto.setDescription(entity.getDescription());
-    dto.setOperations(
-        opTemplateHasOperationsToOperationAccessDTOSet(entity.getOpTemplateHasOperations()));
-    return dto;
-  }
+//  public static OpTemplateDTO opTemplateToOpTemplateDTO(OpTemplate entity) {
+//    if (entity == null) {
+//      return null;
+//    }
+//
+//    OpTemplateDTO dto = new OpTemplateDTO();
+//    dto.setId(entity.getId());
+//    dto.setName(entity.getName());
+//    dto.setDescription(entity.getDescription());
+//    dto.setOperations(
+//        opTemplateHasOperationsToOperationAccessDTOSet(entity.getOpTemplateHasOperations()));
+//    return dto;
+//  }
 
 
   public static OperationAccessDTO opTemplateHasOperationToOperationAccessDTO(
@@ -389,18 +379,18 @@ public class ConverterUtil {
   }
 
 
-  public static Set<OperationAccessDTO> opTemplateHasOperationsToOperationAccessDTOSet(
-      Collection<OpTemplateHasOperation> entities) {
-    if (entities == null) {
-      return null;
-    }
-
-    Set<OperationAccessDTO> dtos = new HashSet<>();
-    for (OpTemplateHasOperation entity : entities) {
-      dtos.add(opTemplateHasOperationToOperationAccessDTO(entity));
-    }
-    return dtos;
-  }
+//  public static Set<OperationAccessDTO> opTemplateHasOperationsToOperationAccessDTOSet(
+//      Collection<OpTemplateHasOperation> entities) {
+//    if (entities == null) {
+//      return null;
+//    }
+//
+//    Set<OperationAccessDTO> dtos = new HashSet<>();
+//    for (OpTemplateHasOperation entity : entities) {
+//      dtos.add(opTemplateHasOperationToOperationAccessDTO(entity));
+//    }
+//    return dtos;
+//  }
 
 
   public static ResourceDTO resourceToResourceDTO(Resource entity) {

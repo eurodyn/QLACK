@@ -1,6 +1,7 @@
 package com.eurodyn.qlack.fuse.aaa.service;
 
 import com.eurodyn.qlack.fuse.aaa.dto.OpTemplateDTO;
+import com.eurodyn.qlack.fuse.aaa.mappers.OpTemplateMapper;
 import com.eurodyn.qlack.fuse.aaa.model.OpTemplate;
 import com.eurodyn.qlack.fuse.aaa.model.OpTemplateHasOperation;
 import com.eurodyn.qlack.fuse.aaa.model.Operation;
@@ -9,9 +10,6 @@ import com.eurodyn.qlack.fuse.aaa.repository.OpTemplateHasOperationRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.OpTemplateRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.OperationRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.ResourceRepository;
-import com.eurodyn.qlack.fuse.aaa.util.ConverterUtil;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -35,44 +33,49 @@ public class OpTemplateService {
 
   private final ResourceRepository resourceRepository;
 
+  private final OpTemplateMapper opTemplateMapper;
+
   public OpTemplateService(
       OpTemplateRepository opTemplateRepository,
       OpTemplateHasOperationRepository opTemplateHasOperationRepository,
-      OperationRepository operationRepository,
-      ResourceRepository resourceRepository) {
+      OperationRepository operationRepository, ResourceRepository resourceRepository,
+      OpTemplateMapper opTemplateMapper) {
     this.opTemplateRepository = opTemplateRepository;
     this.opTemplateHasOperationRepository = opTemplateHasOperationRepository;
     this.operationRepository = operationRepository;
     this.resourceRepository = resourceRepository;
+    this.opTemplateMapper = opTemplateMapper;
   }
 
   public String createTemplate(OpTemplateDTO templateDTO) {
-    OpTemplate template = new OpTemplate();
-    template.setName(templateDTO.getName());
-    template.setDescription(templateDTO.getDescription());
+//    OpTemplate template = new OpTemplate();
+//    template.setName(templateDTO.getName());
+//    template.setDescription(templateDTO.getDescription());
 //    em.persist(template);
+    OpTemplate template = opTemplateMapper.mapToEntity(templateDTO);
     opTemplateRepository.save(template);
+
     return template.getId();
   }
 
   public void deleteTemplateByID(String templateID) {
 //    em.remove(OpTemplate.find(templateID, em));
-
+    opTemplateRepository.delete(opTemplateRepository.fetchById(templateID));
   }
 
   public void deleteTemplateByName(String templateName) {
 //    em.remove(OpTemplate.findByName(templateName, em));
-
+    opTemplateRepository.delete(opTemplateRepository.findByName(templateName));
   }
 
   public OpTemplateDTO getTemplateByID(String templateID) {
 //    return ConverterUtil.opTemplateToOpTemplateDTO(OpTemplate.find(templateID, em));
-    return ConverterUtil.opTemplateToOpTemplateDTO(opTemplateRepository.fetchById(templateID));
+    return opTemplateMapper.mapToDTO(opTemplateRepository.fetchById(templateID));
   }
 
   public OpTemplateDTO getTemplateByName(String templateName) {
 //    return ConverterUtil.opTemplateToOpTemplateDTO(OpTemplate.findByName(templateName, em));
-    return ConverterUtil.opTemplateToOpTemplateDTO(opTemplateRepository.findByName(templateName));
+    return opTemplateMapper.mapToDTO(opTemplateRepository.findByName(templateName));
   }
 
   public void addOperation(String templateID, String operationName,

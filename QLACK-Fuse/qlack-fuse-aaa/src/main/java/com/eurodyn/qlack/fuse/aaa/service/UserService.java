@@ -89,12 +89,12 @@ public class UserService {
     user.setSalt(RandomStringUtils.randomAlphanumeric(saltLength));
     String password = user.getSalt() + dto.getPassword();
     user.setPassword(DigestUtils.md5Hex(password));
-
+    userRepository.save(user);
     for(UserAttribute attribute: user.getUserAttributes()){
       attribute.setUser(user);
+      userAttributeRepository.save(attribute);
     }
 //    em.persist(user);
-    userRepository.save(user);
 //    if (user.getUserAttributes() != null) {
 //      for (UserAttribute attribute : user.getUserAttributes()) {
 ////        em.persist(attribute);

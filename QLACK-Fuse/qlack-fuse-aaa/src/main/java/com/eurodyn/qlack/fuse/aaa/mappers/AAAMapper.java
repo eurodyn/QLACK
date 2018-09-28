@@ -3,6 +3,7 @@ package com.eurodyn.qlack.fuse.aaa.mappers;
 import com.eurodyn.qlack.fuse.aaa.dto.BaseDTO;
 import com.eurodyn.qlack.fuse.aaa.model.AAAModel;
 import java.util.List;
+import org.mapstruct.MappingTarget;
 
 public interface AAAMapper<E extends AAAModel, D extends BaseDTO> {
 
@@ -29,6 +30,14 @@ public interface AAAMapper<E extends AAAModel, D extends BaseDTO> {
    * @return the mapped entity
    */
   E mapToEntity(D dto);
+
+  /**
+   * Maps a DTO to an entity.
+   *
+   * @param dto the source DTO
+   * @return the mapped entity
+   */
+  void mapToExistingEntity(D dto, @MappingTarget E entity);
 
   /**
    * Maps a list of DTO's to a list of entities.

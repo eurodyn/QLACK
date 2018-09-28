@@ -67,9 +67,10 @@ public class UserGroupService {
   public void updateGroup(GroupDTO groupDTO) {
 //    Group group = Group.find(groupDTO.getId(), em);
     Group group = groupRepository.fetchById(groupDTO.getId());
-    group.setName(groupDTO.getName());
-    group.setDescription(groupDTO.getDescription());
-    group.setObjectId(groupDTO.getObjectID());
+//    group.setName(groupDTO.getName());
+//    group.setDescription(groupDTO.getDescription());
+//    group.setObjectId(groupDTO.getObjectID());
+    groupMapper.mapToExistingEntity(groupDTO, group);
   }
 
   public void deleteGroup(String groupID) {

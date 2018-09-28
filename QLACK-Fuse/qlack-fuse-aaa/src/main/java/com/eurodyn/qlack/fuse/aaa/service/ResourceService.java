@@ -1,16 +1,13 @@
 package com.eurodyn.qlack.fuse.aaa.service;
 
 import com.eurodyn.qlack.fuse.aaa.dto.ResourceDTO;
+import com.eurodyn.qlack.fuse.aaa.mappers.ResourceMapper;
 import com.eurodyn.qlack.fuse.aaa.model.Resource;
 import com.eurodyn.qlack.fuse.aaa.repository.ResourceRepository;
-import com.eurodyn.qlack.fuse.aaa.util.ConverterUtil;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.util.Collection;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-
-import java.util.Collection;
 
 /**
  * @author European Dynamics SA
@@ -25,16 +22,20 @@ public class ResourceService {
 
   private final ResourceRepository resourceRepository;
 
-  public ResourceService(ResourceRepository resourceRepository) {
+  private final ResourceMapper resourceMapper;
+
+  public ResourceService(ResourceRepository resourceRepository, ResourceMapper resourceMapper) {
     this.resourceRepository = resourceRepository;
+    this.resourceMapper = resourceMapper;
   }
 
   public String createResource(ResourceDTO resourceDTO) {
-    Resource resource = new Resource();
-    resource.setName(resourceDTO.getName());
-    resource.setDescription(resourceDTO.getDescription());
-    resource.setObjectId(resourceDTO.getObjectID());
+//    Resource resource = new Resource();
+//    resource.setName(resourceDTO.getName());
+//    resource.setDescription(resourceDTO.getDescription());
+//    resource.setObjectId(resourceDTO.getObjectID());
 //    em.persist(resource);
+    Resource resource = resourceMapper.mapToEntity(resourceDTO);
     resourceRepository.save(resource);
 
     return resource.getId();
@@ -43,9 +44,10 @@ public class ResourceService {
   public void updateResource(ResourceDTO resourceDTO) {
 //    Resource resource = em.find(Resource.class, resourceDTO.getId());
     Resource resource = resourceRepository.fetchById(resourceDTO.getId());
-    resource.setName(resourceDTO.getName());
-    resource.setDescription(resourceDTO.getDescription());
-    resource.setObjectId(resourceDTO.getObjectID());
+//    resource.setName(resourceDTO.getName());
+//    resource.setDescription(resourceDTO.getDescription());
+//    resource.setObjectId(resourceDTO.getObjectID());
+    resourceMapper.mapToExistingEntity(resourceDTO, resource);
   }
 
   public void deleteResource(String resourceID) {
@@ -73,13 +75,14 @@ public class ResourceService {
 
   public ResourceDTO getResourceById(String resourceID) {
 //    return ConverterUtil.resourceToResourceDTO(Resource.find(resourceID, em));
-  return ConverterUtil.resourceToResourceDTO(resourceRepository.fetchById(resourceID));
+//  return ConverterUtil.resourceToResourceDTO(resourceRepository.fetchById(resourceID));
+    return resourceMapper.mapToDTO(resourceRepository.fetchById(resourceID));
   }
 
   public ResourceDTO getResourceByObjectId(String objectID) {
 //    return ConverterUtil.resourceToResourceDTO(Resource.findByObjectID(
 //        objectID, em));
-    return ConverterUtil.resourceToResourceDTO(resourceRepository.findByObjectId(objectID));
+    return resourceMapper.mapToDTO(resourceRepository.findByObjectId(objectID));
   }
 
 }

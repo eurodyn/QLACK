@@ -14,7 +14,7 @@ import lombok.Setter;
 public class GroupDTO extends BaseDTO {
 
   private String name;
-  private String objectID;
+  private String objectId;
   private String description;
   private String parentId;
   private Set<GroupDTO> children;

@@ -17,6 +17,6 @@ public class SessionDTO extends BaseDTO {
   private long createdOn;
   private Long terminatedOn;
   private String applicationSessionID;
-  private Set<SessionAttributeDTO> attributes;
+  private Set<SessionAttributeDTO> sessionAttributes;
 
 }
