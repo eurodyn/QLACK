@@ -1,29 +1,6 @@
 package com.eurodyn.qlack.fuse.aaa.util;
 
 
-import com.eurodyn.qlack.fuse.aaa.dto.GroupHasOperationDTO;
-import com.eurodyn.qlack.fuse.aaa.dto.OperationAccessDTO;
-import com.eurodyn.qlack.fuse.aaa.dto.OperationDTO;
-import com.eurodyn.qlack.fuse.aaa.dto.ResourceDTO;
-import com.eurodyn.qlack.fuse.aaa.dto.SessionAttributeDTO;
-import com.eurodyn.qlack.fuse.aaa.dto.SessionDTO;
-import com.eurodyn.qlack.fuse.aaa.dto.UserAttributeDTO;
-import com.eurodyn.qlack.fuse.aaa.dto.UserDTO;
-import com.eurodyn.qlack.fuse.aaa.model.GroupHasOperation;
-import com.eurodyn.qlack.fuse.aaa.model.OpTemplateHasOperation;
-import com.eurodyn.qlack.fuse.aaa.model.Operation;
-import com.eurodyn.qlack.fuse.aaa.model.Resource;
-import com.eurodyn.qlack.fuse.aaa.model.Session;
-import com.eurodyn.qlack.fuse.aaa.model.SessionAttribute;
-import com.eurodyn.qlack.fuse.aaa.model.User;
-import com.eurodyn.qlack.fuse.aaa.model.UserAttribute;
-import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 /**
  * Utility class to convert
  * 1.transfer object to entity
@@ -44,52 +21,52 @@ public class ConverterUtil {
    * @param entity Entity Object.
    * @return UserDTO, Transfer object.
    */
-  public static UserDTO userToUserDTO(User entity) {
-    if (entity == null) {
-      return null;
-    }
+//  public static UserDTO userToUserDTO(User entity) {
+//    if (entity == null) {
+//      return null;
+//    }
+//
+//    UserDTO dto = new UserDTO();
+//    dto.setId(entity.getId());
+//    dto.setUsername(entity.getUsername());
+//    dto.setStatus(entity.getStatus());
+//    dto.setSuperadmin(entity.isSuperadmin());
+//    dto.setExternal(entity.getExternal() != null && entity.getExternal());
+//
+//    Set<UserAttributeDTO> userAttributeDtos = userAttributesToUserAttributeDTOSet(
+//        entity.getUserAttributes());
+//    dto.setUserAttributes(userAttributeDtos);
+//
+//    return dto;
+//  }
 
-    UserDTO dto = new UserDTO();
-    dto.setId(entity.getId());
-    dto.setUsername(entity.getUsername());
-    dto.setStatus(entity.getStatus());
-    dto.setSuperadmin(entity.isSuperadmin());
-    dto.setExternal(entity.getExternal() != null && entity.getExternal());
+//  public static Set<UserAttributeDTO> userAttributesToUserAttributeDTOSet(
+//      Collection<UserAttribute> entities) {
+//    if (entities == null) {
+//      return null;
+//    }
+//
+//    Set<UserAttributeDTO> dtos = new HashSet<UserAttributeDTO>();
+//    for (UserAttribute entity : entities) {
+//      UserAttributeDTO dto = userAttributeToUserAttributeDTO(entity);
+//      dtos.add(dto);
+//    }
+//    return dtos;
+//  }
 
-    Set<UserAttributeDTO> userAttributeDtos = userAttributesToUserAttributeDTOSet(
-        entity.getUserAttributes());
-    dto.setUserAttributes(userAttributeDtos);
-
-    return dto;
-  }
-
-  public static Set<UserAttributeDTO> userAttributesToUserAttributeDTOSet(
-      Collection<UserAttribute> entities) {
-    if (entities == null) {
-      return null;
-    }
-
-    Set<UserAttributeDTO> dtos = new HashSet<UserAttributeDTO>();
-    for (UserAttribute entity : entities) {
-      UserAttributeDTO dto = userAttributeToUserAttributeDTO(entity);
-      dtos.add(dto);
-    }
-    return dtos;
-  }
-
-  public static UserAttributeDTO userAttributeToUserAttributeDTO(UserAttribute entity) {
-    if (entity == null) {
-      return null;
-    }
-    UserAttributeDTO dto = new UserAttributeDTO();
-    dto.setId(entity.getId());
-    dto.setName(entity.getName());
-    dto.setData(entity.getData());
-    dto.setBinData(entity.getBindata());
-    dto.setContentType(entity.getContentType());
-    dto.setUserId(entity.getUser().getId());
-    return dto;
-  }
+//  public static UserAttributeDTO userAttributeToUserAttributeDTO(UserAttribute entity) {
+//    if (entity == null) {
+//      return null;
+//    }
+//    UserAttributeDTO dto = new UserAttributeDTO();
+//    dto.setId(entity.getId());
+//    dto.setName(entity.getName());
+//    dto.setData(entity.getData());
+//    dto.setBinData(entity.getBindata());
+//    dto.setContentType(entity.getContentType());
+//    dto.setUserId(entity.getUser().getId());
+//    return dto;
+//  }
 
   /**
    * Converts a UserDTO transfer object to User entity.
@@ -140,48 +117,48 @@ public class ConverterUtil {
 //  }
 
 
-  public static SessionDTO sessionToSessionDTO(Session entity) {
-    if (entity == null) {
-      return null;
-    }
+//  public static SessionDTO sessionToSessionDTO(Session entity) {
+//    if (entity == null) {
+//      return null;
+//    }
+//
+//    SessionDTO dto = new SessionDTO();
+//    dto.setId(entity.getId());
+//    dto.setUserId(entity.getUser().getId());
+//    dto.setCreatedOn(entity.getCreatedOn());
+//    dto.setTerminatedOn(entity.getTerminatedOn());
+//    dto.setSessionAttributes(sessionAttributesToSessionAttributeDTOSet(
+//        entity.getSessionAttributes()));
+//    dto.setApplicationSessionID(entity.getApplicationSessionId());
+//
+//    return dto;
+//  }
 
-    SessionDTO dto = new SessionDTO();
-    dto.setId(entity.getId());
-    dto.setUserId(entity.getUser().getId());
-    dto.setCreatedOn(entity.getCreatedOn());
-    dto.setTerminatedOn(entity.getTerminatedOn());
-    dto.setSessionAttributes(sessionAttributesToSessionAttributeDTOSet(
-        entity.getSessionAttributes()));
-    dto.setApplicationSessionID(entity.getApplicationSessionId());
+//  public static SessionAttributeDTO sessionAttributeToSessionAttributeDTO(
+//      SessionAttribute entity) {
+//    if (entity == null) {
+//      return null;
+//    }
+//
+//    SessionAttributeDTO dto = new SessionAttributeDTO();
+//    dto.setId(entity.getId());
+//    dto.setName(entity.getName());
+//    dto.setValue(entity.getValue());
+//    dto.setSessionId(entity.getSession().getId());
+//    return dto;
+//  }
 
-    return dto;
-  }
-
-  public static SessionAttributeDTO sessionAttributeToSessionAttributeDTO(
-      SessionAttribute entity) {
-    if (entity == null) {
-      return null;
-    }
-
-    SessionAttributeDTO dto = new SessionAttributeDTO();
-    dto.setId(entity.getId());
-    dto.setName(entity.getName());
-    dto.setValue(entity.getValue());
-    dto.setSessionId(entity.getSession().getId());
-    return dto;
-  }
-
-  public static Set<SessionAttributeDTO> sessionAttributesToSessionAttributeDTOSet(
-      Collection<SessionAttribute> entities) {
-    if (entities == null) {
-      return null;
-    }
-    Set<SessionAttributeDTO> dtos = new HashSet<SessionAttributeDTO>();
-    for (SessionAttribute attribute : entities) {
-      dtos.add(sessionAttributeToSessionAttributeDTO(attribute));
-    }
-    return dtos;
-  }
+//  public static Set<SessionAttributeDTO> sessionAttributesToSessionAttributeDTOSet(
+//      Collection<SessionAttribute> entities) {
+//    if (entities == null) {
+//      return null;
+//    }
+//    Set<SessionAttributeDTO> dtos = new HashSet<SessionAttributeDTO>();
+//    for (SessionAttribute attribute : entities) {
+//      dtos.add(sessionAttributeToSessionAttributeDTO(attribute));
+//    }
+//    return dtos;
+//  }
 
 //  public static Session sessionDTOToSession(SessionDTO dto, EntityManager em) {
 //    if (dto == null) {
@@ -198,36 +175,36 @@ public class ConverterUtil {
 //    return entity;
 //  }
 
-  public static Session sessionDTOToSession(SessionDTO dto, UserRepository repository) {
-    if (dto == null) {
-      return null;
-    }
+//  public static Session sessionDTOToSession(SessionDTO dto, UserRepository repository) {
+//    if (dto == null) {
+//      return null;
+//    }
+//
+//    Session entity = new Session();
+//    entity.setCreatedOn(dto.getCreatedOn());
+//    entity.setTerminatedOn(dto.getTerminatedOn());
+//    entity.setApplicationSessionId(dto.getApplicationSessionID());
+//    entity.setSessionAttributes(sessionAttributeDTOsToSessionAttributeList(
+//        dto.getSessionAttributes(), entity));
+//    return entity;
+//  }
 
-    Session entity = new Session();
-    entity.setCreatedOn(dto.getCreatedOn());
-    entity.setTerminatedOn(dto.getTerminatedOn());
-    entity.setApplicationSessionId(dto.getApplicationSessionID());
-    entity.setSessionAttributes(sessionAttributeDTOsToSessionAttributeList(
-        dto.getSessionAttributes(), entity));
-    return entity;
-  }
-
-  public static List<SessionAttribute> sessionAttributeDTOsToSessionAttributeList(
-      Collection<SessionAttributeDTO> dtos, Session session) {
-    if (dtos == null) {
-      return null;
-    }
-
-    List<SessionAttribute> entities = new ArrayList<>();
-    for (SessionAttributeDTO dto : dtos) {
-      SessionAttribute entity = new SessionAttribute();
-      entity.setSession(session);
-      entity.setName(dto.getName());
-      entity.setValue(dto.getValue());
-      entities.add(entity);
-    }
-    return entities;
-  }
+//  public static List<SessionAttribute> sessionAttributeDTOsToSessionAttributeList(
+//      Collection<SessionAttributeDTO> dtos, Session session) {
+//    if (dtos == null) {
+//      return null;
+//    }
+//
+//    List<SessionAttribute> entities = new ArrayList<>();
+//    for (SessionAttributeDTO dto : dtos) {
+//      SessionAttribute entity = new SessionAttribute();
+//      entity.setSession(session);
+//      entity.setName(dto.getName());
+//      entity.setValue(dto.getValue());
+//      entities.add(entity);
+//    }
+//    return entities;
+//  }
 
 //  public static GroupDTO groupToGroupDTO(Group entity, boolean lazyRelatives) {
 //    return groupToGroupDTO(entity, lazyRelatives, lazyRelatives);
@@ -323,31 +300,31 @@ public class ConverterUtil {
 //  }
 
 
-  public static OperationDTO operationToOperationDTO(Operation entity) {
-    if (entity == null) {
-      return null;
-    }
+//  public static OperationDTO operationToOperationDTO(Operation entity) {
+//    if (entity == null) {
+//      return null;
+//    }
+//
+//    OperationDTO dto = new OperationDTO();
+//    dto.setDescription(entity.getDescription());
+//    dto.setDynamic(entity.isDynamic());
+//    dto.setDynamicCode(entity.getDynamicCode());
+//    dto.setId(entity.getId());
+//    dto.setName(entity.getName());
+//    return dto;
+//  }
 
-    OperationDTO dto = new OperationDTO();
-    dto.setDescription(entity.getDescription());
-    dto.setDynamic(entity.isDynamic());
-    dto.setDynamicCode(entity.getDynamicCode());
-    dto.setId(entity.getId());
-    dto.setName(entity.getName());
-    return dto;
-  }
-
-  public static List<OperationDTO> operationToOperationDTOList(List<Operation> entities) {
-    if (entities == null) {
-      return null;
-    }
-
-    List<OperationDTO> dtos = new ArrayList<>(entities.size());
-    for (Operation entity : entities) {
-      dtos.add(operationToOperationDTO(entity));
-    }
-    return dtos;
-  }
+//  public static List<OperationDTO> operationToOperationDTOList(List<Operation> entities) {
+//    if (entities == null) {
+//      return null;
+//    }
+//
+//    List<OperationDTO> dtos = new ArrayList<>(entities.size());
+//    for (Operation entity : entities) {
+//      dtos.add(operationToOperationDTO(entity));
+//    }
+//    return dtos;
+//  }
 
 
 //  public static OpTemplateDTO opTemplateToOpTemplateDTO(OpTemplate entity) {
@@ -365,18 +342,18 @@ public class ConverterUtil {
 //  }
 
 
-  public static OperationAccessDTO opTemplateHasOperationToOperationAccessDTO(
-      OpTemplateHasOperation entity) {
-    if (entity == null) {
-      return null;
-    }
-
-    OperationAccessDTO dto = new OperationAccessDTO();
-    dto.setOperation(operationToOperationDTO(entity.getOperation()));
-    dto.setResource(resourceToResourceDTO(entity.getResource()));
-    dto.setDeny(entity.isDeny());
-    return dto;
-  }
+//  public static OperationAccessDTO opTemplateHasOperationToOperationAccessDTO(
+//      OpTemplateHasOperation entity) {
+//    if (entity == null) {
+//      return null;
+//    }
+//
+//    OperationAccessDTO dto = new OperationAccessDTO();
+//    dto.setOperation(operationToOperationDTO(entity.getOperation()));
+//    dto.setResource(resourceToResourceDTO(entity.getResource()));
+//    dto.setDeny(entity.isDeny());
+//    return dto;
+//  }
 
 
 //  public static Set<OperationAccessDTO> opTemplateHasOperationsToOperationAccessDTOSet(
@@ -393,31 +370,31 @@ public class ConverterUtil {
 //  }
 
 
-  public static ResourceDTO resourceToResourceDTO(Resource entity) {
-    if (entity == null) {
-      return null;
-    }
-
-    ResourceDTO dto = new ResourceDTO();
-    dto.setId(entity.getId());
-    dto.setName(entity.getName());
-    dto.setDescription(entity.getDescription());
-    dto.setObjectID(entity.getObjectId());
-    return dto;
-  }
-
-  public static List<GroupHasOperationDTO> groupHasOperationToGroupHasOperationDTO(
-      List<GroupHasOperation> entities) {
-    if (entities == null) {
-      return null;
-    }
-
-    List<GroupHasOperationDTO> dtos = new ArrayList<>();
+//  public static ResourceDTO resourceToResourceDTO(Resource entity) {
+//    if (entity == null) {
+//      return null;
+//    }
+//
+//    ResourceDTO dto = new ResourceDTO();
+//    dto.setId(entity.getId());
+//    dto.setName(entity.getName());
+//    dto.setDescription(entity.getDescription());
+//    dto.setObjectID(entity.getObjectId());
+//    return dto;
+//  }
+//
+//  public static List<GroupHasOperationDTO> groupHasOperationToGroupHasOperationDTO(
+//      List<GroupHasOperation> entities) {
+//    if (entities == null) {
+//      return null;
+//    }
+//
+//    List<GroupHasOperationDTO> dtos = new ArrayList<>();
 //    for (GroupHasOperation entity : entities) {
 //      dtos.add(groupHasOperationToGroupHasOperationDTO(entity));
 //    }
-    return dtos;
-  }
+//    return dtos;
+//  }
 
 //  public static GroupHasOperationDTO groupHasOperationToGroupHasOperationDTO(
 //      GroupHasOperation entity) {

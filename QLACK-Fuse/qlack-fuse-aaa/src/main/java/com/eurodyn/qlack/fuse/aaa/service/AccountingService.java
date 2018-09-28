@@ -3,6 +3,7 @@ package com.eurodyn.qlack.fuse.aaa.service;
 import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.aaa.dto.SessionAttributeDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.SessionDTO;
+import com.eurodyn.qlack.fuse.aaa.mappers.SessionAttributeMapper;
 import com.eurodyn.qlack.fuse.aaa.mappers.SessionMapper;
 import com.eurodyn.qlack.fuse.aaa.model.QSession;
 import com.eurodyn.qlack.fuse.aaa.model.QSessionAttribute;
@@ -11,7 +12,6 @@ import com.eurodyn.qlack.fuse.aaa.model.SessionAttribute;
 import com.eurodyn.qlack.fuse.aaa.repository.SessionAttributeRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.SessionRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
-import com.eurodyn.qlack.fuse.aaa.util.ConverterUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -60,15 +60,18 @@ public class AccountingService {
   private final UserRepository userRepository;
   private final SessionAttributeRepository sessionAttributeRepository;
   private final SessionMapper sessionMapper;
+  private final SessionAttributeMapper sessionAttributeMapper;
 
   @Autowired
   public AccountingService(SessionRepository sessionRepository,
       SessionAttributeRepository sessionAttributeRepository,
-      SessionMapper SessionMapper, UserRepository userRepository) {
+      SessionMapper SessionMapper, UserRepository userRepository,
+      SessionAttributeMapper sessionAttributeMapper) {
     this.sessionRepository = sessionRepository;
     this.sessionAttributeRepository = sessionAttributeRepository;
     this.sessionMapper = SessionMapper;
     this.userRepository = userRepository;
+    this.sessionAttributeMapper = sessionAttributeMapper;
   }
 
   public String createSession(SessionDTO sessionDTO) {
@@ -266,7 +269,7 @@ public class AccountingService {
 
   public SessionAttributeDTO getAttribute(String sessionID, String attributeName) {
 
-    return ConverterUtil.sessionAttributeToSessionAttributeDTO(
+    return sessionAttributeMapper.mapToDTO(
         sessionAttributeRepository.findBySessionIdAndName(sessionID, attributeName));
   }
 

@@ -6,6 +6,9 @@ import com.eurodyn.qlack.fuse.aaa.dto.GroupHasOperationDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.OperationDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.ResourceDTO;
 import com.eurodyn.qlack.fuse.aaa.exception.DynamicOperationException;
+import com.eurodyn.qlack.fuse.aaa.mappers.GroupHasOperationMapper;
+import com.eurodyn.qlack.fuse.aaa.mappers.OperationMapper;
+import com.eurodyn.qlack.fuse.aaa.mappers.ResourceMapper;
 import com.eurodyn.qlack.fuse.aaa.model.Group;
 import com.eurodyn.qlack.fuse.aaa.model.GroupHasOperation;
 import com.eurodyn.qlack.fuse.aaa.model.OpTemplate;
@@ -21,7 +24,6 @@ import com.eurodyn.qlack.fuse.aaa.repository.OperationRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.ResourceRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.UserHasOperationRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
-import com.eurodyn.qlack.fuse.aaa.util.ConverterUtil;
 import java.util.ArrayList;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,28 +50,26 @@ public class OperationService {
 //  @PersistenceContext
 //  private EntityManager em;
 
+  //Repositories
   private final OperationRepository operationRepository;
-
   private final UserHasOperationRepository userHasOperationRepository;
-
   private final UserRepository userRepository;
-
   private final ResourceRepository resourceRepository;
-
   private final OpTemplateRepository opTemplateRepository;
-
   private final GroupHasOperationRepository groupHasOperationRepository;
-
   private final GroupRepository groupRepository;
+  //Mappers
+  private final OperationMapper operationMapper;
+  private final ResourceMapper resourceMapper;
+  private final GroupHasOperationMapper groupHasOperationMapper;
 
   public OperationService(
       OperationRepository operationRepository,
-      UserHasOperationRepository userHasOperationRepository,
-      UserRepository userRepository,
-      ResourceRepository resourceRepository,
-      OpTemplateRepository opTemplateRepository,
+      UserHasOperationRepository userHasOperationRepository, UserRepository userRepository,
+      ResourceRepository resourceRepository, OpTemplateRepository opTemplateRepository,
       GroupHasOperationRepository groupHasOperationRepository,
-      GroupRepository groupRepository) {
+      GroupRepository groupRepository, OperationMapper operationMapper,
+      ResourceMapper resourceMapper, GroupHasOperationMapper groupHasOperationMapper) {
     this.operationRepository = operationRepository;
     this.userHasOperationRepository = userHasOperationRepository;
     this.userRepository = userRepository;
@@ -77,6 +77,9 @@ public class OperationService {
     this.opTemplateRepository = opTemplateRepository;
     this.groupHasOperationRepository = groupHasOperationRepository;
     this.groupRepository = groupRepository;
+    this.operationMapper = operationMapper;
+    this.resourceMapper = resourceMapper;
+    this.groupHasOperationMapper = groupHasOperationMapper;
   }
 
   private boolean prioritisePositive;
@@ -86,12 +89,13 @@ public class OperationService {
   }
 
   public String createOperation(OperationDTO operationDTO) {
-    Operation operation = new Operation();
-    operation.setDescription(operationDTO.getDescription());
-    operation.setDynamicCode(operationDTO.getDynamicCode());
-    operation.setDynamic(operationDTO.isDynamic());
-    operation.setName(operationDTO.getName());
+//    Operation operation = new Operation();
+//    operation.setDescription(operationDTO.getDescription());
+//    operation.setDynamicCode(operationDTO.getDynamicCode());
+//    operation.setDynamic(operationDTO.isDynamic());
+//    operation.setName(operationDTO.getName());
 //    em.persist(operation);
+    Operation operation = operationMapper.mapToEntity(operationDTO);
     operationRepository.save(operation);
 
     return operation.getId();
@@ -100,10 +104,11 @@ public class OperationService {
   public void updateOperation(OperationDTO operationDTO) {
 //    Operation operation = Operation.find(operationDTO.getId(), em);
     Operation operation = operationRepository.fetchById(operationDTO.getId());
-    operation.setName(operationDTO.getName());
-    operation.setDescription(operationDTO.getDescription());
-    operation.setDynamic(operationDTO.isDynamic());
-    operation.setDynamicCode(operationDTO.getDynamicCode());
+//    operation.setName(operationDTO.getName());
+//    operation.setDescription(operationDTO.getDescription());
+//    operation.setDynamic(operationDTO.isDynamic());
+//    operation.setDynamicCode(operationDTO.getDynamicCode());
+    operationMapper.mapToExistingEntity(operationDTO, operation);
   }
 
   public void deleteOperation(String operationID) {
@@ -119,12 +124,12 @@ public class OperationService {
 
   public List<OperationDTO> getAllOperations() {
 //    return ConverterUtil.operationToOperationDTOList(Operation.findAll(em));
-    return ConverterUtil.operationToOperationDTOList(operationRepository.findAll());
+    return operationMapper.mapToDTO(operationRepository.findAll());
   }
 
   public OperationDTO getOperationByName(String operationName) {
 //    return ConverterUtil.operationToOperationDTO(Operation.findByName(operationName, em));
-    return ConverterUtil.operationToOperationDTO(operationRepository.findByName(operationName));
+    return operationMapper.mapToDTO(operationRepository.findByName(operationName));
   }
 
   public void addOperationToUser(String userID, String operationName, boolean isDeny) {
@@ -752,9 +757,9 @@ public class OperationService {
     for (UserHasOperation uho : user.getUserHasOperations()) {
       if (uho.isDeny() != getAllowed && Stream.of(operations).anyMatch(o -> o.equals(uho.getOperation().getName()))) {
         resourceDTOList
-            .add(ConverterUtil
+//            .add(ConverterUtil
 //                .resourceToResourceDTO(Resource.find(uho.getResource().getId(), em)));
-            .resourceToResourceDTO(
+            .add(resourceMapper.mapToDTO(
                 resourceRepository.fetchById( uho.getResource().getId())));
       }
     }
@@ -764,9 +769,9 @@ public class OperationService {
         for (GroupHasOperation gho : group.getGroupHasOperations()) {
           if (gho.isDeny() != getAllowed && Stream.of(operations).anyMatch(o -> o.equals(gho.getOperation().getName()))) {
             resourceDTOList.add(
-                ConverterUtil
+//                ConverterUtil
 //                    .resourceToResourceDTO(Resource.find(gho.getResource().getId(), em)));
-                      .resourceToResourceDTO(resourceRepository.fetchById((gho.getResource().getId()))));
+                      resourceMapper.mapToDTO(resourceRepository.fetchById((gho.getResource().getId()))));
           }
         }
       }
@@ -778,7 +783,7 @@ public class OperationService {
 //    Operation o = Operation.find(operationID, em);
     Operation o = operationRepository.fetchById(operationID);
     if (o != null) {
-      return ConverterUtil.operationToOperationDTO(o);
+      return operationMapper.mapToDTO(o);
     } else {
       return null;
     }
@@ -791,7 +796,7 @@ public class OperationService {
   public List<GroupHasOperationDTO> getGroupOperations(String groupName) {
 //    List<GroupHasOperation> entities = GroupHasOperation.findByGroupName(groupName, em);
 
-    return ConverterUtil.groupHasOperationToGroupHasOperationDTO(
+    return groupHasOperationMapper.mapToDTO(
         groupHasOperationRepository.findByGroupName(groupName));
   }
 
@@ -803,6 +808,6 @@ public class OperationService {
             entities.addAll(groupHasOperationRepository.findByGroupName(groupName))
         );
 
-    return ConverterUtil.groupHasOperationToGroupHasOperationDTO(entities);
+    return groupHasOperationMapper.mapToDTO(entities);
   }
 }

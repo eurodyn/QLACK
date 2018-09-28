@@ -6,6 +6,8 @@ import com.eurodyn.qlack.fuse.aaa.criteria.UserSearchCriteria.UserAttributeCrite
 import com.eurodyn.qlack.fuse.aaa.dto.SessionDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserAttributeDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserDTO;
+import com.eurodyn.qlack.fuse.aaa.mappers.SessionMapper;
+import com.eurodyn.qlack.fuse.aaa.mappers.UserAttributeMapper;
 import com.eurodyn.qlack.fuse.aaa.mappers.UserMapper;
 import com.eurodyn.qlack.fuse.aaa.model.Group;
 import com.eurodyn.qlack.fuse.aaa.model.QSession;
@@ -18,7 +20,6 @@ import com.eurodyn.qlack.fuse.aaa.repository.GroupRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.SessionRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.UserAttributeRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
-import com.eurodyn.qlack.fuse.aaa.util.ConverterUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -64,7 +65,11 @@ public class UserService {
 
   private final GroupRepository groupRepository;
 
-  private final UserMapper mapper;
+  private final UserMapper userMapper;
+
+  private final SessionMapper sessionMapper;
+
+  private final UserAttributeMapper userAttributeMapper;
 
   private QUser qUser = QUser.user;
 
@@ -72,19 +77,23 @@ public class UserService {
 
   public UserService(AccountingService accountingService, LdapUserUtil ldapUserUtil,
       UserRepository userRepository, UserAttributeRepository userAttributeRepository,
-      SessionRepository sessionRepository, GroupRepository groupRepository, UserMapper mapper) {
+      SessionRepository sessionRepository, GroupRepository groupRepository, UserMapper userMapper,
+      SessionMapper sessionMapper,
+      UserAttributeMapper userAttributeMapper) {
     this.accountingService = accountingService;
     this.ldapUserUtil = ldapUserUtil;
     this.userRepository = userRepository;
     this.userAttributeRepository = userAttributeRepository;
     this.sessionRepository = sessionRepository;
     this.groupRepository = groupRepository;
-    this.mapper = mapper;
+    this.userMapper = userMapper;
+    this.sessionMapper = sessionMapper;
+    this.userAttributeMapper = userAttributeMapper;
   }
 
   public String createUser(UserDTO dto) {
 //    User user = ConverterUtil.userDTOToUser(dto);
-    User user = mapper.mapToEntity(dto);
+    User user = userMapper.mapToEntity(dto);
     // Generate salt and hash password
     user.setSalt(RandomStringUtils.randomAlphanumeric(saltLength));
     String password = user.getSalt() + dto.getPassword();
@@ -141,7 +150,7 @@ public class UserService {
 //    User user = User.find(userID, em);
     User user = userRepository.fetchById(userID);
 
-    return ConverterUtil.userToUserDTO(user);
+    return userMapper.mapToDTO(user);
   }
 
   public Set<UserDTO> getUsersById(Collection<String> userIDs) {
@@ -156,7 +165,7 @@ public class UserService {
     Predicate predicate = qUser.id.in(userIDs);
 
     return userRepository.findAll(predicate).stream()
-        .map(ConverterUtil::userToUserDTO)
+        .map(userMapper::mapToDTO)
         .collect(Collectors.toSet());
   }
 
@@ -172,13 +181,13 @@ public class UserService {
     Predicate predicate = qUser.id.in(userIDs);
 
     return userRepository.findAll(predicate).stream()
-        .map(ConverterUtil::userToUserDTO)
+        .map(userMapper::mapToDTO)
         .collect(Collectors.toMap(UserDTO::getId,dto -> dto));
   }
 
   public UserDTO getUserByName(String userName) {
 //    return ConverterUtil.userToUserDTO(User.findByUsername(userName, em));
-    return ConverterUtil.userToUserDTO(userRepository.findByUsername(userName));
+    return userMapper.mapToDTO(userRepository.findByUsername(userName));
   }
 
   public void updateUserStatus(String userID, byte status) {
@@ -260,7 +269,7 @@ public class UserService {
 
     // Create a DTO representation of the user and populate the session Id of the session that was
     // just created.
-    final UserDTO userDTO = ConverterUtil.userToUserDTO(user);
+    final UserDTO userDTO = userMapper.mapToDTO(user);
     userDTO.setSessionId(sessionId);
 
     return userDTO;
@@ -305,12 +314,9 @@ public class UserService {
 //
 //    List<Session> queryResult = q.getResultList();
     Predicate predicate = qSession.user.id.eq(userID).and(qSession.terminatedOn.isNull());
-    List<Session> queryResult = sessionRepository
-        .findAll(predicate, Sort.by("createdOn").ascending());
-    List<SessionDTO> retVal = new ArrayList<>(queryResult.size());
-    for (Session session : queryResult) {
-      retVal.add(ConverterUtil.sessionToSessionDTO(session));
-    }
+//    List<SessionDTO> retVal = new ArrayList<>(queryResult.size());
+    List<SessionDTO> retVal = sessionMapper.mapToDTO(sessionRepository
+        .findAll(predicate, Sort.by("createdOn").ascending()));
 
     return retVal.isEmpty() ? null : retVal;
   }
@@ -413,7 +419,7 @@ public class UserService {
   public UserAttributeDTO getAttribute(String userID, String attributeName) {
 //    UserAttribute attribute = User.findAttribute(userID, attributeName, em);
     UserAttribute attribute = userAttributeRepository.findByUserIdAndName(userID, attributeName);
-    return ConverterUtil.userAttributeToUserAttributeDTO(attribute);
+    return userAttributeMapper.mapToDTO(attribute);
   }
 
   public Set<String> getUserIDsForAttribute(Collection<String> userIDs,
@@ -537,7 +543,7 @@ public class UserService {
   private List<UserDTO> listUsers(Predicate predicate) {
 
     return userRepository.findAll(predicate).stream()
-        .map(ConverterUtil::userToUserDTO)
+        .map(userMapper::mapToDTO)
         .collect(Collectors.toList());
   }
 
@@ -573,7 +579,7 @@ public class UserService {
 
   private Page<UserDTO> listUsersPaginated(Predicate predicate, Pageable pageable){
 
-    return userRepository.findAll(predicate, pageable).map(ConverterUtil::userToUserDTO);
+    return userRepository.findAll(predicate, pageable).map(userMapper::mapToDTO);
   }
 
 //  public long findUserCount(UserSearchCriteria criteria) {
@@ -793,9 +799,8 @@ public class UserService {
     Predicate predicate = quserAttribute.name.eq(attributeName)
         .and(quserAttribute.data.eq(attributeName));
     // convert Set to List
-    Set<UserAttributeDTO> set = ConverterUtil
-        .userAttributesToUserAttributeDTOSet(userAttributeRepository.findAll(predicate));
-    ArrayList<UserAttributeDTO> list = new ArrayList<UserAttributeDTO>(set);
+    List<UserAttributeDTO> qResult = userAttributeMapper.mapToDTO(userAttributeRepository.findAll(predicate));
+    ArrayList<UserAttributeDTO> list = new ArrayList<UserAttributeDTO>(qResult);
     //in case of no user exists with this user attribute value	or there is only the given user
     if ((list.size() == 1 && list.get(0).getUserId().equals(userID)) || (list.isEmpty())) {
       isAttributeValueUnique = true;
