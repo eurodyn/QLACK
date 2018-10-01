@@ -71,7 +71,7 @@ public final class ConverterUtil {
 //    Audit alLog = null;
 //    if (null != log) {
 //      alLog = new Audit();
-//      alLog.setTraceId(getAuditTraceObject(log));
+//      alLog.setTrace(getAuditTraceObject(log));
 //      if (null != log.getCreatedOn()) {
 //        alLog.setCreatedOn(log.getCreatedOn().getTime());
 //      }
@@ -100,8 +100,8 @@ public final class ConverterUtil {
 //    AuditLogDTO alLog = null;
 //    if (null != log) {
 //      alLog = new AuditLogDTO();
-//      if (setTraceData && null != log.getTraceId()) {
-//        alLog.setTraceData(log.getTraceId().getTraceData());
+//      if (setTraceData && null != log.getTrace()) {
+//        alLog.setTraceData(log.getTrace().getTraceData());
 //      }
 //      if (null != log.getCreatedOn()) {
 //        alLog.setCreatedOn(new Date(log.getCreatedOn()));

@@ -1,6 +1,7 @@
 package com.eurodyn.qlack.fuse.audit.service;
 
 import com.eurodyn.qlack.fuse.audit.dto.AuditDTO;
+import com.eurodyn.qlack.fuse.audit.dto.AuditTraceDTO;
 import com.eurodyn.qlack.fuse.audit.mappers.AuditMapper;
 import com.eurodyn.qlack.fuse.audit.model.Audit;
 import com.eurodyn.qlack.fuse.audit.repository.AuditLevelRepository;
@@ -86,7 +87,7 @@ public class AuditService {
           traceDataStr = e.getLocalizedMessage();
         }
       }
-      dto.setTraceData(traceDataStr);
+      dto.setTrace(new AuditTraceDTO(traceDataStr));
     }
     return audit(dto);
   }
@@ -100,7 +101,7 @@ public class AuditService {
     dto.setShortDescription(description);
     dto.setPrinSessionId(sessionID);
     if (auditProperties.isTraceData()) {
-      dto.setTraceData(traceData);
+      dto.setTrace(new AuditTraceDTO(traceData));
     }
     audit(dto);
   }
@@ -114,9 +115,9 @@ public class AuditService {
     Audit alAudit = auditMapper.mapToEntity(audit);
 //    alAudit.setLevelId(AuditLevel.findByName(em, audit.getLevel()));
     alAudit.setLevelId(auditLevelRepository.findByName(audit.getLevel()));
-    if (null != alAudit.getTraceId()) {
-//      em.persist(alAudit.getTraceId());
-      auditTraceRepository.save(alAudit.getTraceId());
+    if (null != alAudit.getTrace()) {
+//      em.persist(alAudit.getTrace());
+      auditTraceRepository.save(alAudit.getTrace());
     }
 //    em.persist(alAudit);
     auditRepository.save(alAudit);
@@ -137,9 +138,9 @@ public class AuditService {
 //      alAudit.setLevelId(AuditLevel.findByName(em, audit.getLevel()));
       alAudit.setLevelId(auditLevelRepository.findByName(audit.getLevel()));
       alAudit.setCorrelationId(correlationId);
-      if (null != alAudit.getTraceId()) {
-//        em.persist(alAudit.getTraceId());
-        auditTraceRepository.save(alAudit.getTraceId());
+      if (null != alAudit.getTrace()) {
+//        em.persist(alAudit.getTrace());
+        auditTraceRepository.save(alAudit.getTrace());
       }
 //      em.persist(alAudit);
       auditRepository.save(alAudit);

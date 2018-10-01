@@ -29,5 +29,5 @@ public class AuditDTO extends AuditBaseDTO {
 
   private String level;
 
-  private String traceData;
+  private AuditTraceDTO trace;
 }

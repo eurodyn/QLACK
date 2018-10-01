@@ -20,7 +20,7 @@ public class Audit extends AuditBaseEntity{
   private AuditLevel levelId;
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "trace_id")
-  private AuditTrace traceId;
+  private AuditTrace trace;
   @Column(name = "prin_session_id")
   private String prinSessionId;
   @Column(name = "short_description")
