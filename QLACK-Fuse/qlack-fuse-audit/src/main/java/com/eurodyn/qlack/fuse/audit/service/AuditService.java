@@ -120,6 +120,9 @@ public class AuditService {
       auditTraceRepository.save(alAudit.getTrace());
     }
 //    em.persist(alAudit);
+    if(alAudit.getCreatedOn() == null){
+      alAudit.setCreatedOn(Calendar.getInstance().getTimeInMillis());
+    }
     auditRepository.save(alAudit);
     return alAudit.getId();
   }
@@ -143,6 +146,9 @@ public class AuditService {
         auditTraceRepository.save(alAudit.getTrace());
       }
 //      em.persist(alAudit);
+      if(alAudit.getCreatedOn() == null){
+        alAudit.setCreatedOn(Calendar.getInstance().getTimeInMillis());
+      }
       auditRepository.save(alAudit);
       uuids.add(alAudit.getId());
     }
