@@ -3,7 +3,6 @@ package com.eurodyn.qlack.fuse.audit.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -15,10 +14,7 @@ import lombok.Setter;
 @Table(name = "al_audit")
 @Getter
 @Setter
-public class Audit {
-
-  @Id
-  private String id;
+public class Audit extends AuditBaseEntity{
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "level_id")
   private AuditLevel levelId;
@@ -47,7 +43,7 @@ public class Audit {
   private String opt3;
 
   public Audit() {
-    id = java.util.UUID.randomUUID().toString();
+    setId(java.util.UUID.randomUUID().toString());
   }
 
 }

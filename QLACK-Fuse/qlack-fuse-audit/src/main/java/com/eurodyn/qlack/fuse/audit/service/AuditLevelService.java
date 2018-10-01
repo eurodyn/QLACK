@@ -3,9 +3,8 @@ package com.eurodyn.qlack.fuse.audit.service;
 
 import com.eurodyn.qlack.fuse.audit.dto.AuditLevelDTO;
 import com.eurodyn.qlack.fuse.audit.model.AuditLevel;
+import com.eurodyn.qlack.fuse.audit.repository.AuditLevelRepository;
 import com.eurodyn.qlack.fuse.audit.util.ConverterUtil;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -23,14 +22,21 @@ public class AuditLevelService {
     .getLogger(AuditLevelService.class.getSimpleName());
 
   // Reference to the persistence context.
-  @PersistenceContext
-  private EntityManager em;
+//  @PersistenceContext
+//  private EntityManager em;
+
+  private final AuditLevelRepository auditLevelRepository;
+
+  public AuditLevelService(AuditLevelRepository auditLevelRepository) {
+    this.auditLevelRepository = auditLevelRepository;
+  }
 
   public String addLevel(AuditLevelDTO level) {
     LOGGER.log(Level.FINER, "Adding custom Audit level ''{0}''.", level);
     AuditLevel alLevel = ConverterUtil.convertToAuditLevelModel(level);
     alLevel.setCreatedOn(System.currentTimeMillis());
-    em.persist(alLevel);
+//    em.persist(alLevel);
+    auditLevelRepository.save(alLevel);
     return alLevel.getId();
   }
 
@@ -45,26 +51,30 @@ public class AuditLevelService {
   public void deleteLevelById(String levelId) {
     LOGGER.log(Level.FINER, "Deleting Audit level with id ''{0}''.",
       levelId);
-    em.remove(em.find(AuditLevel.class, levelId));
+//    em.remove(em.find(AuditLevel.class, levelId));
+    auditLevelRepository.delete(auditLevelRepository.fetchById(levelId));
   }
 
   public void deleteLevelByName(String levelName) {
     LOGGER.log(Level.FINER, "Deleting Audit level with name ''{0}''.",
       levelName);
-    em.remove(AuditLevel.findByName(em, levelName));
+//    em.remove(AuditLevel.findByName(em, levelName));
+    auditLevelRepository.delete(auditLevelRepository.findByName(levelName));
   }
 
   public void updateLevel(AuditLevelDTO level) {
     LOGGER.log(Level.FINER, "Updating Audit level ''{0}'',", level);
     AuditLevel lev = ConverterUtil.convertToAuditLevelModel(level);
-    em.merge(lev);
+//    em.merge(lev);
+    auditLevelRepository.save(lev);
     clearAuditLevelCache();
   }
 
   public AuditLevelDTO getAuditLevelByName(String levelName) {
     LOGGER.log(Level.FINER, "Searching Audit level by name ''{0}''.",
       levelName);
-    return ConverterUtil.convertToAuditLevelDTO(AuditLevel.findByName(em, levelName));
+//    return ConverterUtil.convertToAuditLevelDTO(AuditLevel.findByName(em, levelName));
+    return ConverterUtil.convertToAuditLevelDTO(auditLevelRepository.findByName(levelName));
   }
 
   public void clearAuditLevelCache() {
@@ -73,7 +83,8 @@ public class AuditLevelService {
 
   public List<AuditLevelDTO> listAuditLevels() {
     LOGGER.log(Level.FINER, "Retrieving all audit levels");
-    return ConverterUtil.convertToAuditLevelList(AuditLevel.findAll(em));
+//    return ConverterUtil.convertToAuditLevelList(AuditLevel.findAll(em));
+    return ConverterUtil.convertToAuditLevelList(auditLevelRepository.findAll());
   }
 
 }

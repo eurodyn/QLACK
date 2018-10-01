@@ -3,28 +3,25 @@ package com.eurodyn.qlack.fuse.audit.service;
 import com.eurodyn.qlack.fuse.audit.dto.AuditLogDTO;
 import com.eurodyn.qlack.fuse.audit.mappers.AuditMapper;
 import com.eurodyn.qlack.fuse.audit.model.Audit;
-import com.eurodyn.qlack.fuse.audit.model.AuditLevel;
+import com.eurodyn.qlack.fuse.audit.repository.AuditLevelRepository;
 import com.eurodyn.qlack.fuse.audit.repository.AuditRepository;
+import com.eurodyn.qlack.fuse.audit.repository.AuditTraceRepository;
 import com.eurodyn.qlack.fuse.audit.util.AuditProperties;
 import com.eurodyn.qlack.fuse.audit.util.ConverterUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.types.Predicate;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 @Service
 @Transactional
@@ -36,20 +33,26 @@ public class AuditService {
 
   private static final ObjectMapper mapper = new ObjectMapper();
 
-  @PersistenceContext
-  private EntityManager em;
+//  @PersistenceContext
+//  private EntityManager em;
 
   // Service references.
   private AuditProperties auditProperties;
   private AuditRepository auditRepository;
   private AuditMapper auditMapper;
+  private final AuditLevelRepository auditLevelRepository;
+  private final AuditTraceRepository auditTraceRepository;
 
   @Autowired
   public AuditService(AuditProperties auditProperties,
-      AuditRepository auditRepository, AuditMapper auditMapper) {
+      AuditRepository auditRepository, AuditMapper auditMapper,
+      AuditLevelRepository auditLevelRepository,
+      AuditTraceRepository auditTraceRepository) {
     this.auditProperties = auditProperties;
     this.auditRepository = auditRepository;
     this.auditMapper = auditMapper;
+    this.auditLevelRepository = auditLevelRepository;
+    this.auditTraceRepository = auditTraceRepository;
   }
 
   public void audit(String level, String event, String groupName,
@@ -109,11 +112,14 @@ public class AuditService {
       audit.setCreatedOn(new Date());
     }
     Audit alAudit = ConverterUtil.convertToAuditLogModel(audit);
-    alAudit.setLevelId(AuditLevel.findByName(em, audit.getLevel()));
+//    alAudit.setLevelId(AuditLevel.findByName(em, audit.getLevel()));
+    alAudit.setLevelId(auditLevelRepository.findByName(audit.getLevel()));
     if (null != alAudit.getTraceId()) {
-      em.persist(alAudit.getTraceId());
+//      em.persist(alAudit.getTraceId());
+      auditRepository.save(alAudit);
     }
-    em.persist(alAudit);
+//    em.persist(alAudit);
+    auditRepository.save(alAudit);
     return alAudit.getId();
   }
 
@@ -127,12 +133,15 @@ public class AuditService {
         audit.setCreatedOn(new Date());
       }
       Audit alAudit = ConverterUtil.convertToAuditLogModel(audit);
-      alAudit.setLevelId(AuditLevel.findByName(em, audit.getLevel()));
+//      alAudit.setLevelId(AuditLevel.findByName(em, audit.getLevel()));
+      alAudit.setLevelId(auditLevelRepository.findByName(audit.getLevel()));
       alAudit.setCorrelationId(correlationId);
       if (null != alAudit.getTraceId()) {
-        em.persist(alAudit.getTraceId());
+//        em.persist(alAudit.getTraceId());
+        auditTraceRepository.save(alAudit.getTraceId());
       }
-      em.persist(alAudit);
+//      em.persist(alAudit);
+      auditRepository.save(alAudit);
       uuids.add(alAudit.getId());
     }
 
@@ -141,36 +150,42 @@ public class AuditService {
 
   public void deleteAudit(String id) {
     LOGGER.log(Level.FINER, "Deleting audit ''{0}''.", id);
-    em.remove(em.find(Audit.class, id));
+//    em.remove(em.find(Audit.class, id));
+    auditRepository.delete(auditRepository.fetchById(id));
   }
 
   public void truncateAudits() {
     LOGGER.log(Level.FINER, "Clearing all audit log data.");
-    Query query = em.createQuery("DELETE FROM Audit a");
-    query.executeUpdate();
+//    Query query = em.createQuery("DELETE FROM Audit a");
+//    query.executeUpdate();
+    auditRepository.deleteAll();
   }
 
   public void truncateAudits(Date createdOn) {
     LOGGER.log(Level.FINER, "Clearing audit log data before {0}",
-        createdOn.toString());
-    Query query = em
-        .createQuery("DELETE FROM Audit a WHERE a.createdOn < :createdOn");
-    query.setParameter("createdOn", createdOn.getTime());
-    query.executeUpdate();
+        createdOn);
+//    Query query = em
+//        .createQuery("DELETE FROM Audit a WHERE a.createdOn < :createdOn");
+//    query.setParameter("createdOn", createdOn.getTime());
+//    query.executeUpdate();
+    auditRepository.deleteByCreatedOnBefore(createdOn.toInstant().toEpochMilli());
   }
 
   public void truncateAudits(long retentionPeriod) {
     LOGGER.log(Level.FINER, "Clearing audit log data older than {0}",
         String.valueOf(retentionPeriod));
-    Query query = em
-        .createQuery("DELETE FROM Audit a WHERE a.createdOn < :createdOn");
-    query.setParameter("createdOn", Calendar.getInstance()
+//    Query query = em
+//        .createQuery("DELETE FROM Audit a WHERE a.createdOn < :createdOn");
+//    query.setParameter("createdOn", Calendar.getInstance()
+//        .getTimeInMillis() - retentionPeriod);
+//    query.executeUpdate();
+    auditRepository.deleteByCreatedOnBefore(Calendar.getInstance()
         .getTimeInMillis() - retentionPeriod);
-    query.executeUpdate();
   }
 
   public AuditLogDTO getAuditById(String auditId) {
-    Audit log = em.find(Audit.class, auditId);
+//    Audit log = em.find(Audit.class, auditId);
+    Audit log  = auditRepository.fetchById(auditId);
 
     return ConverterUtil.convertToAuditLogDTO(log);
   }
