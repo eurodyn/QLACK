@@ -1,39 +1,5 @@
 package com.eurodyn.qlack.fuse.lexicon;
 
-import com.eurodyn.qlack.fuse.lexicon.criteria.KeySearchCriteria;
-import com.eurodyn.qlack.fuse.lexicon.criteria.KeySearchCriteria.SortType;
-import com.eurodyn.qlack.fuse.lexicon.dto.KeyDTO;
-import com.eurodyn.qlack.fuse.lexicon.mappers.KeyMapper;
-import com.eurodyn.qlack.fuse.lexicon.model.Data;
-import com.eurodyn.qlack.fuse.lexicon.model.Group;
-import com.eurodyn.qlack.fuse.lexicon.model.Key;
-import com.eurodyn.qlack.fuse.lexicon.model.Language;
-import com.eurodyn.qlack.fuse.lexicon.model.QData;
-import com.eurodyn.qlack.fuse.lexicon.model.QKey;
-import com.eurodyn.qlack.fuse.lexicon.repository.DataRepository;
-import com.eurodyn.qlack.fuse.lexicon.repository.GroupRepository;
-import com.eurodyn.qlack.fuse.lexicon.repository.KeyRepository;
-import com.eurodyn.qlack.fuse.lexicon.repository.LanguageRepository;
-import com.eurodyn.qlack.fuse.lexicon.util.ConverterUtil;
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Root;
-import javax.transaction.Transactional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,6 +12,28 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import com.eurodyn.qlack.fuse.lexicon.criteria.KeySearchCriteria;
+import com.eurodyn.qlack.fuse.lexicon.criteria.KeySearchCriteria.SortType;
+import com.eurodyn.qlack.fuse.lexicon.dto.KeyDTO;
+import com.eurodyn.qlack.fuse.lexicon.mappers.KeyMapper;
+import com.eurodyn.qlack.fuse.lexicon.model.Data;
+import com.eurodyn.qlack.fuse.lexicon.model.Key;
+import com.eurodyn.qlack.fuse.lexicon.model.Language;
+import com.eurodyn.qlack.fuse.lexicon.model.QData;
+import com.eurodyn.qlack.fuse.lexicon.model.QKey;
+import com.eurodyn.qlack.fuse.lexicon.repository.DataRepository;
+import com.eurodyn.qlack.fuse.lexicon.repository.GroupRepository;
+import com.eurodyn.qlack.fuse.lexicon.repository.KeyRepository;
+import com.eurodyn.qlack.fuse.lexicon.repository.LanguageRepository;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
 
 @Transactional
 @Service
@@ -192,29 +180,23 @@ public class KeyService {
 		}
 		if (criteria.getGroupId() != null) {
 			predicate = ((BooleanBuilder) predicate).and(qKey.group.id.eq(criteria.getGroupId()));
-			// Predicate pr = cb.equal(root.get("group").get("id"), criteria.getGroupId());
 		}
 
-		// Apply pagination
-		if (criteria.getPaging() != null && criteria.getPaging().getCurrentPage() > -1) {
-			// TODO ADD pagable decide implementation
-//pageable
-//////////////////////////////////////////////////////////////////////////////			
-			
-		}
-		// query.setFirstResult((criteria.getPaging().getCurrentPage() - 1) *
-		// criteria.getPaging().getPageSize());
-		// query.setMaxResults(criteria.getPaging().getPageSize());
-		// Pageable pageable;
-
-		// Set ordering
-		if (criteria.isAscending()) {
-			return keyMapper.mapToDTO(keyRepository.findAll(predicate, Sort.by("name").ascending()).stream()
-					.collect(Collectors.toList()));
-		} else {
-			return keyMapper.mapToDTO(keyRepository.findAll(predicate, Sort.by("name").descending()).stream()
-					.collect(Collectors.toList()));
-		}
+		List<KeyDTO> dtos = new ArrayList<>();
+		keyRepository.findAll(predicate, criteria.getPageable()).forEach(entity -> {
+			KeyDTO dto = keyMapper.mapToDTO(entity);
+			if (includeTranslations) {
+				Map<String, String> translations = new HashMap<>();
+				if (entity.getData() != null) {
+					for (Data data : entity.getData()) {
+						translations.put(data.getLanguage().getId(), data.getValue());
+					}
+				}
+				dto.setTranslations(translations);
+			}
+			dtos.add(dto);
+		});
+		return dtos;
 	}
   
 	   

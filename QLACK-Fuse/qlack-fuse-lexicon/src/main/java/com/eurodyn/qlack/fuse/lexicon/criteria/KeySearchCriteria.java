@@ -1,45 +1,49 @@
 package com.eurodyn.qlack.fuse.lexicon.criteria;
 
-import com.eurodyn.qlack.common.search.PagingParams;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import com.eurodyn.qlack.common.search.PagingParams;
+import com.eurodyn.qlack.fuse.lexicon.model.Key;
+import com.eurodyn.qlack.fuse.lexicon.model.Language;
+
+import lombok.Getter;
+import lombok.Setter;
+
+
+@Getter
+@Setter
 public class KeySearchCriteria {
 
   private String groupId;
   private String keyName;
   private boolean ascending = true;
-  private PagingParams paging;
+//  private PagingParams paging;
+  private Pageable pageable;
 
-  public String getGroupId() {
-    return groupId;
-  }
-
-  private void setGroupId(String groupId) {
-    this.groupId = groupId;
-  }
-
-  public String getKeyName() {
-    return keyName;
-  }
-
-  private void setKeyName(String keyName) {
-    this.keyName = keyName;
-  }
-
-  public boolean isAscending() {
-    return ascending;
-  }
-
-  private void setAscending(boolean ascending) {
-    this.ascending = ascending;
-  }
-
-  public PagingParams getPaging() {
-    return paging;
-  }
-
-  private void setPaging(PagingParams paging) {
-    this.paging = paging;
-  }
+//  public String getGroupId() {
+//    return groupId;
+//  }
+//
+//  private void setGroupId(String groupId) {
+//    this.groupId = groupId;
+//  }
+//
+//  public String getKeyName() {
+//    return keyName;
+//  }
+//
+//  private void setKeyName(String keyName) {
+//    this.keyName = keyName;
+//  }
+//
+//  public boolean isAscending() {
+//    return ascending;
+//  }
+//
+//  private void setAscending(boolean ascending) {
+//    this.ascending = ascending;
+//  }
 
   public enum SortType {
     ASCENDING,
@@ -49,7 +53,7 @@ public class KeySearchCriteria {
   public static class KeySearchCriteriaBuilder {
 
     private KeySearchCriteria criteria;
-    private PagingParams paging;
+    private Pageable pageable;
 
     private KeySearchCriteriaBuilder() {
       criteria = new KeySearchCriteria();
@@ -60,7 +64,7 @@ public class KeySearchCriteria {
     }
 
     public KeySearchCriteria build() {
-      criteria.setPaging(paging);
+      criteria.setPageable(pageable);
       return criteria;
     }
 
@@ -74,20 +78,16 @@ public class KeySearchCriteria {
       return this;
     }
 
-    public KeySearchCriteriaBuilder withPageSize(int pageSize) {
-      if (paging == null) {
-        paging = new PagingParams();
-      }
-      paging.setPageSize(pageSize);
+    public KeySearchCriteriaBuilder setPageSizeWithPageNum(int pageSize, int page) {
+    	  pageable = PageRequest.of(page, pageSize);
       return this;
     }
 
-    public KeySearchCriteriaBuilder getPage(int page) {
-      if (paging == null) {
-        paging = new PagingParams();
-      }
-      paging.setCurrentPage(page);
-      return this;
-    }
+//    public KeySearchCriteriaBuilder getPage(int page) {
+//      if (pageable == null) {
+//    	  pageable = PageRequest.of(page);
+//      }
+//      return this;
+//    }
   }
 }
