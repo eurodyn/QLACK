@@ -2,9 +2,9 @@ package com.eurodyn.qlack.fuse.audit.service;
 
 
 import com.eurodyn.qlack.fuse.audit.dto.AuditLevelDTO;
+import com.eurodyn.qlack.fuse.audit.mappers.AuditLevelMapper;
 import com.eurodyn.qlack.fuse.audit.model.AuditLevel;
 import com.eurodyn.qlack.fuse.audit.repository.AuditLevelRepository;
-import com.eurodyn.qlack.fuse.audit.util.ConverterUtil;
 import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -27,13 +27,17 @@ public class AuditLevelService {
 
   private final AuditLevelRepository auditLevelRepository;
 
-  public AuditLevelService(AuditLevelRepository auditLevelRepository) {
+  private final AuditLevelMapper mapper;
+
+  public AuditLevelService(AuditLevelRepository auditLevelRepository, AuditLevelMapper mapper) {
     this.auditLevelRepository = auditLevelRepository;
+    this.mapper = mapper;
   }
 
   public String addLevel(AuditLevelDTO level) {
     LOGGER.log(Level.FINER, "Adding custom Audit level ''{0}''.", level);
-    AuditLevel alLevel = ConverterUtil.convertToAuditLevelModel(level);
+//    AuditLevel alLevel = ConverterUtil.convertToAuditLevelModel(level);
+    AuditLevel alLevel = mapper.mapToEntity(level);
     alLevel.setCreatedOn(System.currentTimeMillis());
 //    em.persist(alLevel);
     auditLevelRepository.save(alLevel);
@@ -64,7 +68,8 @@ public class AuditLevelService {
 
   public void updateLevel(AuditLevelDTO level) {
     LOGGER.log(Level.FINER, "Updating Audit level ''{0}'',", level);
-    AuditLevel lev = ConverterUtil.convertToAuditLevelModel(level);
+//    AuditLevel lev = ConverterUtil.convertToAuditLevelModel(level);
+    AuditLevel lev = mapper.mapToEntity(level);
 //    em.merge(lev);
     auditLevelRepository.save(lev);
     clearAuditLevelCache();
@@ -74,7 +79,7 @@ public class AuditLevelService {
     LOGGER.log(Level.FINER, "Searching Audit level by name ''{0}''.",
       levelName);
 //    return ConverterUtil.convertToAuditLevelDTO(AuditLevel.findByName(em, levelName));
-    return ConverterUtil.convertToAuditLevelDTO(auditLevelRepository.findByName(levelName));
+    return mapper.mapToDTO(auditLevelRepository.findByName(levelName));
   }
 
   public void clearAuditLevelCache() {
@@ -84,7 +89,7 @@ public class AuditLevelService {
   public List<AuditLevelDTO> listAuditLevels() {
     LOGGER.log(Level.FINER, "Retrieving all audit levels");
 //    return ConverterUtil.convertToAuditLevelList(AuditLevel.findAll(em));
-    return ConverterUtil.convertToAuditLevelList(auditLevelRepository.findAll());
+    return mapper.mapToDTO(auditLevelRepository.findAll());
   }
 
 }

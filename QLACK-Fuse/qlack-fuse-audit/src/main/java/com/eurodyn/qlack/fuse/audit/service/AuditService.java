@@ -1,13 +1,12 @@
 package com.eurodyn.qlack.fuse.audit.service;
 
-import com.eurodyn.qlack.fuse.audit.dto.AuditLogDTO;
+import com.eurodyn.qlack.fuse.audit.dto.AuditDTO;
 import com.eurodyn.qlack.fuse.audit.mappers.AuditMapper;
 import com.eurodyn.qlack.fuse.audit.model.Audit;
 import com.eurodyn.qlack.fuse.audit.repository.AuditLevelRepository;
 import com.eurodyn.qlack.fuse.audit.repository.AuditRepository;
 import com.eurodyn.qlack.fuse.audit.repository.AuditTraceRepository;
 import com.eurodyn.qlack.fuse.audit.util.AuditProperties;
-import com.eurodyn.qlack.fuse.audit.util.ConverterUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.types.Predicate;
 import java.util.ArrayList;
@@ -39,9 +38,9 @@ public class AuditService {
   // Service references.
   private AuditProperties auditProperties;
   private AuditRepository auditRepository;
-  private AuditMapper auditMapper;
   private final AuditLevelRepository auditLevelRepository;
   private final AuditTraceRepository auditTraceRepository;
+  private final AuditMapper auditMapper;
 
   @Autowired
   public AuditService(AuditProperties auditProperties,
@@ -71,7 +70,7 @@ public class AuditService {
 
   public String audit(String level, String event, String groupName, String description,
       String sessionID, Object traceData, String referenceId) {
-    AuditLogDTO dto = new AuditLogDTO();
+    AuditDTO dto = new AuditDTO();
     dto.setLevel(level);
     dto.setEvent(event);
     dto.setGroupName(groupName);
@@ -94,7 +93,7 @@ public class AuditService {
 
   public void audit(String level, String event, String groupName,
       String description, String sessionID, String traceData) {
-    AuditLogDTO dto = new AuditLogDTO();
+    AuditDTO dto = new AuditDTO();
     dto.setLevel(level);
     dto.setEvent(event);
     dto.setGroupName(groupName);
@@ -106,33 +105,35 @@ public class AuditService {
     audit(dto);
   }
 
-  public String audit(AuditLogDTO audit) {
+  public String audit(AuditDTO audit) {
     LOGGER.log(Level.FINER, "Adding audit ''{0}''.", audit);
     if (audit.getCreatedOn() == null) {
-      audit.setCreatedOn(new Date());
+      audit.setCreatedOn(Calendar.getInstance().getTimeInMillis());
     }
-    Audit alAudit = ConverterUtil.convertToAuditLogModel(audit);
+//    Audit alAudit = ConverterUtil.convertToAuditLogModel(audit);
+    Audit alAudit = auditMapper.mapToEntity(audit);
 //    alAudit.setLevelId(AuditLevel.findByName(em, audit.getLevel()));
     alAudit.setLevelId(auditLevelRepository.findByName(audit.getLevel()));
     if (null != alAudit.getTraceId()) {
 //      em.persist(alAudit.getTraceId());
-      auditRepository.save(alAudit);
+      auditTraceRepository.save(alAudit.getTraceId());
     }
 //    em.persist(alAudit);
     auditRepository.save(alAudit);
     return alAudit.getId();
   }
 
-  public List<String> audits(List<AuditLogDTO> auditList, String correlationId) {
+  public List<String> audits(List<AuditDTO> auditList, String correlationId) {
     LOGGER.log(Level.FINER, "Adding audits ''{0}''.", auditList);
 
     List<String> uuids = new ArrayList<>();
 
-    for (AuditLogDTO audit : auditList) {
+    for (AuditDTO audit : auditList) {
       if (audit.getCreatedOn() == null) {
-        audit.setCreatedOn(new Date());
+        audit.setCreatedOn(Calendar.getInstance().getTimeInMillis());
       }
-      Audit alAudit = ConverterUtil.convertToAuditLogModel(audit);
+//      Audit alAudit = ConverterUtil.convertToAuditLogModel(audit);
+      Audit alAudit = auditMapper.mapToEntity(audit);
 //      alAudit.setLevelId(AuditLevel.findByName(em, audit.getLevel()));
       alAudit.setLevelId(auditLevelRepository.findByName(audit.getLevel()));
       alAudit.setCorrelationId(correlationId);
@@ -183,15 +184,16 @@ public class AuditService {
         .getTimeInMillis() - retentionPeriod);
   }
 
-  public AuditLogDTO getAuditById(String auditId) {
+  public AuditDTO getAuditById(String auditId) {
 //    Audit log = em.find(Audit.class, auditId);
     Audit log  = auditRepository.fetchById(auditId);
 
-    return ConverterUtil.convertToAuditLogDTO(log);
+//    return ConverterUtil.convertToAuditDTO(log);
+    return auditMapper.mapToDTO(log);
   }
 
-  public Page<AuditLogDTO> getAuditLogs(Pageable pageable, Predicate predicate) {
-    return auditMapper.toAuditLogDTO(auditRepository.findAll(predicate, pageable));
+  public Page<AuditDTO> getAuditLogs(Pageable pageable, Predicate predicate) {
+    return auditMapper.toAuditDTO(auditRepository.findAll(predicate, pageable));
   }
 
   public List<String> getDistinctEventsForReferenceId(String referenceId) {

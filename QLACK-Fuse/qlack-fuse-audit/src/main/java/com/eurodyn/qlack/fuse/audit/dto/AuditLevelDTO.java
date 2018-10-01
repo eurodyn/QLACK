@@ -1,7 +1,5 @@
 package com.eurodyn.qlack.fuse.audit.dto;
 
-import java.io.Serializable;
-import java.util.Date;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,13 +7,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AuditLevelDTO implements Serializable {
+public class AuditLevelDTO extends AuditBaseDTO {
 
   private String name;
-  private String id;
   private String description;
   private String prinSessionId;
-  private Date createdOn;
+  private Long createdOn;
 
   /**
    * parameterized Constructor
