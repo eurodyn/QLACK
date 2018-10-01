@@ -1,6 +1,5 @@
 package com.eurodyn.qlack.fuse.lexicon;
 
-
 import com.eurodyn.qlack.fuse.lexicon.dto.GroupDTO;
 import com.eurodyn.qlack.fuse.lexicon.dto.KeyDTO;
 import com.eurodyn.qlack.fuse.lexicon.dto.LanguageDTO;
@@ -32,8 +31,8 @@ public class LexiconConfigService {
 
   private static final Logger LOGGER = Logger.getLogger(LexiconConfigService.class.getName());
 
-  @PersistenceContext
-  private EntityManager em;
+//  @PersistenceContext
+//  private EntityManager em;
 
   // Service references.
   private GroupService groupService;

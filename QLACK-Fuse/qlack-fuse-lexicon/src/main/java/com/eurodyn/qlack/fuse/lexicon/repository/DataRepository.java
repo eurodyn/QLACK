@@ -10,10 +10,10 @@ public interface DataRepository extends LexiconRepository<Data, String> {
 
 	Data findByKeyNameAndLanguageId(String keyName, String languageId);
 
-	Data findByKeyIdAndLocale(String keyId, String locale);
+	Data findByKeyIdAndLanguageLocale(String keyId, String locale);
 
-	Data findByKeyNameAndLocale(String keyName, String locale);
+	Data findByKeyNameAndLanguageLocale(String keyName, String locale);
 
-	List<Data> findByGroupIDAndLocale(String groupId, String locale);
+	List<Data> findByKeyGroupIdAndLanguageLocale(String groupId, String locale);
 
 }

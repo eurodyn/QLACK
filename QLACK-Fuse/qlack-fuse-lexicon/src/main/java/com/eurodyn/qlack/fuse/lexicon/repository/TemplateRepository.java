@@ -8,5 +8,7 @@ public interface TemplateRepository extends LexiconRepository<Template, String> 
 
 	List<Template> findByName(String name);
 	
-	Template findByNameAndLocale(String templateName, String locale);
+	Template findByNameAndLanguageLocale(String templateName, String locale);
+	
+	Template findByNameAndLanguageId(String templateName, String languageId);
 }

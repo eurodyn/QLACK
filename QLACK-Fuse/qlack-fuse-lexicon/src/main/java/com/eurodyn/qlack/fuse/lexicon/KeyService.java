@@ -3,14 +3,21 @@ package com.eurodyn.qlack.fuse.lexicon;
 import com.eurodyn.qlack.fuse.lexicon.criteria.KeySearchCriteria;
 import com.eurodyn.qlack.fuse.lexicon.criteria.KeySearchCriteria.SortType;
 import com.eurodyn.qlack.fuse.lexicon.dto.KeyDTO;
+import com.eurodyn.qlack.fuse.lexicon.mappers.KeyMapper;
 import com.eurodyn.qlack.fuse.lexicon.model.Data;
 import com.eurodyn.qlack.fuse.lexicon.model.Group;
 import com.eurodyn.qlack.fuse.lexicon.model.Key;
 import com.eurodyn.qlack.fuse.lexicon.model.Language;
 import com.eurodyn.qlack.fuse.lexicon.model.QData;
 import com.eurodyn.qlack.fuse.lexicon.model.QKey;
+import com.eurodyn.qlack.fuse.lexicon.repository.DataRepository;
+import com.eurodyn.qlack.fuse.lexicon.repository.GroupRepository;
+import com.eurodyn.qlack.fuse.lexicon.repository.KeyRepository;
+import com.eurodyn.qlack.fuse.lexicon.repository.LanguageRepository;
 import com.eurodyn.qlack.fuse.lexicon.util.ConverterUtil;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,15 +25,19 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -34,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -44,20 +56,38 @@ public class KeyService {
   QData qData = QData.data;
   QKey qKey = QKey.key;
 
-  @PersistenceContext
-  private EntityManager em;
+//  @PersistenceContext
+//  private EntityManager em;
+  private final KeyRepository keyRepository;
+  private final GroupRepository groupRepository;
+  private final DataRepository dataRepository; 
+  private final LanguageRepository languageRepository;
 
+  private KeyMapper keyMapper;
+  
+  @Autowired
+	public KeyService(KeyRepository keyRepository, GroupRepository groupRepository, KeyMapper keyMapper,
+			DataRepository dataRepository,  LanguageRepository languageRepository) {
+		this.keyRepository = keyRepository;
+		this.keyMapper = keyMapper;
+		this.groupRepository = groupRepository;
+		this.dataRepository = dataRepository;
+		this.languageRepository = languageRepository;
+	}
+  
+  
   public String createKey(KeyDTO key, boolean createDefaultTranslations) {
     // Create the new key.
     Key entity = new Key();
     entity.setName(key.getName());
     if (key.getGroupId() != null) {
-      entity.setGroup(Group.find(key.getGroupId(), em));
+    	entity.setGroup(groupRepository.fetchById(key.getGroupId()));
     }
-    em.persist(entity);
+    keyRepository.save(entity);
 
     if (createDefaultTranslations) {
-      List<Language> languages = Language.getAllLanguages(em);
+      List<Language> languages = languageRepository.findAll();
+    		  //Language.getAllLanguages(em);
       for (Language language : languages) {
         String translation = null;
         if (key.getTranslations() != null) {
@@ -94,16 +124,20 @@ public class KeyService {
 
   public void deleteKeys(Collection<String> keyIDs) {
     for (String keyID : keyIDs) {
-      em.remove(Key.find(keyID, em));
+    	keyRepository.deleteById(keyID);
+//      em.remove(Key.find(keyID, em));
     }
   }
 
   public void deleteKeysByGroupId(String groupId) {
-    new JPAQueryFactory(em).delete(qKey).where(qKey.group.id.eq(groupId)).execute();
+//    new JPAQueryFactory(em).delete(qKey).where(qKey.group.id.eq(groupId)).execute();
+	  Predicate predicate = qKey.group.id.eq(groupId);
+	  keyRepository.deleteAll(keyRepository.findAll(predicate));
   }
 
   public void renameKey(String keyID, String newName) {
-    Key key = Key.find(keyID, em);
+    Key key = keyRepository.fetchById(keyID);
+    		//Key.find(keyID, em);
     key.setName(newName);
   }
 
@@ -116,27 +150,78 @@ public class KeyService {
 
   public void moveKeys(Collection<String> keyIDs, String newGroupId) {
     for (String keyID : keyIDs) {
-      Key key = Key.find(keyID, em);
-      key.setGroup(Group.find(newGroupId, em));
+      Key key = keyRepository.fetchById(keyID);
+    		  //Key.find(keyID, em);
+      key.setGroup(groupRepository.fetchById(newGroupId));
+    		  //Group.find(newGroupId, em));
     }
   }
 
-  public KeyDTO getKeyByID(String keyID, boolean includeTranslations) {
-    return ConverterUtil.keyToKeyDTO(em.find(Key.class, keyID), includeTranslations);
-  }
+	public KeyDTO getKeyByID(String keyID, boolean includeTranslations) {
 
-  public KeyDTO getKeyByName(String keyName, String groupId, boolean includeTranslations) {
-    return ConverterUtil
-        .keyToKeyDTO(Key.findByName(keyName, groupId, em), includeTranslations);
-  }
+		Key key = keyRepository.fetchById(keyID);
+
+		if (includeTranslations) {
+			return keyMapper.mapToDTOwithTranslations(key);
+		} else {
+			return keyMapper.mapToDTO(key);
+		}
+		// ConverterUtil.keyToKeyDTO(em.find(Key.class, keyID), includeTranslations);
+	}
+
+	public KeyDTO getKeyByName(String keyName, String groupId, boolean includeTranslations) {
+
+		Key key = keyRepository.findByNameAndGroupId(keyName, groupId);
+		if (includeTranslations) {
+			return keyMapper.mapToDTOwithTranslations(key);
+		} else {
+			return keyMapper.mapToDTO(key);
+		}
+		// return ConverterUtil.keyToKeyDTO(Key.findByName(keyName, groupId, em),
+		// includeTranslations);
+
+	}
 
   public List<KeyDTO> findKeys(KeySearchCriteria criteria,
-      boolean includeTranslations) {
-    CriteriaBuilder cb = em.getCriteriaBuilder();
+			boolean includeTranslations) {
+
+		Predicate predicate = new BooleanBuilder();
+
+		if (criteria.getKeyName() != null) {
+			predicate = ((BooleanBuilder) predicate).and(qKey.name.eq(criteria.getKeyName()));
+		}
+		if (criteria.getGroupId() != null) {
+			predicate = ((BooleanBuilder) predicate).and(qKey.group.id.eq(criteria.getGroupId()));
+			// Predicate pr = cb.equal(root.get("group").get("id"), criteria.getGroupId());
+		}
+
+		// Apply pagination
+		if (criteria.getPaging() != null && criteria.getPaging().getCurrentPage() > -1) {
+			// TODO ADD pagable decide implementation
+//pageable
+//////////////////////////////////////////////////////////////////////////////			
+			
+		}
+		// query.setFirstResult((criteria.getPaging().getCurrentPage() - 1) *
+		// criteria.getPaging().getPageSize());
+		// query.setMaxResults(criteria.getPaging().getPageSize());
+		// Pageable pageable;
+
+		// Set ordering
+		if (criteria.isAscending()) {
+			return keyMapper.mapToDTO(keyRepository.findAll(predicate, Sort.by("name").ascending()).stream()
+					.collect(Collectors.toList()));
+		} else {
+			return keyMapper.mapToDTO(keyRepository.findAll(predicate, Sort.by("name").descending()).stream()
+					.collect(Collectors.toList()));
+		}
+	}
+  
+	   
+   /* CriteriaBuilder cb = em.getCriteriaBuilder();
     CriteriaQuery<Key> cq = cb.createQuery(Key.class);
     Root<Key> root = cq.from(Key.class);
-
-    // Add query criteria
+	 Add query criteria
     if (criteria.getKeyName() != null) {
       Predicate pr = cb.like(root.<String>get("name"), criteria.getKeyName());
       cq = addPredicate(cq, cb, pr);
@@ -145,7 +230,6 @@ public class KeyService {
       Predicate pr = cb.equal(root.get("group").get("id"), criteria.getGroupId());
       cq = addPredicate(cq, cb, pr);
     }
-
     // Set ordering
     Order order = null;
     if (criteria.isAscending()) {
@@ -163,11 +247,9 @@ public class KeyService {
           (criteria.getPaging().getCurrentPage() - 1) * criteria.getPaging().getPageSize());
       query.setMaxResults(criteria.getPaging().getPageSize());
     }
-
     return ConverterUtil.keyToKeyDTOList(query.getResultList(), includeTranslations);
   }
-
-  private <T> CriteriaQuery<T> addPredicate(CriteriaQuery<T> query,
+    private <T> CriteriaQuery<T> addPredicate(CriteriaQuery<T> query,
       CriteriaBuilder cb, Predicate pr) {
     CriteriaQuery<T> cq = query;
     if (cq.getRestriction() != null) {
@@ -177,19 +259,26 @@ public class KeyService {
     }
     return cq;
   }
+*/
+	    
+
 
   private void update(Data data) {
     data.setLastUpdatedOn(Instant.now().toEpochMilli());
-    em.merge(data);
+    dataRepository.save(data);
   }
 
   public void updateTranslation(String keyID, String languageID, String value) {
-    Key key = Key.find(keyID, em);
-    Data data = Data.findByKeyAndLanguageId(keyID, languageID, em);
+    Key key = keyRepository.fetchById(keyID);
+    
+    Data data = dataRepository.findByKeyAndLanguageId(keyID, languageID);
+    		//Data.findByKeyAndLanguageId(keyID, languageID, em);
+    
     if (data == null) {
       data = new Data();
       data.setKey(key);
-      data.setLanguage(Language.find(languageID, em));
+      data.setLanguage(languageRepository.fetchById(languageID));
+    		  //Language.find(languageID, em));
     }
     data.setValue(value);
     update(data);
@@ -203,37 +292,46 @@ public class KeyService {
   }
 
   public void updateTranslationByGroupId(String keyName, String value, String groupId,
-      String languageId) {
-    Data data = new JPAQueryFactory(em).selectFrom(qData).where(qData.key.name.eq(keyName)
-        .and(qData.key.group.id.eq(groupId))
-        .and(qData.language.id.eq(languageId))).fetchOne();
-    if (data == null) {
-      data = new Data();
-      data.setKey(Key.findByName(keyName, groupId, em));
-      data.setLanguage(Language.find(languageId, em));
-    }
-    data.setValue(value);
-    update(data);
-  }
+			String languageId) {
+
+		Predicate predicate = qData.key.name.eq(keyName).and(qData.key.group.id.eq(groupId))
+				.and(qData.language.id.eq(languageId));
+		Data data = dataRepository.findOne(predicate).get();
+
+		// Data data = new
+		// JPAQueryFactory(em).selectFrom(qData).where(qData.key.name.eq(keyName)
+		// .and(qData.key.group.id.eq(groupId))
+		// .and(qData.language.id.eq(languageId))
+		// ).fetchOne();
+
+		if (data == null) {
+			data = new Data();
+			data.setKey(keyRepository.findByNameAndGroupId(keyName, groupId));
+			data.setLanguage(languageRepository.fetchById(languageId));
+		}
+		data.setValue(value);
+		update(data);
+	}
 
   public void updateTranslationByKeyName(String keyName, String groupID, String languageID,
-      String value) {
-    Data data = Data.findByKeyNameAndLanguageId(keyName, languageID, em);
-    if (data == null) {
-      data = new Data();
-      data.setKey(Key.findByName(keyName, groupID, em));
-      data.setLanguage(Language.find(languageID, em));
-    }
-    data.setValue(value);
-    update(data);
-  }
+			String value) {
+		Data data = dataRepository.findByKeyNameAndLanguageId(keyName, languageID);
+		if (data == null) {
+			data = new Data();
+			data.setKey(keyRepository.findByNameAndGroupId(keyName, groupID));
+			data.setLanguage(languageRepository.fetchById(languageID));
+		}
+		data.setValue(value);
+		update(data);
+	}
 
   public void updateTranslationByLocale(String keyID, String locale, String value) {
-    Data data = Data.findByKeyIdAndLocale(keyID, locale, em);
+
+	  Data data = dataRepository.findByKeyIdAndLanguageLocale(keyID, locale);
     if (data == null) {
       data = new Data();
-      data.setKey(Key.find(keyID, em));
-      data.setLanguage(Language.findByLocale(locale, em));
+      data.setKey(keyRepository.fetchById(keyID));
+      data.setLanguage(languageRepository.findByLocale(locale));
     }
     data.setValue(value);
     update(data);
@@ -270,16 +368,16 @@ public class KeyService {
     }
   }
 
-  public String getTranslation(String keyName, String locale) {
-    Data data = Data.findByKeyNameAndLocale(keyName, locale, em);
-    if (data == null) {
-      return null;
-    }
-    return data.getValue();
-  }
+	public String getTranslation(String keyName, String locale) {
+		Data data = dataRepository.findByKeyNameAndLanguageLocale(keyName, locale);
+		if (data == null) {
+			return null;
+		}
+		return data.getValue();
+	}
 
   public Map<String, String> getTranslationsForKeyName(String keyName, String groupID) {
-    Key key = Key.findByName(keyName, groupID, em);
+    Key key = keyRepository.findByNameAndGroupId(keyName, groupID); 
     Map<String, String> translations = new HashMap<>();
     for (Data data : key.getData()) {
       translations.put(data.getLanguage().getLocale(), data.getValue());
@@ -287,15 +385,23 @@ public class KeyService {
     return translations;
   }
 
-  public String getTranslationForKeyGroupLocale(String keyName, String groupName, String locale) {
-    List<String> list = new JPAQueryFactory(em)
-        .select(qData.value).from(qData)
-        .where(
-            qData.key.name.eq(keyName)
-                .and(qData.key.group.title.eq(groupName))
-                .and(qData.language.locale.eq(locale))
-        )
-        .fetch();
+	public String getTranslationForKeyGroupLocale(String keyName, String groupName, String locale) {
+
+	  Predicate predicate = qData.key.name.eq(keyName).and(qData.key.group.title.eq(groupName)).and(qData.language.locale.eq(locale));
+	  List<Data> data  = dataRepository.findAll(predicate);
+	  List<String> list = Collections.emptyList();
+	  
+	  for (Data d: data) {
+		  list.add(d.getValue());
+	  }
+//    List<String> list = new JPAQueryFactory(em)
+//        .select(qData.value).from(qData)
+//        .where(
+//            qData.key.name.eq(keyName)
+//                .and(qData.key.group.title.eq(groupName))
+//                .and(qData.language.locale.eq(locale))
+//        ).fetch();
+    
     if (list != null && !list.isEmpty()) {
       return list.get(0);
     }
@@ -303,7 +409,8 @@ public class KeyService {
   }
 
   public Map<String, String> getTranslationsForLocale(String locale) {
-    Language language = Language.findByLocale(locale, em);
+	  Language language = languageRepository.findByLocale(locale);
+//    Language language = Language.findByLocale(locale, em);
     Map<String, String> translations = new HashMap<>();
     for (Data data : language.getData()) {
       translations.put(data.getKey().getName(), data.getValue());
@@ -312,7 +419,9 @@ public class KeyService {
   }
 
   public Map<String, String> getTranslationsForGroupAndLocale(String groupId, String locale) {
-    List<Data> dataList = Data.findByGroupIDAndLocale(groupId, locale, em);
+    //List<Data> dataList = Data.findByGroupIDAndLocale(groupId, locale, em);
+	  List<Data> dataList = dataRepository.findByKeyGroupIdAndLanguageLocale(groupId, locale);
+    
     Map<String, String> translations = new HashMap<>();
     for (Data data : dataList) {
       translations.put(data.getKey().getName(), data.getValue());
@@ -320,27 +429,38 @@ public class KeyService {
     return translations;
   }
 
-  public Map<String, String> getTranslationsForGroupNameAndLocale(String groupName, String locale) {
+  
+  
+	public Map<String, String> getTranslationsForGroupNameAndLocale(String groupName, String locale) {
 
-    List<Tuple> listTuples = new JPAQueryFactory(em)
-        .select(qData.key.name, qData.value)
-        .from(qData)
-        .leftJoin(qData.key)
-        .where(
-            (qData.key.group.title.eq(groupName))
-                .and(qData.language.locale.eq(locale))
-        )
-        .fetch();
+		Predicate predicate = (qData.key.group.title.eq(groupName)).and(qData.language.locale.eq(locale));
 
-    Map<String, String> translations = new HashMap<>();
-    if (listTuples != null) {
-      for (Tuple t : listTuples) {
-        translations.put(t.get(0, String.class), t.get(1, String.class));
-      }
-    }
+		return dataRepository.findAll(predicate).stream()
+				.collect(Collectors.toMap(a -> a.getKey().getName(), a -> a.getValue()));
 
-    return translations;
-  }
+		// Map<String, String> listTuples =
+		// return userRepository.findAll(predicate).stream()
+		// .map(userMapper::mapToDTO)
+		// .collect(Collectors.toMap(UserDTO::getId,dto -> dto));
+
+		// List<Tuple> listTuples
+		// new JPAQueryFactory(em)
+		// .select(qData.key.name, qData.value)
+		// .from(qData)
+		// .leftJoin(qData.key)
+		// .where(
+		// (qData.key.group.title.eq(groupName))
+		// .and(qData.language.locale.eq(locale))
+		// ).fetch();
+
+//		Map<String, String> translations = new HashMap<>();
+//		if (listTuples != null) {
+//			for (Tuple t : listTuples) {
+//				translations.put(t.get(0, String.class), t.get(1, String.class));
+//			}
+//		}
+//		return translations;
+	}
 
   private SortedSet<TranslationKV> getSortedDataForGroupNameAndLocale(String groupName,
       String locale, SortType sortType) {
