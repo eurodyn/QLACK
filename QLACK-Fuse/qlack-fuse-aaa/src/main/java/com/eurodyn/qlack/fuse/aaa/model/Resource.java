@@ -50,23 +50,6 @@ public class Resource extends AAAModel {
     setId(UUID.randomUUID().toString());
   }
 
-//  public static Resource find(String resourceID, EntityManager em) {
-//    return em.find(Resource.class, resourceID);
-//  }
-
-//  public static Resource findByObjectID(final String resourceObjectID, final EntityManager em) {
-//    Resource retVal = null;
-//
-//    Query q = em.createQuery("select r from com.eurodyn.qlack.fuse.aaa.model.Resource r where r.objectId = :objectID")
-//        .setParameter("objectID", resourceObjectID);
-//    List<Resource> l = q.getResultList();
-//    if (!l.isEmpty()) {
-//      retVal = l.get(0);
-//    }
-//
-//    return retVal;
-//  }
-
   public UserHasOperation addUserHasOperation(UserHasOperation userHasOperation) {
     if (getUserHasOperations() == null) {
       setUserHasOperations(new ArrayList<UserHasOperation>());

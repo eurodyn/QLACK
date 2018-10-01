@@ -22,8 +22,6 @@ import org.springframework.validation.annotation.Validated;
 @Transactional
 public class OpTemplateService {
 
-//  @PersistenceContext
-//  private EntityManager em;
 
   // Repositories
   private final OpTemplateRepository opTemplateRepository;
@@ -46,10 +44,6 @@ public class OpTemplateService {
   }
 
   public String createTemplate(OpTemplateDTO templateDTO) {
-//    OpTemplate template = new OpTemplate();
-//    template.setName(templateDTO.getName());
-//    template.setDescription(templateDTO.getDescription());
-//    em.persist(template);
     OpTemplate template = opTemplateMapper.mapToEntity(templateDTO);
     opTemplateRepository.save(template);
 
@@ -57,99 +51,74 @@ public class OpTemplateService {
   }
 
   public void deleteTemplateByID(String templateID) {
-//    em.remove(OpTemplate.find(templateID, em));
     opTemplateRepository.delete(opTemplateRepository.fetchById(templateID));
   }
 
   public void deleteTemplateByName(String templateName) {
-//    em.remove(OpTemplate.findByName(templateName, em));
     opTemplateRepository.delete(opTemplateRepository.findByName(templateName));
   }
 
   public OpTemplateDTO getTemplateByID(String templateID) {
-//    return ConverterUtil.opTemplateToOpTemplateDTO(OpTemplate.find(templateID, em));
     return opTemplateMapper.mapToDTO(opTemplateRepository.fetchById(templateID));
   }
 
   public OpTemplateDTO getTemplateByName(String templateName) {
-//    return ConverterUtil.opTemplateToOpTemplateDTO(OpTemplate.findByName(templateName, em));
     return opTemplateMapper.mapToDTO(opTemplateRepository.findByName(templateName));
   }
 
   public void addOperation(String templateID, String operationName,
       boolean isDeny) {
-//    OpTemplateHasOperation tho = OpTemplateHasOperation
-//        .findByTemplateIDAndOperationName(templateID, operationName, em);
     OpTemplateHasOperation tho = opTemplateHasOperationRepository
         .findByTemplateIdAndOperationName(templateID, operationName);
     if (tho != null) {
       tho.setDeny(isDeny);
     } else {
-//      OpTemplate template = OpTemplate.find(templateID, em);
       OpTemplate template = opTemplateRepository.fetchById(templateID);
-//      Operation operation = Operation.findByName(operationName, em);
       Operation operation = operationRepository.findByName(operationName);
       tho = new OpTemplateHasOperation();
       tho.setDeny(isDeny);
       template.addOpTemplateHasOperation(tho);
       operation.addOpTemplateHasOperation(tho);
-//      em.persist(tho);
       opTemplateHasOperationRepository.save(tho);
     }
   }
 
   public void addOperation(String templateID, String operationName,
       String resourceID, boolean isDeny) {
-//    OpTemplateHasOperation tho = OpTemplateHasOperation
-//        .findByTemplateAndResourceIDAndOperationName(
-//            templateID, operationName, resourceID, em);
     OpTemplateHasOperation tho = opTemplateHasOperationRepository
         .findByTemplateIdAndResourceIdAndOperationName(
             templateID, resourceID, operationName);
     if (tho != null) {
       tho.setDeny(isDeny);
     } else {
-//      OpTemplate template = OpTemplate.find(templateID, em);
       OpTemplate template = opTemplateRepository.fetchById(templateID);
-//      Operation operation = Operation.findByName(operationName, em);
       Operation operation = operationRepository.findByName(operationName);
-//      Resource resource = Resource.find(resourceID, em);
       Resource resource = resourceRepository.fetchById(resourceID);
       tho = new OpTemplateHasOperation();
       tho.setDeny(isDeny);
       template.addOpTemplateHasOperation(tho);
       operation.addOpTemplateHasOperation(tho);
       resource.addOpTemplateHasOperation(tho);
-//      em.persist(tho);
       opTemplateHasOperationRepository.save(tho);
     }
   }
 
   public void removeOperation(String templateID, String operationName) {
-//    OpTemplateHasOperation tho = OpTemplateHasOperation.findByTemplateIDAndOperationName(
-//        templateID, operationName, em);
     OpTemplateHasOperation tho = opTemplateHasOperationRepository.findByTemplateIdAndOperationName(
         templateID, operationName);
-//    em.remove(tho);
     opTemplateHasOperationRepository.delete(tho);
   }
 
   public void removeOperation(String templateID, String operationName,
       String resourceID) {
-//    OpTemplateHasOperation tho = OpTemplateHasOperation
-//        .findByTemplateAndResourceIDAndOperationName(
-//            templateID, operationName, resourceID, em);
     OpTemplateHasOperation tho = opTemplateHasOperationRepository
         .findByTemplateIdAndResourceIdAndOperationName(templateID, operationName, resourceID);
-//    em.remove(tho);
     opTemplateHasOperationRepository.delete(tho);
   }
 
   public Boolean getOperationAccess(String templateID, String operationName) {
     Boolean retVal = null;
 
-//    OpTemplateHasOperation tho = OpTemplateHasOperation.findByTemplateIDAndOperationName(
-//        templateID, operationName, em);
     OpTemplateHasOperation tho = opTemplateHasOperationRepository.findByTemplateIdAndOperationName(
         templateID, operationName);
     if (tho != null) {
@@ -163,9 +132,6 @@ public class OpTemplateService {
       String resourceID) {
     Boolean retVal = null;
 
-//    OpTemplateHasOperation tho = OpTemplateHasOperation
-//        .findByTemplateAndResourceIDAndOperationName(
-//            templateID, operationName, resourceID, em);
     OpTemplateHasOperation tho = opTemplateHasOperationRepository
         .findByTemplateIdAndResourceIdAndOperationName(
             templateID, resourceID, operationName);
@@ -178,7 +144,6 @@ public class OpTemplateService {
 
   public boolean updateTemplate(OpTemplateDTO templateDTO) {
     boolean retVal = false;
-//    OpTemplate template = em.find(OpTemplate.class, templateDTO.getId());
     OpTemplate template = opTemplateRepository.fetchById(templateDTO.getId());
     if (template != null) {
       template.setDescription(templateDTO.getDescription());

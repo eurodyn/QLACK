@@ -46,31 +46,4 @@ public class OpTemplateHasOperation extends AAAModel {
     setId(UUID.randomUUID().toString());
   }
 
-//  public static OpTemplateHasOperation findByTemplateIDAndOperationName(String templateID,
-//      String operationName, EntityManager em) {
-//    Query q = em.createQuery("SELECT o FROM com.eurodyn.qlack.fuse.aaa.model.OpTemplateHasOperation o WHERE "
-//        + "o.template.id = :templateID AND o.operation.name = :operationName AND o.resource IS NULL");
-//    q.setParameter("templateID", templateID);
-//    q.setParameter("operationName", operationName);
-//    List<OpTemplateHasOperation> queryResults = q.getResultList();
-//    if (queryResults.isEmpty()) {
-//      return null;
-//    }
-//    return queryResults.get(0);
-//  }
-
-//  public static OpTemplateHasOperation findByTemplateAndResourceIDAndOperationName(
-//      String templateID, String operationName, String resourceID, EntityManager em) {
-//    Query q = em.createQuery("SELECT o FROM com.eurodyn.qlack.fuse.aaa.model.OpTemplateHasOperation o WHERE "
-//        + "o.template.id = :templateID AND o.operation.name = :operationName AND o.resource.id = :resourceID");
-//    q.setParameter("templateID", templateID);
-//    q.setParameter("operationName", operationName);
-//    q.setParameter("resourceID", resourceID);
-//    List<OpTemplateHasOperation> queryResults = q.getResultList();
-//    if (queryResults.isEmpty()) {
-//      return null;
-//    }
-//    return queryResults.get(0);
-//  }
-
 }

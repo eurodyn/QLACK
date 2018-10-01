@@ -52,9 +52,6 @@ public class AccountingService {
   private static QSession qSession = QSession.session;
   private static QSessionAttribute qSessionAttribute = QSessionAttribute.sessionAttribute;
 
-//  @PersistenceContext
-//  private EntityManager em;
-
   // Repositories
   private final SessionRepository sessionRepository;
   private final UserRepository userRepository;
@@ -76,17 +73,6 @@ public class AccountingService {
   }
 
   public String createSession(SessionDTO sessionDTO) {
-//    Session entity = ConverterUtil.sessionDTOToSession(session, em);
-//    if (entity.getCreatedOn() == 0) {
-//      entity.setCreatedOn(Instant.now().toEpochMilli());
-//    }
-//    em.persist(entity);
-//    if (entity.getSessionAttributes() != null) {
-//      for (SessionAttribute attribute : entity.getSessionAttributes()) {
-//        em.persist(attribute);
-//      }
-//    }
-//    return entity.getId();
     Session entity = sessionMapper.mapToEntity(sessionDTO);
     if (entity.getCreatedOn() == 0) {
       entity.setCreatedOn(Instant.now().toEpochMilli());
@@ -116,17 +102,6 @@ public class AccountingService {
   }
 
   public void terminateSessionByApplicationSessionId(String applicationSessionId) {
-//    final Session session = new JPAQueryFactory(em)
-//        .selectFrom(qSession)
-//        .where(qSession.applicationSessionId.eq(applicationSessionId))
-//        .fetchOne();
-//    if (session != null) {
-//      terminateSession(session.getId());
-//    } else {
-//      throw new QDoesNotExistException(MessageFormat
-//          .format("Session with application session Id {0} could not be found to be terminated.",
-//              applicationSessionId));
-//    }
     Predicate predicate = qSession.applicationSessionId.eq(applicationSessionId);
     final Session session = sessionRepository.findOne(predicate)
         .orElseThrow(()-> new QDoesNotExistException(MessageFormat
@@ -151,14 +126,6 @@ public class AccountingService {
   }
 
   public Long getUserLastLogIn(String userID) {
-//    Query q = em.createQuery(
-//        "SELECT MAX(s.createdOn) FROM com.eurodyn.qlack.fuse.aaa.model.Session s WHERE s.user = :user");
-//    q.setParameter("user", User.find(userID, em));
-//    List<Long> queryResult = q.getResultList();
-//    if (CollectionUtils.isEmpty(queryResult)) {
-//      return null;
-//    }
-//    return queryResult.get(0);
     Predicate predicate = qSession.user.id.eq(userID);
     List<Session> queryResult = sessionRepository
         .findAll(predicate, Sort.by("createdOn").descending());
@@ -170,14 +137,6 @@ public class AccountingService {
   }
 
   public Long getUserLastLogOut(String userID) {
-//    Query q = em.createQuery(
-//        "SELECT MAX(s.terminatedOn) FROM com.eurodyn.qlack.fuse.aaa.model.Session s WHERE s.user = :user");
-//    q.setParameter("user", User.find(userID, em));
-//    List<Long> queryResult = q.getResultList();
-//    if (CollectionUtils.isEmpty(queryResult)) {
-//      return null;
-//    }
-//    return queryResult.get(0);
     Predicate predicate = qSession.user.id.eq(userID);
     List<Session> queryResult = sessionRepository
         .findAll(predicate, Sort.by("terminatedOn").descending());
@@ -189,19 +148,6 @@ public class AccountingService {
   }
 
   public Long getUserLastLogInDuration(String userID) {
-//    Query q = em.createQuery("SELECT s FROM Session s WHERE s.user = :user "
-//        + "AND s.terminatedOn = (SELECT MAX(s.terminatedOn) FROM com.eurodyn.qlack.fuse.aaa.model.Session s WHERE s.user = :user)");
-//    q.setParameter("user", User.find(userID, em));
-//    List<Session> queryResult = q.getResultList();
-//    // Also checking the terminatedOn value of the retrieved result in case
-//    // there is no terminated session and thus the query
-//    // SELECT MAX(s.terminatedOn) FROM AaaSession s WHERE s.user = :user
-//    // returns null.
-//    if ((CollectionUtils.isEmpty(queryResult)) || (queryResult.get(0).getTerminatedOn() == null)) {
-//      return null;
-//    }
-//    Session session = queryResult.get(0);
-//    return session.getTerminatedOn() - session.getCreatedOn();
     Predicate predicate = qSession.user.id.eq(userID);
     List<Session> queryResult = sessionRepository
         .findAll(predicate, Sort.by("terminatedOn").descending());
@@ -214,22 +160,12 @@ public class AccountingService {
   }
 
   public long getNoOfTimesUserLoggedIn(String userID) {
-//    Query q = em.createQuery(
-//        "SELECT COUNT(s) FROM com.eurodyn.qlack.fuse.aaa.model.Session s WHERE s.user = :user");
-//    q.setParameter("user", User.find(userID, em));
-//    return (Long) q.getSingleResult();
     Predicate predicate = qSession.user.id.eq(userID);
 
     return (long) sessionRepository.findAll(predicate).size();
   }
 
   public Set<String> filterOnlineUsers(Collection<String> userIDs) {
-//    Query query = em.createQuery(
-//        "SELECT DISTINCT s.user.id FROM com.eurodyn.qlack.fuse.aaa.model.Session s "
-//            + "WHERE s.terminatedOn IS NULL "
-//            + "AND s.user.id in (:userIDs)");
-//    query.setParameter("userIDs", userIDs);
-//    return new HashSet<String>(query.getResultList());
     Predicate predicate = qSession.terminatedOn.isNull().and(qSession.user.id.in(userIDs));
 
     return sessionRepository.findAll(predicate).stream()
@@ -276,20 +212,6 @@ public class AccountingService {
 
   public Set<String> getSessionIDsForAttribute(Collection<String> sessionIDs,
       String attributeName, String attributeValue) {
-//    String queryString = "SELECT s.id FROM com.eurodyn.qlack.fuse.aaa.model.Session s "
-//        + "JOIN s.sessionAttributes sa "
-//        + "WHERE sa.name = :attributeName "
-//        + "AND sa.value = :attributeValue";
-//    if ((sessionIDs != null) && (sessionIDs.size() > 0)) {
-//      queryString = queryString.concat(" AND s.id IN (:sessions)");
-//    }
-//    Query q = em.createQuery(queryString);
-//    q.setParameter("attributeName", attributeName);
-//    q.setParameter("attributeValue", attributeValue);
-//    if ((sessionIDs != null) && (sessionIDs.size() > 0)) {
-//      q.setParameter("sessions", sessionIDs);
-//    }
-//    return new HashSet<>(q.getResultList());
     Predicate predicate = qSession.sessionAttributes.any().name.eq(attributeName)
         .and(qSession.sessionAttributes.any().value.eq(attributeValue));
     if (sessionIDs != null) {
@@ -307,16 +229,8 @@ public class AccountingService {
 
   public boolean isAttributeValueUnique(String userId, String attributeName,
       String attributeValue) {
-//    long count = new JPAQueryFactory(em)
-//        .selectFrom(qSessionAttribute)
-//        .innerJoin(qSessionAttribute.session, qSession)
-//        .where(qSession.user.id.eq(userId), qSessionAttribute.name.eq(attributeName),
-//            qSessionAttribute.value.eq(attributeValue))
-//        .fetchCount();
-//
-//    return count == 0;
     Predicate predicate = qSession.sessionAttributes.any().name.eq(attributeName)
-        .and(qSession.sessionAttributes.any().value.eq(attributeName))
+        .and(qSession.sessionAttributes.any().value.eq(attributeValue))
         .and(qSession.user.id.eq(userId));
 
     return sessionRepository.findAll(predicate).isEmpty();

@@ -198,8 +198,6 @@ public class LdapUserUtil {
     String userId = user.getId();
 
     user.setUsername(username);
-//		user.setPassword("external");
-//		user.setSalt("external");
     user.setStatus((byte) 1);
     user.setSuperadmin(false);
     user.setExternal(true);

@@ -32,7 +32,7 @@ public interface AAAMapper<E extends AAAModel, D extends BaseDTO> {
   E mapToEntity(D dto);
 
   /**
-   * Maps a DTO to an entity.
+   * Maps a DTO to an existing entity.
    *
    * @param dto the source DTO
    * @return the mapped entity

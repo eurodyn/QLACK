@@ -4,7 +4,6 @@ import com.eurodyn.qlack.fuse.aaa.model.AAAModel;
 import com.eurodyn.qlack.fuse.aaa.model.User;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.data.jpa.repository.Query;
 
 public interface UserRepository extends AAARepository<User, String> {
 
@@ -13,9 +12,6 @@ public interface UserRepository extends AAARepository<User, String> {
   Set<User> findBySuperadminTrue();
 
   Set<User> findBySuperadminFalse();
-
-//  @Query(value = "select User.id from User where User.superadmin = :superadmin", nativeQuery = true)
-//  Set<String> getUserIds(Boolean superadmin);
 
   default Set<String> getUserIds(Boolean superadmin){
 

@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,9 +30,6 @@ public class JSONConfigService {
 
   // JSON parser.
   ObjectMapper mapper = new ObjectMapper();
-
-//  @PersistenceContext
-//  private EntityManager em;
 
   private UserGroupService groupService;
   private OpTemplateService templateService;
@@ -81,17 +79,16 @@ public class JSONConfigService {
       }
       groupDTO.setDescription(g.getDescription());
       groupDTO.setName(g.getName());
-//      if (StringUtils.isNotBlank(g.getParentGroupName())) {
-//        GroupDTO parentGroup = groupService.getGroupByName(g.getParentGroupName(), true);
-//        groupDTO.setParent(new GroupDTO(parentGroup.getId()));
-//      }
+      if (StringUtils.isNotBlank(g.getParentGroupName())) {
+        GroupDTO parentGroup = groupService.getGroupByName(g.getParentGroupName(), true);
+        groupDTO.setParentId(parentGroup.getId());
+      }
       if (isNew) {
         groupService.createGroup(groupDTO);
       } else {
         groupService.updateGroup(groupDTO);
       }
     }
-//    em.flush();
 
     // Create templates.
     for (JSONConfig.Template t : config.getTemplates()) {
@@ -110,7 +107,6 @@ public class JSONConfigService {
         templateService.updateTemplate(templateDTO);
       }
     }
-//    em.flush();
 
     // Create Operations.
     for (JSONConfig.Operation o : config.getOperations()) {
@@ -129,7 +125,6 @@ public class JSONConfigService {
         operationService.updateOperation(opDTO);
       }
     }
-//    em.flush();
 
     // Create Group has Operations.
     for (JSONConfig.GroupHasOperation gho : config.getGroupHasOperations()) {
@@ -143,7 +138,6 @@ public class JSONConfigService {
             groupDTO.getId(), gho.getOperationName(), gho.isDeny());
       }
     }
-//    em.flush();
 
     // Create Template has Operations.
     for (JSONConfig.TemplateHasOperation tho : config.getTemplateHasOperations()) {
@@ -155,7 +149,6 @@ public class JSONConfigService {
         templateService.addOperation(templateDTO.getId(), tho.getOperationName(), tho.isDeny());
       }
     }
-//    em.flush();
   }
 
   @PostConstruct

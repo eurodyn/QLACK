@@ -72,55 +72,6 @@ public class User extends AAAModel {
     setId(UUID.randomUUID().toString());
   }
 
-//  public static User find(String userID, EntityManager em) {
-//    return em.find(User.class, userID);
-//  }
-
-//  public static User findByUsername(String username, EntityManager em) {
-//    Query query = em.createQuery(
-//        "SELECT u FROM com.eurodyn.qlack.fuse.aaa.model.User u WHERE u.username = :username");
-//    query.setParameter("username", username);
-//    List<User> resultList = query.getResultList();
-//
-//    return resultList.isEmpty() ? null : resultList.get(0);
-//  }
-
-//  public static UserAttribute findAttribute(String userId, String attributeName,
-//      EntityManager em) {
-//    UserAttribute retVal = null;
-//    Query query = em.createQuery("SELECT a FROM com.eurodyn.qlack.fuse.aaa.model.UserAttribute a "
-//        + "WHERE a.user.id = :id AND a.name = :name");
-//    query.setParameter("id", userId);
-//    query.setParameter("name", attributeName);
-//    List<UserAttribute> l = query.getResultList();
-//    if (!l.isEmpty()) {
-//      retVal = l.get(0);
-//    }
-//
-//    return retVal;
-//  }
-
-//  public static Set<String> getAllUserIds(EntityManager em) {
-//    Set<String> retVal = new HashSet<>();
-//    Query query = em.createQuery("SELECT u.id FROM com.eurodyn.qlack.fuse.aaa.model.User u");
-//    retVal.addAll(query.getResultList());
-//    return retVal;
-//  }
-
-//  public static Set<String> getNormalUserIds(EntityManager em) {
-//    Set<String> retVal = new HashSet<>();
-//    Query query = em.createQuery("SELECT u.id FROM com.eurodyn.qlack.fuse.aaa.model.User u WHERE u.superadmin = false");
-//    retVal.addAll(query.getResultList());
-//    return retVal;
-//  }
-
-//  public static Set<String> getSuperadminUserIds(EntityManager em) {
-//    Set<String> retVal = new HashSet<>();
-//    Query query = em.createQuery("SELECT u.id FROM com.eurodyn.qlack.fuse.aaa.model.User u WHERE u.superadmin = true");
-//    retVal.addAll(query.getResultList());
-//    return retVal;
-//  }
-
   public UserHasOperation addUserHasOperation(UserHasOperation userHasOperations) {
     if (getUserHasOperations() == null) {
       setUserHasOperations(new ArrayList<UserHasOperation>());

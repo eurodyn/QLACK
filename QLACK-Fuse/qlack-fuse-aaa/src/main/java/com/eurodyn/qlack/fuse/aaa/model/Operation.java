@@ -1,16 +1,12 @@
 package com.eurodyn.qlack.fuse.aaa.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
-import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import lombok.Getter;
@@ -55,28 +51,6 @@ public class Operation extends AAAModel {
   public Operation() {
     setId(UUID.randomUUID().toString());
   }
-
-//  public static Operation find(String operationID, EntityManager em) {
-//    return em.find(Operation.class, operationID);
-//  }
-
-//  public static Operation findByName(String opName, EntityManager em) {
-//    Operation retVal = null;
-//
-//    Query q = em.createQuery("select o from com.eurodyn.qlack.fuse.aaa.model.Operation o where o.name = :operationName");
-//    q.setParameter("operationName", opName);
-//    List<Operation> l = q.getResultList();
-//    if (!l.isEmpty()) {
-//      retVal = (Operation) l.get(0);
-//    }
-//
-//    return retVal;
-//  }
-
-//  public static List<Operation> findAll(EntityManager em) {
-//    Query q = em.createQuery("SELECT o FROM com.eurodyn.qlack.fuse.aaa.model.Operation o");
-//    return q.getResultList();
-//  }
 
   public GroupHasOperation addGroupHasOperation(GroupHasOperation groupHasOperation) {
     if (getGroupHasOperations() == null) {
