@@ -21,20 +21,7 @@ public interface DBFileRepository extends JpaRepository<DBFile, DBFilePK>, Query
   @NonNull
   List<DBFile> findAll(@NonNull Predicate predicate,@NonNull Sort sort);
 
-//  default DBFile fetchById(DBFilePK pk){
-//    if (pk == null) {
-//      throw new IllegalArgumentException("Null id");
-//    }
-//    Optional<DBFile> optional = findById(pk);
-//
-//    return optional.orElseThrow(
-//        () -> new QDoesNotExistException(MessageFormat
-//            .format("Entity with Id {0} and chunk order {1} could not be found.", pk.getId(), pk.getChunkOrder())));
-//  }
-
   default DBFile getChunk(String id, Long chunkOrder){
-
-//    return findById(new DBFilePK(id, chunkOrder));
     Optional<DBFile> optional = findById(new DBFilePK(id, chunkOrder));
 
     return optional.orElse(null);

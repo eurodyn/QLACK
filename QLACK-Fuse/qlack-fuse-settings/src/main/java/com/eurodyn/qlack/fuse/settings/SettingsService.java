@@ -27,9 +27,6 @@ public class SettingsService {
   // Logger ref.
   public static final Logger LOGGER = Logger.getLogger(SettingsService.class.getName());
 
-  // An injected Entity Manager.
-//  @PersistenceContext
-//  EntityManager em;
 
   // Service references.
   private final SettingMapper settingMapper;
@@ -44,12 +41,6 @@ public class SettingsService {
   }
 
   public List<SettingDTO> getSettings(String owner, boolean includeSensitive) {
-//    JPAQuery<Setting> q = new JPAQueryFactory(em).selectFrom(qsetting)
-//        .where(qsetting.owner.eq(owner));
-//    if (!includeSensitive) {
-//      q.where(qsetting.sensitive.ne(true));
-//    }
-//    List<Setting> l = q.fetch();
     Predicate predicate = qsetting.owner.endsWith(owner);
     if(!includeSensitive){
       predicate = ((BooleanExpression) predicate).and(qsetting.sensitive.ne(true));
@@ -59,11 +50,6 @@ public class SettingsService {
   }
 
   public List<GroupDTO> getGroupNames(String owner) {
-//    List<Setting> l = new JPAQueryFactory(em).selectFrom(qsetting)
-//        .where(qsetting.owner.eq(owner))
-//        .distinct()
-//        .orderBy(qsetting.group.asc())
-//        .fetch();
     Predicate predicate = qsetting.owner.eq(owner);
 
     return settingMapper.mapToGroupDTO(settingRepository.findAll(predicate));
@@ -72,22 +58,11 @@ public class SettingsService {
   public SettingDTO getSetting(String owner, String key, String group) {
     SettingDTO retVal;
 
-//    Setting setting = new JPAQueryFactory(em).selectFrom(qsetting)
-//        .where(qsetting.owner.eq(owner)
-//            .and(qsetting.key.eq(key))
-//            .and(qsetting.group.eq(group)))
-//        .fetchOne();
     Predicate predicate = qsetting.owner.eq(owner)
         .and(qsetting.key.eq(key))
         .and(qsetting.group.eq(group));
     Optional<Setting> setting = settingRepository.findOne(predicate);
 
-//    if (setting == null) {
-//      throw new QDoesNotExistException(MessageFormat.format(
-//          "Did not find a setting with key: {0}.", key));
-//    } else {
-//      retVal = settingMapper.map(setting);
-//    }
     retVal = settingMapper.map(setting.orElseThrow(
         () -> new QDoesNotExistException(MessageFormat.format(
           "Did not find a setting with key: {0}.", key))));
@@ -96,10 +71,6 @@ public class SettingsService {
   }
 
   public List<SettingDTO> getGroupSettings(String owner, String group) {
-//    List<Setting> l = new JPAQueryFactory(em).selectFrom(qsetting)
-//        .where(qsetting.owner.eq(owner)
-//            .and(qsetting.group.eq(group)))
-//        .fetch();
     Predicate predicate = qsetting.owner.eq(owner)
         .and(qsetting.group.eq(group));
 
@@ -114,17 +85,11 @@ public class SettingsService {
     } catch (QDoesNotExistException e) {
       Setting setting = settingMapper.mapToEntity(dto);
 
-//      em.persist(setting);
       settingRepository.save(setting);
     }
   }
 
   public void setVal(String owner, String key, String val, String group) {
-//    Setting setting = new JPAQueryFactory(em).selectFrom(qsetting)
-//        .where(qsetting.owner.eq(owner)
-//            .and(qsetting.key.eq(key)
-//                .and(qsetting.group.eq(group))))
-//        .fetchOne();
     Predicate predicate = qsetting.owner.eq(owner)
         .and(qsetting.key.eq(key))
         .and(qsetting.group.eq(group));

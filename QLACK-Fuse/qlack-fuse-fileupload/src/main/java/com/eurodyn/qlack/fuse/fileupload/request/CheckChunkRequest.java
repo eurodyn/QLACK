@@ -20,9 +20,4 @@ public class CheckChunkRequest {
   public void setChunkNumber(long chunkNumber) {
     this.chunkNumber = chunkNumber;
   }
-
-  public CheckChunkRequest() {
-
-  }
-
 }

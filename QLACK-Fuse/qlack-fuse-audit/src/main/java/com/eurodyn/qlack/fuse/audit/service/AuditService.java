@@ -33,9 +33,6 @@ public class AuditService {
 
   private static final ObjectMapper mapper = new ObjectMapper();
 
-//  @PersistenceContext
-//  private EntityManager em;
-
   // Service references.
   private AuditProperties auditProperties;
   private AuditRepository auditRepository;
@@ -111,15 +108,11 @@ public class AuditService {
     if (audit.getCreatedOn() == null) {
       audit.setCreatedOn(Calendar.getInstance().getTimeInMillis());
     }
-//    Audit alAudit = ConverterUtil.convertToAuditLogModel(audit);
     Audit alAudit = auditMapper.mapToEntity(audit);
-//    alAudit.setLevelId(AuditLevel.findByName(em, audit.getLevel()));
     alAudit.setLevelId(auditLevelRepository.findByName(audit.getLevel()));
     if (null != alAudit.getTrace()) {
-//      em.persist(alAudit.getTrace());
       auditTraceRepository.save(alAudit.getTrace());
     }
-//    em.persist(alAudit);
     if(alAudit.getCreatedOn() == null){
       alAudit.setCreatedOn(Calendar.getInstance().getTimeInMillis());
     }
@@ -136,16 +129,12 @@ public class AuditService {
       if (audit.getCreatedOn() == null) {
         audit.setCreatedOn(Calendar.getInstance().getTimeInMillis());
       }
-//      Audit alAudit = ConverterUtil.convertToAuditLogModel(audit);
       Audit alAudit = auditMapper.mapToEntity(audit);
-//      alAudit.setLevelId(AuditLevel.findByName(em, audit.getLevel()));
       alAudit.setLevelId(auditLevelRepository.findByName(audit.getLevel()));
       alAudit.setCorrelationId(correlationId);
       if (null != alAudit.getTrace()) {
-//        em.persist(alAudit.getTrace());
         auditTraceRepository.save(alAudit.getTrace());
       }
-//      em.persist(alAudit);
       if(alAudit.getCreatedOn() == null){
         alAudit.setCreatedOn(Calendar.getInstance().getTimeInMillis());
       }
@@ -158,44 +147,30 @@ public class AuditService {
 
   public void deleteAudit(String id) {
     LOGGER.log(Level.FINER, "Deleting audit ''{0}''.", id);
-//    em.remove(em.find(Audit.class, id));
     auditRepository.delete(auditRepository.fetchById(id));
   }
 
   public void truncateAudits() {
     LOGGER.log(Level.FINER, "Clearing all audit log data.");
-//    Query query = em.createQuery("DELETE FROM Audit a");
-//    query.executeUpdate();
     auditRepository.deleteAll();
   }
 
   public void truncateAudits(Date createdOn) {
     LOGGER.log(Level.FINER, "Clearing audit log data before {0}",
         createdOn);
-//    Query query = em
-//        .createQuery("DELETE FROM Audit a WHERE a.createdOn < :createdOn");
-//    query.setParameter("createdOn", createdOn.getTime());
-//    query.executeUpdate();
     auditRepository.deleteByCreatedOnBefore(createdOn.toInstant().toEpochMilli());
   }
 
   public void truncateAudits(long retentionPeriod) {
     LOGGER.log(Level.FINER, "Clearing audit log data older than {0}",
         String.valueOf(retentionPeriod));
-//    Query query = em
-//        .createQuery("DELETE FROM Audit a WHERE a.createdOn < :createdOn");
-//    query.setParameter("createdOn", Calendar.getInstance()
-//        .getTimeInMillis() - retentionPeriod);
-//    query.executeUpdate();
     auditRepository.deleteByCreatedOnBefore(Calendar.getInstance()
         .getTimeInMillis() - retentionPeriod);
   }
 
   public AuditDTO getAuditById(String auditId) {
-//    Audit log = em.find(Audit.class, auditId);
     Audit log  = auditRepository.fetchById(auditId);
 
-//    return ConverterUtil.convertToAuditDTO(log);
     return auditMapper.mapToDTO(log);
   }
 

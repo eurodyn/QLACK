@@ -22,35 +22,12 @@ public class AuditLevel extends AuditBaseEntity{
   @Column(name = "created_on")
   private Long createdOn;
 
-
   public AuditLevel() {
     setId(java.util.UUID.randomUUID().toString());
   }
 
-//  public static AuditLevel findByName(EntityManager em, String name) {
-//    try {
-//      String id = cache.get(name, new Callable<String>() {
-//        @Override
-//        public String call() throws Exception {
-//          Query q = em.createQuery("SELECT l FROM AuditLevel l WHERE l.name = :name");
-//          q.setParameter("name", name);
-//          List<AuditLevel> resultList = q.getResultList();
-//          return q.getResultList().isEmpty() ? null : resultList.get(0).getId();
-//        }
-//      });
-//      return em.find(AuditLevel.class, id);
-//    } catch (ExecutionException e) {
-//      throw new RuntimeException("Unexpected checked exception thrown.", e);
-//    }
-//  }
-
   public static void clearCache() {
     cache.invalidateAll();
   }
-
-//  public static List<AuditLevel> findAll(EntityManager em) {
-//    Query q = em.createQuery("SELECT l FROM AuditLevel l");
-//    return q.getResultList();
-//  }
 
 }

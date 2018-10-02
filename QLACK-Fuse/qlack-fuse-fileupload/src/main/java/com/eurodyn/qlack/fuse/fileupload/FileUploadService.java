@@ -78,13 +78,6 @@ public class FileUploadService {
    * @param includeBinary Whether to include the binary content of the file or not.
    */
   private DBFileDTO getByID(String fileID, boolean includeBinary) {
-    // Find all chunks of the requested file.
-//    Query q = em
-//        .createQuery(
-//            "select f from DBFile f where f.id.id = :id order by f.id.chunkOrder")
-//        .setParameter("id", fileID);
-//    @SuppressWarnings("unchecked")
-//    List<DBFile> results = q.getResultList();
     Predicate predicate = qdbFile.id.id.eq(fileID);
     List<DBFile> results = dbFileRepository.findAll(predicate);
 
@@ -146,17 +139,6 @@ public class FileUploadService {
   }
 
   public ChunkGetResponse getByIDAndChunk(String fileID, long chunkIndex) {
-//    Query q = em
-//        .createQuery(
-//            "select f from DBFile f "
-//                + "where "
-//                + "f.id.id = :id and f.id.chunkOrder in :chunkIndexes "
-//                + "order by f.id.chunkOrder")
-//        .setParameter("id", fileID)
-//        .setParameter("chunkIndexes", Arrays.asList(new Long[]{chunkIndex, chunkIndex + 1}));
-//
-//    @SuppressWarnings("unchecked")
-//    List<DBFile> results = q.getResultList();
     Predicate predicate = qdbFile.id.id.eq(fileID).and(qdbFile.id.chunkOrder
         .in(Arrays.asList(chunkIndex, chunkIndex + 1)));
     List<DBFile> results = dbFileRepository
@@ -192,8 +174,6 @@ public class FileUploadService {
 
   public CheckChunkResponse checkChunk(CheckChunkRequest req) {
     CheckChunkResponse res = new CheckChunkResponse();
-//    res.setChunkExists(DBFile.getChunk(req.getFileAlias(),
-//        req.getChunkNumber(), em) != null);
     res.setChunkExists(dbFileRepository.getChunk(req.getFileAlias(),
         req.getChunkNumber()) != null);
 
@@ -205,7 +185,6 @@ public class FileUploadService {
 
     // Check if this chunk has already been uploaded, so that we can support
     // updating existing chunks.
-//    DBFile file = DBFile.getChunk(req.getAlias(), req.getChunkNumber(), em);
     DBFile file = dbFileRepository.getChunk(req.getAlias(), req.getChunkNumber());
     if (file == null) {
       file = new DBFile(
@@ -226,18 +205,15 @@ public class FileUploadService {
     file.setChunkData(req.getData());
     file.setChunkSize(req.getData().length);
 
-//    em.persist(file);
     dbFileRepository.save(file);
     return res;
   }
 
   public FileDeleteResponse deleteByID(String fileID) {
-//    return new FileDeleteResponse(DBFile.delete(fileID, em));
     return new FileDeleteResponse(dbFileRepository.deleteById(fileID));
   }
 
   public FileDeleteResponse deleteByIDForConsole(String fileID) {
-//    return new FileDeleteResponse(DBFile.delete(fileID, em));
     return deleteByID(fileID);
   }
 
@@ -249,10 +225,6 @@ public class FileUploadService {
     List<DBFileDTO> retVal = new ArrayList<>();
 
     // First find all unique IDs for file chunks.
-//    Query q = em
-//        .createQuery("select distinct f.id.id from DBFile f order by f.uploadedAt");
-//    @SuppressWarnings("unchecked")
-//    List<String> chunks = q.getResultList();
     List<String> chunks = dbFileRepository.findAll(Sort.by("UploadedAt"))
         .stream()
         .map(dbFile -> dbFile.getId().getId())
@@ -300,8 +272,6 @@ public class FileUploadService {
   }
 
   public void cleanupExpired(long deleteBefore) {
-//    new JPAQueryFactory(em).delete(qFile)
-//        .where(qFile.uploadedAt.lt(deleteBefore)).execute();
     Predicate predicate = qdbFile.uploadedAt.lt(deleteBefore);
     dbFileRepository.deleteAll(dbFileRepository.findAll(predicate));
   }
@@ -310,10 +280,6 @@ public class FileUploadService {
     List<DBFileDTO> retVal = new ArrayList<>();
 
     // First find all unique IDs for file chunks.
-//    Query q = em
-//        .createQuery("select distinct f.id.id from DBFile f order by f.uploadedAt");
-//    @SuppressWarnings("unchecked")
-//    List<String> chunks = q.getResultList();
     Set<String> chunks = dbFileRepository.findAll(Sort.by("uploadedAt")).stream()
         .map(dbFile -> dbFile.getId().getId())
         .collect(Collectors.toSet());

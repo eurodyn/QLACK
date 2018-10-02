@@ -3,9 +3,6 @@ package com.eurodyn.qlack.fuse.fileupload.response;
 public class CheckChunkResponse {
 	private boolean chunkExists;
 
-	public CheckChunkResponse() {
-
-	}
 	public boolean isChunkExists() {
 		return chunkExists;
 	}

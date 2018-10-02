@@ -10,10 +10,6 @@ import org.springframework.data.domain.Page;
 uses = AuditTraceMapper.class)
 public interface AuditMapper extends AuditBaseMapper<Audit, AuditDTO> {
 
-//  @Mapping(expression = "java(new java.util.Date(audit.getCreatedOn()))", target = "createdOn")
-//  @Mapping(expression = "java(audit.getLevelId().getName())", target = "level")
-//  AuditLogDTO toAuditLogDTO(Audit audit);
-
   default Page<AuditDTO> toAuditDTO(Page<Audit> audits) {
     return audits.map(this::mapToDTO);
   }

@@ -44,13 +44,6 @@ public interface AuditRepository extends AuditBaseRepository<Audit, String>
   }
 
   default List<String> findDistinctEventsByReferenceId(String referenceId) {
-//    QAudit audit = QAudit.audit;
-//    return new JPAQueryFactory(em)
-//        .select(audit.event)
-//        .from(audit)
-//        .where(audit.referenceId.eq(referenceId))
-//        .orderBy(audit.event.asc())
-//        .distinct().fetch();
     QAudit qAudit = QAudit.audit;
 
     Predicate predicate = qAudit.referenceId.eq(referenceId);

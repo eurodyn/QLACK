@@ -47,16 +47,4 @@ public class DBFile {
   public DBFilePK getId() {
     return id;
   }
-
-//  public static DBFile getChunk(String id, long chunkOrder, EntityManager em) {
-//    return em.find(DBFile.class, new DBFilePK(id, chunkOrder));
-//  }
-//
-//  public static long delete(String id, EntityManager em) {
-//    Query q = em.createQuery("delete from DBFile f where f.id.id = :id")
-//        .setParameter("id", id);
-//
-//    return q.executeUpdate();
-//  }
-
 }
