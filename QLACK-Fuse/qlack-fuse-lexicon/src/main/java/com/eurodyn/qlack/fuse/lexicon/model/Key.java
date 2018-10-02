@@ -33,6 +33,7 @@ public class Key extends LexiconModel {
 	@ManyToOne
 	@JoinColumn(name = "group_id")
 	private Group group;
+	
 	@OneToMany(mappedBy = "key")
 	private List<Data> data;
 

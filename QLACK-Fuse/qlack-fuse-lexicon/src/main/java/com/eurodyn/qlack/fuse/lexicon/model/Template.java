@@ -23,7 +23,7 @@ import lombok.Setter;
 @Table(name = "lex_template")
 @Getter
 @Setter
-public class Template {
+public class Template extends LexiconModel{
 
 	@Id
 	// @GeneratedValue(generator = "uuid")
@@ -37,9 +37,9 @@ public class Template {
 	@JoinColumn(name = "language_id")
 	private Language language;
 
-	public Template() {
-		id = UUID.randomUUID().toString();
-	}
+//	public Template() {
+//		id = UUID.randomUUID().toString();
+//	}
 
 	//
 	// public static Template find(String templateID, EntityManager em) {

@@ -1,6 +1,7 @@
 package com.eurodyn.qlack.fuse.lexicon.repository;
 
 import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
+import com.eurodyn.qlack.fuse.lexicon.model.LexiconModel;
 import com.querydsl.core.types.Predicate;
 
 import java.text.MessageFormat;
@@ -12,7 +13,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.lang.NonNull;
 
-public interface LexiconRepository<T, I> extends JpaRepository<T, I>, QuerydslPredicateExecutor<T> {
+public interface LexiconRepository<T extends LexiconModel, I> extends JpaRepository<T, I>, QuerydslPredicateExecutor<T> {
 
 	@NonNull
 	List<T> findAll(@NonNull Predicate predicate);

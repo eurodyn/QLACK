@@ -150,7 +150,7 @@ public class KeyService {
 		Key key = keyRepository.fetchById(keyID);
 
 		if (includeTranslations) {
-			return keyMapper.mapToDTOwithTranslations(key);
+			return keyMapper.mapToDTOwithTranslations(key, true);
 		} else {
 			return keyMapper.mapToDTO(key);
 		}
@@ -161,7 +161,7 @@ public class KeyService {
 
 		Key key = keyRepository.findByNameAndGroupId(keyName, groupId);
 		if (includeTranslations) {
-			return keyMapper.mapToDTOwithTranslations(key);
+			return keyMapper.mapToDTOwithTranslations(key, true);
 		} else {
 			return keyMapper.mapToDTO(key);
 		}
@@ -252,9 +252,11 @@ public class KeyService {
 
   public void updateTranslation(String keyID, String languageID, String value) {
     Key key = keyRepository.fetchById(keyID);
+    System.out.println(" finding by "+keyID+" " +languageID);
     
-    Data data = dataRepository.findByKeyAndLanguageId(keyID, languageID);
+    Data data = dataRepository.findByKeyIdAndLanguageId(keyID, languageID);
     		//Data.findByKeyAndLanguageId(keyID, languageID, em);
+    System.out.println(" found "+ data);
     
     if (data == null) {
       data = new Data();

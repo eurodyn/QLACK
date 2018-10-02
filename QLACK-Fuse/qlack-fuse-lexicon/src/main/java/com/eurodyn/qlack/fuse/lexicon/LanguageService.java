@@ -161,7 +161,7 @@ public class LanguageService {
 			languages = languageRepository.findAll(); 
 					//Language.getAllLanguages(em);
 		} else {
-			languages = languageRepository.findbyActiveTrueOrderByNameAsc();
+			languages = languageRepository.findByActiveTrueOrderByNameAsc();
 					//Language.getActiveLanguages(em);
 		}
 		return  languageMapper.mapToDTO(languages);
