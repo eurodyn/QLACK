@@ -21,10 +21,10 @@ import lombok.Setter;
 @Table(name = "mai_internal_messages")
 @Getter
 @Setter
-public class InternalMessages implements java.io.Serializable {
+public class InternalMessages extends MailingModel {
 
-  @Id
-  private String id;
+//  @Id
+//  private String id;
 
   @Column(name = "subject", nullable = false, length = 100)
   private String subject;
@@ -54,8 +54,8 @@ public class InternalMessages implements java.io.Serializable {
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "messages")
   private Set<InternalAttachment> attachments = new HashSet<InternalAttachment>(0);
 
+  /*
   // -- Constructors
-
   public InternalMessages() {
     this.id = java.util.UUID.randomUUID().toString();
   }
@@ -120,5 +120,5 @@ public class InternalMessages implements java.io.Serializable {
 
     return q.getSingleResult();
   }
-
+*/
 }

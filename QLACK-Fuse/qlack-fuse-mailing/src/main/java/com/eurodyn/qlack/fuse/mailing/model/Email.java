@@ -21,10 +21,10 @@ import lombok.Setter;
 @Table(name = "mai_email")
 @Getter
 @Setter
-public class Email implements java.io.Serializable {
+public class Email  extends MailingModel {
 
-  @Id
-  private String id;
+//  @Id
+//  private String id;
 
   @Column(name = "subject", length = 254)
   private String subject;
@@ -72,7 +72,7 @@ public class Email implements java.io.Serializable {
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "email")
   private Set<Attachment> attachments = new HashSet<Attachment>(0);
 
-  // -- Constructors
+  /*// -- Constructors
 
   public Email() {
     this.id = java.util.UUID.randomUUID().toString();
@@ -126,5 +126,5 @@ public class Email implements java.io.Serializable {
 
     return em.createQuery(jpql, Email.class).getResultList();
   }
-
+*/
 }

@@ -15,10 +15,10 @@ import lombok.Setter;
 @Table(name = "mai_attachment")
 @Getter
 @Setter
-public class Attachment implements java.io.Serializable {
+public class Attachment extends MailingModel {
 
-  @Id
-  private String id;
+//  @Id
+//  private String id;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "email_id", nullable = false)
@@ -39,8 +39,8 @@ public class Attachment implements java.io.Serializable {
 
   // -- Constructors
 
-  public Attachment() {
-    this.id = java.util.UUID.randomUUID().toString();
-  }
+//  public Attachment() {
+//    this.id = java.util.UUID.randomUUID().toString();
+//  }
 
 }

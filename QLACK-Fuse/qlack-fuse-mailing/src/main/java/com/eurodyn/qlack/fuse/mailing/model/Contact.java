@@ -17,10 +17,10 @@ import lombok.Setter;
 @Table(name = "mai_contact")
 @Getter
 @Setter
-public class Contact implements java.io.Serializable {
+public class Contact  extends MailingModel {
 
-  @Id
-  private String id;
+//  @Id
+//  private String id;
 
   @Column(name = "email", nullable = false, length = 45)
   private String email;
@@ -50,8 +50,8 @@ public class Contact implements java.io.Serializable {
 
   // -- Constructors
 
-  public Contact() {
-    this.id = java.util.UUID.randomUUID().toString();
-  }
+//  public Contact() {
+//    this.id = java.util.UUID.randomUUID().toString();
+//  }
 
 }

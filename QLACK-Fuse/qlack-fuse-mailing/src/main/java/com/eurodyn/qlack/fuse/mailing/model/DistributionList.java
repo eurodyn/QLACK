@@ -19,10 +19,10 @@ import lombok.Setter;
 @Table(name = "mai_distribution_list")
 @Getter
 @Setter
-public class DistributionList implements java.io.Serializable {
+public class DistributionList  extends MailingModel {
 
-  @Id
-  private String id;
+//  @Id
+//  private String id;
 
   @Column(name = "list_name", nullable = false, length = 45)
   private String name;
@@ -46,26 +46,26 @@ public class DistributionList implements java.io.Serializable {
       }
   )
   private Set<Contact> contacts = new HashSet<Contact>(0);
-
-  // -- Constructors
-
-  public DistributionList() {
-    this.id = java.util.UUID.randomUUID().toString();
-  }
-
-  // -- Queries
-
-  public static List<DistributionList> findAll(EntityManager em) {
-    String jpql = "SELECT dl FROM DistributionList dl";
-
-    return em.createQuery(jpql, DistributionList.class).getResultList();
-  }
-
-  public static List<DistributionList> findByName(EntityManager em, String name) {
-    String jpql = "SELECT dl FROM DistributionList dl WHERE dl.name = :name";
-
-    return em.createQuery(jpql, DistributionList.class).setParameter("name", name)
-        .getResultList();
-  }
+//
+//  // -- Constructors
+//
+//  public DistributionList() {
+//    this.id = java.util.UUID.randomUUID().toString();
+//  }
+//
+//  // -- Queries
+//
+//  public static List<DistributionList> findAll(EntityManager em) {
+//    String jpql = "SELECT dl FROM DistributionList dl";
+//
+//    return em.createQuery(jpql, DistributionList.class).getResultList();
+//  }
+//
+//  public static List<DistributionList> findByName(EntityManager em, String name) {
+//    String jpql = "SELECT dl FROM DistributionList dl WHERE dl.name = :name";
+//
+//    return em.createQuery(jpql, DistributionList.class).setParameter("name", name)
+//        .getResultList();
+//  }
 
 }

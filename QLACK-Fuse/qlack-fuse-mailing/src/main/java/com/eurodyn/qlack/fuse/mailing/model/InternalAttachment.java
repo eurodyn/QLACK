@@ -17,10 +17,10 @@ import lombok.Setter;
 @Table(name = "mai_internal_attachment")
 @Getter
 @Setter
-public class InternalAttachment implements java.io.Serializable {
+public class InternalAttachment  extends MailingModel {
 
-  @Id
-  private String id;
+//  @Id
+//  private String id;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "messages_id", nullable = false)
@@ -38,7 +38,7 @@ public class InternalAttachment implements java.io.Serializable {
   @Column(name = "format", length = 45)
   private String format;
 
-  // -- Constructors
+/*  // -- Constructors
 
   public InternalAttachment() {
     this.id = java.util.UUID.randomUUID().toString();
@@ -63,5 +63,5 @@ public class InternalAttachment implements java.io.Serializable {
     return em.createQuery(jpql, InternalAttachment.class).setParameter("messageId", messageId)
         .getResultList();
   }
-
+*/
 }
