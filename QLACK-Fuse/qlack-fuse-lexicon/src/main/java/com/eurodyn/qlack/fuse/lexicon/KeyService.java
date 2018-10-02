@@ -44,8 +44,6 @@ public class KeyService {
   QData qData = QData.data;
   QKey qKey = QKey.key;
 
-//  @PersistenceContext
-//  private EntityManager em;
   private final KeyRepository keyRepository;
   private final GroupRepository groupRepository;
   private final DataRepository dataRepository; 
@@ -75,7 +73,6 @@ public class KeyService {
 
     if (createDefaultTranslations) {
       List<Language> languages = languageRepository.findAll();
-    		  //Language.getAllLanguages(em);
       for (Language language : languages) {
         String translation = null;
         if (key.getTranslations() != null) {
@@ -113,19 +110,16 @@ public class KeyService {
   public void deleteKeys(Collection<String> keyIDs) {
     for (String keyID : keyIDs) {
     	keyRepository.deleteById(keyID);
-//      em.remove(Key.find(keyID, em));
     }
   }
 
   public void deleteKeysByGroupId(String groupId) {
-//    new JPAQueryFactory(em).delete(qKey).where(qKey.group.id.eq(groupId)).execute();
 	  Predicate predicate = qKey.group.id.eq(groupId);
 	  keyRepository.deleteAll(keyRepository.findAll(predicate));
   }
 
   public void renameKey(String keyID, String newName) {
     Key key = keyRepository.fetchById(keyID);
-    		//Key.find(keyID, em);
     key.setName(newName);
   }
 
@@ -139,9 +133,7 @@ public class KeyService {
   public void moveKeys(Collection<String> keyIDs, String newGroupId) {
     for (String keyID : keyIDs) {
       Key key = keyRepository.fetchById(keyID);
-    		  //Key.find(keyID, em);
       key.setGroup(groupRepository.fetchById(newGroupId));
-    		  //Group.find(newGroupId, em));
     }
   }
 
@@ -154,7 +146,6 @@ public class KeyService {
 		} else {
 			return keyMapper.mapToDTO(key);
 		}
-		// ConverterUtil.keyToKeyDTO(em.find(Key.class, keyID), includeTranslations);
 	}
 
 	public KeyDTO getKeyByName(String keyName, String groupId, boolean includeTranslations) {
@@ -165,9 +156,6 @@ public class KeyService {
 		} else {
 			return keyMapper.mapToDTO(key);
 		}
-		// return ConverterUtil.keyToKeyDTO(Key.findByName(keyName, groupId, em),
-		// includeTranslations);
-
 	}
 
   public List<KeyDTO> findKeys(KeySearchCriteria criteria,
@@ -198,51 +186,6 @@ public class KeyService {
 		});
 		return dtos;
 	}
-  
-	   
-   /* CriteriaBuilder cb = em.getCriteriaBuilder();
-    CriteriaQuery<Key> cq = cb.createQuery(Key.class);
-    Root<Key> root = cq.from(Key.class);
-	 Add query criteria
-    if (criteria.getKeyName() != null) {
-      Predicate pr = cb.like(root.<String>get("name"), criteria.getKeyName());
-      cq = addPredicate(cq, cb, pr);
-    }
-    if (criteria.getGroupId() != null) {
-      Predicate pr = cb.equal(root.get("group").get("id"), criteria.getGroupId());
-      cq = addPredicate(cq, cb, pr);
-    }
-    // Set ordering
-    Order order = null;
-    if (criteria.isAscending()) {
-      order = cb.asc(root.get("name"));
-    } else {
-      order = cb.desc(root.get("name"));
-    }
-    cq = cq.orderBy(order);
-
-    TypedQuery<Key> query = em.createQuery(cq);
-
-    // Apply pagination
-    if (criteria.getPaging() != null && criteria.getPaging().getCurrentPage() > -1) {
-      query.setFirstResult(
-          (criteria.getPaging().getCurrentPage() - 1) * criteria.getPaging().getPageSize());
-      query.setMaxResults(criteria.getPaging().getPageSize());
-    }
-    return ConverterUtil.keyToKeyDTOList(query.getResultList(), includeTranslations);
-  }
-    private <T> CriteriaQuery<T> addPredicate(CriteriaQuery<T> query,
-      CriteriaBuilder cb, Predicate pr) {
-    CriteriaQuery<T> cq = query;
-    if (cq.getRestriction() != null) {
-      cq = cq.where(cb.and(cq.getRestriction(), pr));
-    } else {
-      cq = cq.where(pr);
-    }
-    return cq;
-  }
-*/
-	    
 
 
   private void update(Data data) {
@@ -250,23 +193,19 @@ public class KeyService {
     dataRepository.save(data);
   }
 
-  public void updateTranslation(String keyID, String languageID, String value) {
-    Key key = keyRepository.fetchById(keyID);
-    System.out.println(" finding by "+keyID+" " +languageID);
-    
-    Data data = dataRepository.findByKeyIdAndLanguageId(keyID, languageID);
-    		//Data.findByKeyAndLanguageId(keyID, languageID, em);
-    System.out.println(" found "+ data);
-    
-    if (data == null) {
-      data = new Data();
-      data.setKey(key);
-      data.setLanguage(languageRepository.fetchById(languageID));
-    		  //Language.find(languageID, em));
-    }
-    data.setValue(value);
-    update(data);
-  }
+	public void updateTranslation(String keyID, String languageID, String value) {
+		Key key = keyRepository.fetchById(keyID);
+		Data data = dataRepository.findByKeyIdAndLanguageId(keyID, languageID);
+
+		if (data == null) {
+			data = new Data();
+			data.setKey(key);
+			data.setLanguage(languageRepository.fetchById(languageID));
+			// Language.find(languageID, em));
+		}
+		data.setValue(value);
+		update(data);
+	}
 
   public void updateTranslationsByGroupId(Map<String, String> keys, String groupId,
       String languageId) {
@@ -281,12 +220,6 @@ public class KeyService {
 		Predicate predicate = qData.key.name.eq(keyName).and(qData.key.group.id.eq(groupId))
 				.and(qData.language.id.eq(languageId));
 		Data data = dataRepository.findOne(predicate).get();
-
-		// Data data = new
-		// JPAQueryFactory(em).selectFrom(qData).where(qData.key.name.eq(keyName)
-		// .and(qData.key.group.id.eq(groupId))
-		// .and(qData.language.id.eq(languageId))
-		// ).fetchOne();
 
 		if (data == null) {
 			data = new Data();
@@ -378,32 +311,22 @@ public class KeyService {
 	  for (Data d: data) {
 		  list.add(d.getValue());
 	  }
-//    List<String> list = new JPAQueryFactory(em)
-//        .select(qData.value).from(qData)
-//        .where(
-//            qData.key.name.eq(keyName)
-//                .and(qData.key.group.title.eq(groupName))
-//                .and(qData.language.locale.eq(locale))
-//        ).fetch();
-    
     if (list != null && !list.isEmpty()) {
       return list.get(0);
     }
     return null;
   }
 
-  public Map<String, String> getTranslationsForLocale(String locale) {
-	  Language language = languageRepository.findByLocale(locale);
-//    Language language = Language.findByLocale(locale, em);
-    Map<String, String> translations = new HashMap<>();
-    for (Data data : language.getData()) {
-      translations.put(data.getKey().getName(), data.getValue());
-    }
-    return translations;
-  }
+	public Map<String, String> getTranslationsForLocale(String locale) {
+		Language language = languageRepository.findByLocale(locale);
+		Map<String, String> translations = new HashMap<>();
+		for (Data data : language.getData()) {
+			translations.put(data.getKey().getName(), data.getValue());
+		}
+		return translations;
+	}
 
   public Map<String, String> getTranslationsForGroupAndLocale(String groupId, String locale) {
-    //List<Data> dataList = Data.findByGroupIDAndLocale(groupId, locale, em);
 	  List<Data> dataList = dataRepository.findByKeyGroupIdAndLanguageLocale(groupId, locale);
     
     Map<String, String> translations = new HashMap<>();
@@ -418,32 +341,8 @@ public class KeyService {
 	public Map<String, String> getTranslationsForGroupNameAndLocale(String groupName, String locale) {
 
 		Predicate predicate = (qData.key.group.title.eq(groupName)).and(qData.language.locale.eq(locale));
-
 		return dataRepository.findAll(predicate).stream()
 				.collect(Collectors.toMap(a -> a.getKey().getName(), a -> a.getValue()));
-
-		// Map<String, String> listTuples =
-		// return userRepository.findAll(predicate).stream()
-		// .map(userMapper::mapToDTO)
-		// .collect(Collectors.toMap(UserDTO::getId,dto -> dto));
-
-		// List<Tuple> listTuples
-		// new JPAQueryFactory(em)
-		// .select(qData.key.name, qData.value)
-		// .from(qData)
-		// .leftJoin(qData.key)
-		// .where(
-		// (qData.key.group.title.eq(groupName))
-		// .and(qData.language.locale.eq(locale))
-		// ).fetch();
-
-//		Map<String, String> translations = new HashMap<>();
-//		if (listTuples != null) {
-//			for (Tuple t : listTuples) {
-//				translations.put(t.get(0, String.class), t.get(1, String.class));
-//			}
-//		}
-//		return translations;
 	}
 
   private SortedSet<TranslationKV> getSortedDataForGroupNameAndLocale(String groupName,

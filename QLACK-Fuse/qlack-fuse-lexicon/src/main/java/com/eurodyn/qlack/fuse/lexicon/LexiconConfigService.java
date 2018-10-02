@@ -1,19 +1,5 @@
 package com.eurodyn.qlack.fuse.lexicon;
 
-import com.eurodyn.qlack.fuse.lexicon.dto.GroupDTO;
-import com.eurodyn.qlack.fuse.lexicon.dto.KeyDTO;
-import com.eurodyn.qlack.fuse.lexicon.dto.LanguageDTO;
-import com.eurodyn.qlack.fuse.lexicon.exception.LexiconYMLProcessingException;
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
@@ -24,15 +10,26 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
+
+import com.eurodyn.qlack.fuse.lexicon.dto.GroupDTO;
+import com.eurodyn.qlack.fuse.lexicon.dto.KeyDTO;
+import com.eurodyn.qlack.fuse.lexicon.dto.LanguageDTO;
+import com.eurodyn.qlack.fuse.lexicon.exception.LexiconYMLProcessingException;
+
 @Service
 @Validated
 @Transactional
 public class LexiconConfigService {
 
   private static final Logger LOGGER = Logger.getLogger(LexiconConfigService.class.getName());
-
-//  @PersistenceContext
-//  private EntityManager em;
 
   // Service references.
   private GroupService groupService;

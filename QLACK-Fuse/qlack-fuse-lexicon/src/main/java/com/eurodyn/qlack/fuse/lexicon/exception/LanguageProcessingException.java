@@ -14,13 +14,14 @@
  */
 package com.eurodyn.qlack.fuse.lexicon.exception;
 
-
 import com.eurodyn.qlack.common.exceptions.QException;
 
 public class LanguageProcessingException extends QException {
 
-  public LanguageProcessingException(String msg) {
-    super(msg);
-  }
+	private static final long serialVersionUID = 1L;
+
+	public LanguageProcessingException(String msg) {
+		super(msg);
+	}
 
 }

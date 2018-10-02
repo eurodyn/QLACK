@@ -1,16 +1,16 @@
 package com.eurodyn.qlack.fuse.lexicon;
 
-import com.eurodyn.qlack.fuse.lexicon.dto.LanguageDTO;
-import com.eurodyn.qlack.fuse.lexicon.exception.LanguageProcessingException;
-import com.eurodyn.qlack.fuse.lexicon.mappers.LanguageMapper;
-import com.eurodyn.qlack.fuse.lexicon.model.Group;
-import com.eurodyn.qlack.fuse.lexicon.model.Key;
-import com.eurodyn.qlack.fuse.lexicon.model.Language;
-import com.eurodyn.qlack.fuse.lexicon.repository.KeyRepository;
-import com.eurodyn.qlack.fuse.lexicon.repository.LanguageRepository;
-//import com.eurodyn.qlack.fuse.lexicon.util.ConverterUtil;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -24,16 +24,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
+import com.eurodyn.qlack.fuse.lexicon.dto.LanguageDTO;
+import com.eurodyn.qlack.fuse.lexicon.exception.LanguageProcessingException;
+import com.eurodyn.qlack.fuse.lexicon.mappers.LanguageMapper;
+import com.eurodyn.qlack.fuse.lexicon.model.Group;
+import com.eurodyn.qlack.fuse.lexicon.model.Key;
+import com.eurodyn.qlack.fuse.lexicon.model.Language;
+import com.eurodyn.qlack.fuse.lexicon.repository.KeyRepository;
+import com.eurodyn.qlack.fuse.lexicon.repository.LanguageRepository;
 
 @Transactional
 @Service
@@ -45,9 +43,6 @@ public class LanguageService {
 	private static final Pattern RtlLocalesRe = Pattern
 			.compile("^(ar|dv|he|iw|fa|nqo|ps|sd|ug|ur|yi|.*[-_](Arab|Hebr|Thaa|Nkoo|Tfng))"
 					+ "(?!.*[-_](Latn|Cyrl)($|-|_))($|-|_)");
-
-	// @PersistenceContext
-	// private EntityManager em;
 
 	private final KeyRepository keyRepository;
 	private final LanguageRepository languageRepository;
@@ -69,20 +64,15 @@ public class LanguageService {
 
 	public String createLanguage(LanguageDTO language) {
 		Language entity = languageMapper.mapToEntity(language);
-				//ConverterUtil.languageDTOToLanguage(language);
-//		em.persist(entity);
 		languageRepository.save(entity);
 		return entity.getId();
 	}
 
 	public String createLanguage(LanguageDTO language, String translationPrefix) {
 		Language entity = languageMapper.mapToEntity(language); 
-				//ConverterUtil.languageDTOToLanguage(language);
-//		em.persist(entity);
 		languageRepository.save(entity);
 		Map<String, String> translations = new HashMap<>();
 		for (Key key : keyRepository.findAll()) {
-//			Key.getAllKeys(em) ) {
 			translations.put(key.getId(),
 					(translationPrefix != null) ? (translationPrefix + key.getName()) : key.getName());
 		}
@@ -93,10 +83,8 @@ public class LanguageService {
 
 	public String createLanguage(LanguageDTO language, String sourceLanguageId, String translationPrefix) {
 		Language entity = languageMapper.mapToEntity(language);
-				//ConverterUtil.languageDTOToLanguage(language);
 		entity.setId(language.getId());
 		languageRepository.save(entity);
-		// em.persist(entity);
 		Map<String, String> translations;
 
 		translations = keyService
@@ -113,31 +101,26 @@ public class LanguageService {
 
 	public void updateLanguage(LanguageDTO language) {
 		Language entity = languageRepository.fetchById(language.getId()); 
-				//Language.find(language.getId(), em);
 		entity.setName(language.getName());
 		entity.setLocale(language.getLocale());
 	}
 
 	public void deleteLanguage(String languageID) {
-//		em.remove(Language.find(languageID, em));
 		languageRepository.deleteById(languageID);
 	}
 
 	public void activateLanguage(String languageID) {
 		Language language = languageRepository.fetchById(languageID); 
-				//Language.find(languageID, em);
 		language.setActive(true);
 	}
 
 	public void deactivateLanguage(String languageID) {
 		Language language = languageRepository.fetchById(languageID); 
-				//Language.find(languageID, em);
 		language.setActive(false);
 	}
 
 	public LanguageDTO getLanguage(String languageID) {
 		return languageMapper.mapToDTO(languageRepository.fetchById(languageID));
-//		return ConverterUtil.languageToLanguageDTO(em.find(Language.class, languageID));
 	}
 
 	public LanguageDTO getLanguageByLocale(String locale) {
@@ -146,31 +129,24 @@ public class LanguageService {
 
 	public LanguageDTO getLanguageByLocale(String locale, boolean fallback) {
 		Language language = languageRepository.findByLocale(locale); 
-				//Language.findByLocale(locale, em);
 		if (fallback && language == null) {
 			language = languageRepository.findByLocale(getEffectiveLanguage(locale, null)); 
-					//Language.findByLocale(getEffectiveLanguage(locale, null), em);
 		}
 		return languageMapper.mapToDTO(language);
-				//ConverterUtil.languageToLanguageDTO(language);
 	}
 
 	public List<LanguageDTO> getLanguages(boolean includeInactive) {
 		List<Language> languages = null;
 		if (includeInactive) {
 			languages = languageRepository.findAll(); 
-					//Language.getAllLanguages(em);
 		} else {
 			languages = languageRepository.findByActiveTrueOrderByNameAsc();
-					//Language.getActiveLanguages(em);
 		}
 		return  languageMapper.mapToDTO(languages);
-				//ConverterUtil.languageToLanguageDTOList(languages);
 	}
 
 	public String getEffectiveLanguage(String locale, String defaultLocale) {
 		Language language = languageRepository.findByLocale(locale);
-//				Language.findByLocale(locale, em);
 		if ((language != null) && (language.isActive())) {
 			return locale;
 		}
@@ -180,14 +156,12 @@ public class LanguageService {
 		if (locale.contains("_")) {
 			String reducedLocale = locale.substring(0, locale.indexOf("_"));
 			language = languageRepository.findByLocale(reducedLocale);
-					//Language.findByLocale(reducedLocale, em);
 			if ((language != null) && (language.isActive())) {
 				return reducedLocale;
 			}
 		} else if (locale.contains("-")) {
 			String reducedLocale = locale.substring(0, locale.indexOf("-"));
 			language = languageRepository.findByLocale(reducedLocale);
-					//Language.findByLocale(reducedLocale, em);
 			if ((language != null) && (language.isActive())) {
 				return reducedLocale;
 			}
@@ -196,7 +170,6 @@ public class LanguageService {
 		// If nothing worked, return the default locale after checking
 		// that it corresponds to an existing active language
 		Language defaultLanguage = languageRepository.findByLocale(defaultLocale); 
-				//Language.findByLocale(defaultLocale, em);
 		if ((defaultLanguage != null) && (defaultLanguage.isActive())) {
 			return defaultLocale;
 		}
@@ -208,7 +181,6 @@ public class LanguageService {
 
 		// Check that the language exists and get its translations
 		Language language = languageRepository.fetchById(languageID); 
-				//Language.find(languageID, em);
 
 		// Create an Excel workbook. The workbook will contain a sheet for each
 		// group.

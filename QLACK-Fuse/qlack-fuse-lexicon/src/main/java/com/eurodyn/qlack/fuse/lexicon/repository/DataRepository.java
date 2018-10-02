@@ -3,7 +3,6 @@ package com.eurodyn.qlack.fuse.lexicon.repository;
 import java.util.List;
 
 import com.eurodyn.qlack.fuse.lexicon.model.Data;
-import com.eurodyn.qlack.fuse.lexicon.model.Key;
 
 public interface DataRepository extends LexiconRepository<Data, String> {
 

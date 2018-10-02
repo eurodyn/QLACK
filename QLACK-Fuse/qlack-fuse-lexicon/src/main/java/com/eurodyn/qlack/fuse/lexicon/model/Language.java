@@ -35,31 +35,4 @@ public class Language extends LexiconModel {
 	@OneToMany(mappedBy = "language")
 	private List<Template> templates;
 
-	// public static Language find(String languageId, EntityManager em) {
-	// return em.find(Language.class, languageId);
-	// }
-	//
-	// public static Language findByLocale(String locale, EntityManager em) {
-	// Query query = em.createQuery("SELECT l FROM Language l WHERE l.locale =
-	// :locale");
-	// query.setParameter("locale", locale);
-	// List<Language> queryResult = query.getResultList();
-	// if (queryResult.isEmpty()) {
-	// return null;
-	// }
-	// return queryResult.get(0);
-	// }
-	//
-	// public static List<Language> getAllLanguages(EntityManager em) {
-	// Query query = em.createQuery("SELECT l FROM Language l ORDER BY l.name ASC");
-	// return query.getResultList();
-	// }
-	//
-	// public static List<Language> getActiveLanguages(EntityManager em) {
-	// Query query = em
-	// .createQuery("SELECT l FROM Language l WHERE l.active = true ORDER BY l.name
-	// ASC");
-	// return query.getResultList();
-	// }
-
 }

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 import com.eurodyn.qlack.fuse.lexicon.dto.KeyDTO;
@@ -14,8 +13,6 @@ import com.eurodyn.qlack.fuse.lexicon.model.Key;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface KeyMapper extends LexiconMapper<Key, KeyDTO> {
 	
-//	@Override
-//  @Mapping(source = "parent.id", target = "parentId")
 	default KeyDTO mapToDTOwithTranslations(Key entity, boolean addtranslations) {
 
 		KeyDTO dto = mapToDTO(entity);

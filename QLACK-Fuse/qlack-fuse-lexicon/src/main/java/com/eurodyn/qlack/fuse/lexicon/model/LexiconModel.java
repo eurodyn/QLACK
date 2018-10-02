@@ -16,8 +16,9 @@ import lombok.Setter;
 @Setter
 public class LexiconModel implements Serializable {
 
-	  @Id
-	  @GeneratedValue(generator = "uuid")
-	  @GenericGenerator(name = "uuid", strategy = "uuid2")
-	  private String id;
-	}
+	private static final long serialVersionUID = 1L;
+	@Id
+	@GeneratedValue(generator = "uuid")
+	@GenericGenerator(name = "uuid", strategy = "uuid2")
+	private String id;
+}

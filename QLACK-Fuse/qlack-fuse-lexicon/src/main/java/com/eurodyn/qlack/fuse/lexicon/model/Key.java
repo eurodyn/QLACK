@@ -37,38 +37,4 @@ public class Key extends LexiconModel {
 	@OneToMany(mappedBy = "key")
 	private List<Data> data;
 
-	// public Key() {
-	// id = UUID.randomUUID().toString();
-	// }
-	//
-	// public static Key find(String keyId, EntityManager em) {
-	// return em.find(Key.class, keyId);
-	// }
-	//
-	// public static Key findByName(String keyName, String groupId, EntityManager
-	// em) {
-	// Query query = null;
-	// if (groupId != null) {
-	// query = em
-	// .createQuery("SELECT k FROM Key k WHERE k.name = :name AND k.group.id =
-	// :groupId");
-	// query.setParameter("name", keyName);
-	// query.setParameter("groupId", groupId);
-	// } else {
-	// query = em.createQuery("SELECT k FROM Key k WHERE k.name = :name AND k.group
-	// IS NULL");
-	// query.setParameter("name", keyName);
-	// }
-	// List<Key> queryResult = query.getResultList();
-	// if (queryResult.isEmpty()) {
-	// return null;
-	// }
-	// return queryResult.get(0);
-	// }
-	//
-	// public static List<Key> getAllKeys(EntityManager em) {
-	// Query query = em.createQuery("SELECT k FROM Key k");
-	// return query.getResultList();
-	// }
-
 }
