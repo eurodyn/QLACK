@@ -9,6 +9,7 @@ import com.eurodyn.qlack.fuse.fileupload.exception.VirusScanException;
 import com.eurodyn.qlack.fuse.fileupload.model.DBFile;
 import com.eurodyn.qlack.fuse.fileupload.model.DBFilePK;
 import com.eurodyn.qlack.fuse.fileupload.model.QDBFile;
+import com.eurodyn.qlack.fuse.fileupload.repository.DBFileRepository;
 import com.eurodyn.qlack.fuse.fileupload.request.CheckChunkRequest;
 import com.eurodyn.qlack.fuse.fileupload.request.FileUploadRequest;
 import com.eurodyn.qlack.fuse.fileupload.request.VirusScanRequest;
@@ -20,18 +21,9 @@ import com.eurodyn.qlack.fuse.fileupload.response.FileListResponse;
 import com.eurodyn.qlack.fuse.fileupload.response.FileUploadResponse;
 import com.eurodyn.qlack.fuse.fileupload.response.VirusScanResponse;
 import com.eurodyn.qlack.fuse.fileupload.util.Properties;
-import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.core.types.Predicate;
 import io.sensesecure.clamav4j.ClamAV;
 import io.sensesecure.clamav4j.ClamAVException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -39,8 +31,16 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 @Service
 @Validated
@@ -51,8 +51,12 @@ public class FileUploadService {
   private static final Logger LOGGER = Logger.getLogger(FileUploadService.class
       .getName());
 
-  @PersistenceContext
-  private EntityManager em;
+//  @PersistenceContext
+//  private EntityManager em;
+
+  private final DBFileRepository dbFileRepository;
+
+  private QDBFile qdbFile = QDBFile.dBFile;
 
   // How long to wait for ClamAV to reply before timeout.
   private static final int CLAMAV_SOCKET_TIMEOUT = 10000;
@@ -61,7 +65,9 @@ public class FileUploadService {
   private Properties properties;
 
   @Autowired
-  public FileUploadService(Properties properties) {
+  public FileUploadService(
+      DBFileRepository dbFileRepository, Properties properties) {
+    this.dbFileRepository = dbFileRepository;
     this.properties = properties;
   }
 
@@ -73,15 +79,17 @@ public class FileUploadService {
    */
   private DBFileDTO getByID(String fileID, boolean includeBinary) {
     // Find all chunks of the requested file.
-    Query q = em
-        .createQuery(
-            "select f from DBFile f where f.id.id = :id order by f.id.chunkOrder")
-        .setParameter("id", fileID);
-    @SuppressWarnings("unchecked")
-    List<DBFile> results = q.getResultList();
+//    Query q = em
+//        .createQuery(
+//            "select f from DBFile f where f.id.id = :id order by f.id.chunkOrder")
+//        .setParameter("id", fileID);
+//    @SuppressWarnings("unchecked")
+//    List<DBFile> results = q.getResultList();
+    Predicate predicate = qdbFile.id.id.eq(fileID);
+    List<DBFile> results = dbFileRepository.findAll(predicate);
 
     // Check if any chunk for the requested file has been found.
-    if (results != null && results.size() == 0) {
+    if (results != null && results.isEmpty()) {
       throw new FileNotFoundException();
     }
 
@@ -138,19 +146,23 @@ public class FileUploadService {
   }
 
   public ChunkGetResponse getByIDAndChunk(String fileID, long chunkIndex) {
-    Query q = em
-        .createQuery(
-            "select f from DBFile f "
-                + "where "
-                + "f.id.id = :id and f.id.chunkOrder in :chunkIndexes "
-                + "order by f.id.chunkOrder")
-        .setParameter("id", fileID)
-        .setParameter("chunkIndexes", Arrays.asList(new Long[]{chunkIndex, chunkIndex + 1}));
-
-    @SuppressWarnings("unchecked")
-    List<DBFile> results = q.getResultList();
+//    Query q = em
+//        .createQuery(
+//            "select f from DBFile f "
+//                + "where "
+//                + "f.id.id = :id and f.id.chunkOrder in :chunkIndexes "
+//                + "order by f.id.chunkOrder")
+//        .setParameter("id", fileID)
+//        .setParameter("chunkIndexes", Arrays.asList(new Long[]{chunkIndex, chunkIndex + 1}));
+//
+//    @SuppressWarnings("unchecked")
+//    List<DBFile> results = q.getResultList();
+    Predicate predicate = qdbFile.id.id.eq(fileID).and(qdbFile.id.chunkOrder
+        .in(Arrays.asList(chunkIndex, chunkIndex + 1)));
+    List<DBFile> results = dbFileRepository
+        .findAll(predicate, Sort.by("id.chunkOrder").ascending());
     // Check if any chunk for the requested file has been found.
-    if (results != null && results.size() == 0) {
+    if (results.isEmpty()) {
       throw new FileNotFoundException();
     }
 
@@ -170,7 +182,7 @@ public class FileUploadService {
     dto.setTotalSize(currentChunk.getFileSize());
     dto.setBinContent(currentChunk.getChunkData());
 
-    if (results.size() > 0) {
+    if (!results.isEmpty()) {
       dto.setChunkIndex(results.get(0).getId().getChunkOrder());
       dto.setHasMoreChunks(results.size() == 2);
     }
@@ -180,8 +192,10 @@ public class FileUploadService {
 
   public CheckChunkResponse checkChunk(CheckChunkRequest req) {
     CheckChunkResponse res = new CheckChunkResponse();
-    res.setChunkExists(DBFile.getChunk(req.getFileAlias(),
-        req.getChunkNumber(), em) != null);
+//    res.setChunkExists(DBFile.getChunk(req.getFileAlias(),
+//        req.getChunkNumber(), em) != null);
+    res.setChunkExists(dbFileRepository.getChunk(req.getFileAlias(),
+        req.getChunkNumber()) != null);
 
     return res;
   }
@@ -191,7 +205,8 @@ public class FileUploadService {
 
     // Check if this chunk has already been uploaded, so that we can support
     // updating existing chunks.
-    DBFile file = DBFile.getChunk(req.getAlias(), req.getChunkNumber(), em);
+//    DBFile file = DBFile.getChunk(req.getAlias(), req.getChunkNumber(), em);
+    DBFile file = dbFileRepository.getChunk(req.getAlias(), req.getChunkNumber());
     if (file == null) {
       file = new DBFile(
           new DBFilePK(req.getAlias(), req.getChunkNumber()));
@@ -211,17 +226,19 @@ public class FileUploadService {
     file.setChunkData(req.getData());
     file.setChunkSize(req.getData().length);
 
-    em.persist(file);
-
+//    em.persist(file);
+    dbFileRepository.save(file);
     return res;
   }
 
   public FileDeleteResponse deleteByID(String fileID) {
-    return new FileDeleteResponse(DBFile.delete(fileID, em));
+//    return new FileDeleteResponse(DBFile.delete(fileID, em));
+    return new FileDeleteResponse(dbFileRepository.deleteById(fileID));
   }
 
   public FileDeleteResponse deleteByIDForConsole(String fileID) {
-    return new FileDeleteResponse(DBFile.delete(fileID, em));
+//    return new FileDeleteResponse(DBFile.delete(fileID, em));
+    return deleteByID(fileID);
   }
 
   public FileGetResponse getByID(String fileID) {
@@ -232,10 +249,15 @@ public class FileUploadService {
     List<DBFileDTO> retVal = new ArrayList<>();
 
     // First find all unique IDs for file chunks.
-    Query q = em
-        .createQuery("select distinct f.id.id from DBFile f order by f.uploadedAt");
-    @SuppressWarnings("unchecked")
-    List<String> chunks = q.getResultList();
+//    Query q = em
+//        .createQuery("select distinct f.id.id from DBFile f order by f.uploadedAt");
+//    @SuppressWarnings("unchecked")
+//    List<String> chunks = q.getResultList();
+    List<String> chunks = dbFileRepository.findAll(Sort.by("UploadedAt"))
+        .stream()
+        .map(dbFile -> dbFile.getId().getId())
+        .collect(Collectors.toList());
+
     for (String id : chunks) {
       retVal.add(getByID(id, includeBinaryContent));
     }
@@ -249,9 +271,9 @@ public class FileUploadService {
     InetSocketAddress clamAVAddress;
     if (StringUtils.isBlank(req.getClamAVHost())) {
       clamAVAddress = new InetSocketAddress(properties.getClamAV().substring(0,
-          properties.getClamAV().indexOf(":")),
+          properties.getClamAV().indexOf(':')),
           Integer.parseInt(properties.getClamAV().substring(properties.getClamAV()
-              .indexOf(":") + 1)));
+              .indexOf(':') + 1)));
     } else {
       clamAVAddress = new InetSocketAddress(req.getClamAVHost(), req.getClamAVPort());
     }
@@ -271,26 +293,30 @@ public class FileUploadService {
 
     VirusScanResponse res = new VirusScanResponse();
     res.setId(req.getId());
-    res.setVirusFree(scanResult.equals("OK") ? true : false);
+    res.setVirusFree(scanResult.equals("OK"));
     res.setVirusScanDescription(scanResult);
 
     return res;
   }
 
   public void cleanupExpired(long deleteBefore) {
-    QDBFile qFile = QDBFile.dBFile;
-    new JPAQueryFactory(em).delete(qFile)
-        .where(qFile.uploadedAt.lt(deleteBefore)).execute();
+//    new JPAQueryFactory(em).delete(qFile)
+//        .where(qFile.uploadedAt.lt(deleteBefore)).execute();
+    Predicate predicate = qdbFile.uploadedAt.lt(deleteBefore);
+    dbFileRepository.deleteAll(dbFileRepository.findAll(predicate));
   }
 
   public FileListResponse listFilesForConsole(boolean includeBinary) {
     List<DBFileDTO> retVal = new ArrayList<>();
 
     // First find all unique IDs for file chunks.
-    Query q = em
-        .createQuery("select distinct f.id.id from DBFile f order by f.uploadedAt");
-    @SuppressWarnings("unchecked")
-    List<String> chunks = q.getResultList();
+//    Query q = em
+//        .createQuery("select distinct f.id.id from DBFile f order by f.uploadedAt");
+//    @SuppressWarnings("unchecked")
+//    List<String> chunks = q.getResultList();
+    Set<String> chunks = dbFileRepository.findAll(Sort.by("uploadedAt")).stream()
+        .map(dbFile -> dbFile.getId().getId())
+        .collect(Collectors.toSet());
     for (String id : chunks) {
       retVal.add(getByID(id, includeBinary));
     }

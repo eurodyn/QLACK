@@ -4,9 +4,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
-import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import lombok.Getter;
@@ -50,15 +48,15 @@ public class DBFile {
     return id;
   }
 
-  public static DBFile getChunk(String id, long chunkOrder, EntityManager em) {
-    return em.find(DBFile.class, new DBFilePK(id, chunkOrder));
-  }
-
-  public static long delete(String id, EntityManager em) {
-    Query q = em.createQuery("delete from DBFile f where f.id.id = :id")
-        .setParameter("id", id);
-
-    return q.executeUpdate();
-  }
+//  public static DBFile getChunk(String id, long chunkOrder, EntityManager em) {
+//    return em.find(DBFile.class, new DBFilePK(id, chunkOrder));
+//  }
+//
+//  public static long delete(String id, EntityManager em) {
+//    Query q = em.createQuery("delete from DBFile f where f.id.id = :id")
+//        .setParameter("id", id);
+//
+//    return q.executeUpdate();
+//  }
 
 }
