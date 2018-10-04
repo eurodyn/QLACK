@@ -11,13 +11,14 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class ContactDTO  implements Serializable {
+public class ContactDTO implements Serializable {
 
-  private String id;
-  private String userID;
-  private String firstName;
-  private String lastName;
-  private String email;
-  private String locale;
+	private static final long serialVersionUID = 1L;
+	private String id;
+	private String userID;
+	private String firstName;
+	private String lastName;
+	private String email;
+	private String locale;
 
 }

@@ -13,10 +13,11 @@ import lombok.Setter;
 @Setter
 public class DistributionListDTO extends MailBaseDTO {
 
-  private String name;
-  private String description;
-  private List<ContactDTO> contacts;
-  private String createdBy;
-  private Long createdOn;
+	private static final long serialVersionUID = 1L;
+	private String name;
+	private String description;
+	private List<ContactDTO> contacts;
+	private String createdBy;
+	private Long createdOn;
 
 }

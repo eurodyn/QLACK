@@ -1,10 +1,7 @@
 package com.eurodyn.qlack.fuse.mailing.mappers;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import com.eurodyn.qlack.fuse.mailing.model.MailingModel;
 
@@ -54,7 +51,4 @@ public interface MailingMapper<E extends MailingModel, D > {
 	default java.util.Date mapToDTO(java.lang.Long value) {
 		return (value != null) ? new Date(value) : null;
 	}
-	
-	
-	
 }

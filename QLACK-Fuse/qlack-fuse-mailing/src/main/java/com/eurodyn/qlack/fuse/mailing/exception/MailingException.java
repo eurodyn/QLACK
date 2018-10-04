@@ -14,7 +14,6 @@
  */
 package com.eurodyn.qlack.fuse.mailing.exception;
 
-
 import com.eurodyn.qlack.common.exceptions.QException;
 
 /**
@@ -24,18 +23,20 @@ import com.eurodyn.qlack.common.exceptions.QException;
  */
 public class MailingException extends QException {
 
-  public MailingException(String message) {
-    super(message);
-  }
+	private static final long serialVersionUID = 1L;
 
-  public MailingException(String message, Throwable cause) {
-    super(message, cause);
-  }
+	public MailingException(String message) {
+		super(message);
+	}
 
-  public MailingException(Throwable cause) {
-    super(cause);
-  }
+	public MailingException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
-  public MailingException() {
-  }
+	public MailingException(Throwable cause) {
+		super(cause);
+	}
+
+	public MailingException() {
+	}
 }

@@ -13,18 +13,19 @@ import lombok.Setter;
 @Setter
 public class AttributeDTO implements Serializable {
 
-  private Map<String, Object> attribute = new HashMap<String, Object>();
+	private static final long serialVersionUID = 1L;
+	private Map<String, Object> attribute = new HashMap<String, Object>();
 
-  public Object clearAttribute(String key) {
-    return this.getAttribute().remove(key);
-  }
+	public Object clearAttribute(String key) {
+		return this.getAttribute().remove(key);
+	}
 
-  public Object getAttribute(String key) {
-    return this.getAttribute().get(key);
-  }
+	public Object getAttribute(String key) {
+		return this.getAttribute().get(key);
+	}
 
-  public void setAttribute(String key, Object value) {
-    this.getAttribute().put(key, value);
-  }
+	public void setAttribute(String key, Object value) {
+		this.getAttribute().put(key, value);
+	}
 
 }

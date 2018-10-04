@@ -14,23 +14,24 @@ import lombok.Setter;
 @Setter
 public class InternalMessagesDTO extends MailBaseDTO {
 
-  private String subject;
-  private String message;
-  private String from;
-  private String to;
-  private Date dateSent;
-  private Date dateReceived;
-  private String status;
-  private String deleteType;
-  private List<InternalAttachmentDTO> attachments;
-  private String fwdAttachmentId;
+	private static final long serialVersionUID = 1L;
+	private String subject;
+	private String message;
+	private String from;
+	private String to;
+	private Date dateSent;
+	private Date dateReceived;
+	private String status;
+	private String deleteType;
+	private List<InternalAttachmentDTO> attachments;
+	private String fwdAttachmentId;
 
-  public void setDateSent(Long dateSent) {
-    this.dateSent = new Date(dateSent);
-  }
+	public void setDateSent(Long dateSent) {
+		this.dateSent = new Date(dateSent);
+	}
 
-  public void setDateReceived(Long dateReceived) {
-    this.dateReceived = new Date(dateReceived);
-  }
+	public void setDateReceived(Long dateReceived) {
+		this.dateReceived = new Date(dateReceived);
+	}
 
 }

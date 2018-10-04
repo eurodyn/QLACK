@@ -52,7 +52,6 @@ public class MailQueueSender {
     email.setHostName(mailingProperties.getServerHost());
     email.setSmtpPort(mailingProperties.getServerPort());
     email.setFrom(vo.getFromEmail());
-    		//getFrom());
     email.setSubject(vo.getSubject());
     email.setSentDate(new Date());
 

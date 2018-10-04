@@ -10,12 +10,13 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class InternalAttachmentDTO  extends MailBaseDTO {
+public class InternalAttachmentDTO extends MailBaseDTO {
 
-  private String messagesId;
-  private String filename;
-  private String contentType;
-  private byte[] data;
-  private String format;
+	private static final long serialVersionUID = 1L;
+	private String messagesId;
+	private String filename;
+	private String contentType;
+	private byte[] data;
+	private String format;
 
 }

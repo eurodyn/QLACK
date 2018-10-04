@@ -10,13 +10,11 @@ import com.eurodyn.qlack.fuse.mailing.dto.EmailDTO;
 import com.eurodyn.qlack.fuse.mailing.model.Email;
 
 @Mapper(componentModel = "spring")
-public interface EmailMapper extends MailingMapper<Email, EmailDTO > {
+public interface EmailMapper extends MailingMapper<Email, EmailDTO> {
 
-//	@IterableMapping(qualifiedBy = Email.class )
-//	@Named("checkQualifiedNamed")
 	default Email mapToEntityWithRecipilents(EmailDTO dto, boolean icludeReceipliens) {
 		Email email = mapToEntity(dto);
-		if (icludeReceipliens) { 
+		if (icludeReceipliens) {
 			email.setToEmails(mapListToCsv(dto.getToEmails()));
 			email.setCcEmails(mapListToCsv(dto.getCcEmails()));
 			email.setBccEmails(mapListToCsv(dto.getBccEmails()));
@@ -24,7 +22,6 @@ public interface EmailMapper extends MailingMapper<Email, EmailDTO > {
 		}
 		return email;
 	}
-
 
 	default String mapListToCsv(List<String> emails) {
 		StringBuilder emailAddress = new StringBuilder();
@@ -52,7 +49,7 @@ public interface EmailMapper extends MailingMapper<Email, EmailDTO > {
 		}
 		return contacts.isEmpty() ? null : contacts;
 	}
-		
+
 	default EmailDTO mapToDTOyWithRecipilents(Email email, boolean icludeReceipliens) {
 
 		EmailDTO maildto = mapToDTO(email);

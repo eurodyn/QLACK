@@ -1,6 +1,5 @@
 package com.eurodyn.qlack.fuse.mailing.monitor;
 
-
 import com.eurodyn.qlack.fuse.mailing.dto.AttachmentDTO;
 import com.eurodyn.qlack.fuse.mailing.dto.EmailDTO;
 import com.eurodyn.qlack.fuse.mailing.exception.MailingException;
@@ -36,71 +35,45 @@ import java.util.logging.Logger;
  */
 @Service
 @Validated
-@Transactional(noRollbackFor = {MailingException.class})
+@Transactional(noRollbackFor = { MailingException.class })
 public class MailQueueMonitor {
 
-  /**
-   * Logger reference
-   */
-  private static final Logger LOGGER = Logger.getLogger(MailQueueMonitor.class.getName());
+	/**
+	 * Logger reference
+	 */
+	private static final Logger LOGGER = Logger.getLogger(MailQueueMonitor.class.getName());
 
-  // Service references.
-  private MailQueueSender mailQueueSender;
-  private MailingProperties mailingProperties;
-  private EmailMapper emailMapper;
-  private AttachmentMapper attachmentMapper;
-  
-  private final EmailRepository emailRepository; 
-  
-  private static QEmail qEmail = QEmail.email;
+	// Service references.
+	private MailQueueSender mailQueueSender;
+	private MailingProperties mailingProperties;
+	private EmailMapper emailMapper;
+	private AttachmentMapper attachmentMapper;
 
-  @Autowired
-  public MailQueueMonitor(MailQueueSender mailQueueSender, MailingProperties mailingProperties,
-		EmailRepository emailRepository, EmailMapper emailMapper, AttachmentMapper attachmentMapper) {
-	this.mailQueueSender = mailQueueSender;
-	this.mailingProperties = mailingProperties;
-	this.emailRepository = emailRepository;
-	this.emailMapper = emailMapper;
-	this.attachmentMapper = attachmentMapper;
-}
-  
+	private final EmailRepository emailRepository;
+
+	private static QEmail qEmail = QEmail.email;
+
+	@Autowired
+	public MailQueueMonitor(MailQueueSender mailQueueSender, MailingProperties mailingProperties,
+			EmailRepository emailRepository, EmailMapper emailMapper, AttachmentMapper attachmentMapper) {
+		this.mailQueueSender = mailQueueSender;
+		this.mailingProperties = mailingProperties;
+		this.emailRepository = emailRepository;
+		this.emailMapper = emailMapper;
+		this.attachmentMapper = attachmentMapper;
+	}
+
 	private void send(Email email) {
 		/** Create a DTO for the email about to be sent */
 		EmailDTO dto = new EmailDTO();
 
 		dto = emailMapper.mapToDTOyWithRecipilents(email, true);
 
-		//// dto.setId(email.getId());
-		//// dto.setSubject(email.getSubject());
-		//// dto.setBody(email.getBody());
-		//// dto.setFrom(email.getFromEmail());
-		////
-		// if (email.getToEmails() != null) {
-		// dto.setToContact(ConverterUtil.createRecepientlist(email.getToEmails()));
-		// }
-		// if (email.getCcEmails() != null) {
-		// dto.setCcContact(ConverterUtil.createRecepientlist(email.getCcEmails()));
-		// }
-		// if (email.getBccEmails() != null) {
-		// dto.setBccContact(ConverterUtil.createRecepientlist(email.getBccEmails()));
-		// }
-		// if (email.getReplyToEmails() != null) {
-		// dto.setReplyToContact(ConverterUtil.createRecepientlist(email.getReplyToEmails()));
-		// }
-		// if (email.getEmailType().equals("HTML")) {
-		// dto.setEmailType(EmailDTO.EMAIL_TYPE.HTML);
-		// } else {
-		// dto.setEmailType(EmailDTO.EMAIL_TYPE.TEXT);
-		// }
-
 		/** Process attachments. */
 		Set<Attachment> attachments = email.getAttachments();
 		for (Attachment attachment : attachments) {
 			AttachmentDTO attachmentDTO = new AttachmentDTO();
 			attachmentDTO = attachmentMapper.mapToDTO(attachment);
-//			attachmentDTO.setContentType(attachment.getContentType());
-//			attachmentDTO.setData(attachment.getData());
-//			attachmentDTO.setFilename(attachment.getFilename());
 			dto.addAttachment(attachmentDTO);
 		}
 
@@ -135,48 +108,30 @@ public class MailQueueMonitor {
 			}
 		}
 		emailRepository.save(email);
-		// em.merge(email);
 	}
 
+	public void sendOne(String emailId) {
+		send(emailRepository.fetchById(emailId));
+	}
 
+	/**
+	 * Check for QUEUED emails and send them.
+	 */
+	@Scheduled(initialDelay = 30000, fixedDelay = 5000)
+	public void checkAndSendQueued() {
+		if (mailingProperties.isPolling()) {
 
-public void sendOne(String emailId) {
-    send(emailRepository.fetchById(emailId));
-    		//Email.find(em, emailId));
-  }
+			Predicate predicate = qEmail.status.eq(EMAIL_STATUS.QUEUED.toString())
+					.and(qEmail.tries.lt(mailingProperties.getMaxTries()));
 
-  /**
-   * Check for QUEUED emails and send them.
-   */
-  @Scheduled(initialDelay = 30000, fixedDelay = 5000)
-  public void checkAndSendQueued() {
-    if (mailingProperties.isPolling()) {
-    	
-    	Predicate predicate = qEmail.status.eq(EMAIL_STATUS.QUEUED.toString()).and(qEmail.tries.lt(mailingProperties.getMaxTries()));
-    	
-    	  List<Email> emails = 	emailRepository.findAll(predicate);
-//    	
-/*    	  public static List<Email> findQueued(EntityManager em, byte maxTries) {
-    	    String jpql =
-    	        "SELECT m FROM Email m " +
-    	            "WHERE m.status = :status AND m.tries < :tries";
+			List<Email> emails = emailRepository.findAll(predicate);
 
-    	    return em.createQuery(jpql, Email.class)
-    	        .setParameter("status", EMAIL_STATUS.QUEUED.toString())
-    	        .setParameter("tries", maxTries)
-    	        .getResultList();
-    	  }
-    	*/
-//    	emailRepository.
-    	  //emailRepository.findQueued(mailingProperties.getMaxTries());
-    	  //Email.findQueued(em, mailingProperties.getMaxTries());
-    	
-      LOGGER.log(Level.FINEST, "Found {0} email(s) to be sent.", emails.size());
+			LOGGER.log(Level.FINEST, "Found {0} email(s) to be sent.", emails.size());
 
-      for (Email email : emails) {
-        send(email);
-      }
-    }
-  }
+			for (Email email : emails) {
+				send(email);
+			}
+		}
+	}
 
 }
