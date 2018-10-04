@@ -1,8 +1,14 @@
 package com.eurodyn.qlack.fuse.mailing.mappers;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.StringTokenizer;
 
-public interface MailingMapper<E, D> {
+import com.eurodyn.qlack.fuse.mailing.model.MailingModel;
+
+public interface MailingMapper<E extends MailingModel, D > {
 	
 	/**
 	 * Maps an entity to a DTO.
@@ -39,5 +45,16 @@ public interface MailingMapper<E, D> {
 	 * @return the mapped list of entities
 	 */
 	List<E> mapToEntity(List<D> dto);
+	
+	
+	default java.lang.Long map(java.util.Date value){
+		return (value != null) ? value.getTime() : null;
+	}
 
+	default java.util.Date mapToDTO(java.lang.Long value) {
+		return (value != null) ? new Date(value) : null;
+	}
+	
+	
+	
 }

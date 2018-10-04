@@ -1,5 +1,6 @@
 package com.eurodyn.qlack.fuse.mailing.repository;
 
+import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +14,7 @@ import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.mailing.model.MailingModel;
 import com.querydsl.core.types.Predicate;
 
-public interface MailingRepository<T extends MailingModel, I> extends JpaRepository<T, I>, QuerydslPredicateExecutor<T> {
+public interface MailingRepository<T extends MailingModel, I extends Serializable> extends JpaRepository<T, I>, QuerydslPredicateExecutor<T> {
 
 	@NonNull
 	List<T> findAll(@NonNull Predicate predicate);

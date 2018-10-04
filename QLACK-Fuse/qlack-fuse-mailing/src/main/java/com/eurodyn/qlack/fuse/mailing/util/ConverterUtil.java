@@ -101,21 +101,22 @@ public class ConverterUtil {
    * @param emails List of e-mails.
    * @return String of token separated e-mails.
    */
-  public static String createRecepientlist(List<String> emails) {
+//  public static String createRecepientlist(List<String> emails) {
+//
+//    StringBuilder emailAddress = new StringBuilder();
+//    if (emails != null && !emails.isEmpty()) {
+//      for (String email : emails) {
+//        if (emailAddress.length() > 0) {
+//          emailAddress.append(",");
+//        }
+//        emailAddress.append(email);
+//      }
+//    }
+//
+//    return emailAddress.length() > 0 ? emailAddress.toString() : null;
+//  }
 
-    StringBuilder emailAddress = new StringBuilder();
-    if (emails != null && !emails.isEmpty()) {
-      for (String email : emails) {
-        if (emailAddress.length() > 0) {
-          emailAddress.append(",");
-        }
-        emailAddress.append(email);
-      }
-    }
-
-    return emailAddress.length() > 0 ? emailAddress.toString() : null;
-  }
-
+  
   /**
    * Converts InternalMessagesDTO DTO to InternalMessages without attachments.
    *
@@ -252,7 +253,7 @@ public class ConverterUtil {
     dto.setDateSent(entity.getDateSent());
     dto.setStatus(entity.getStatus());
     dto.setBody(entity.getBody());
-    dto.setFrom(entity.getFromEmail());
+    dto.setFromEmail(entity.getFromEmail());
     dto.setServerResponse(entity.getServerResponse());
     dto.setSubject(entity.getSubject());
     dto.setStatus(entity.getStatus());

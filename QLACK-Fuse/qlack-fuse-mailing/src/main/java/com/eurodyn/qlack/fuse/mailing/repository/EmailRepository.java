@@ -1,12 +1,19 @@
 package com.eurodyn.qlack.fuse.mailing.repository;
 
+import java.util.List;
+
 import com.eurodyn.qlack.fuse.mailing.model.Email;
 import com.eurodyn.qlack.fuse.mailing.util.MailConstants.EMAIL_STATUS;
 
 public interface EmailRepository extends MailingRepository<Email, String>{
 
+
 	
-	 List<Email> findQueued(byte maxTries);
+	 List<Email> findByAddedOnDateAndStatus(Long date, EMAIL_STATUS... statuses);
+
+	
+	
+//	 List<Email> findQueued(byte maxTries);
 	 /**
 	  *  
 	  *   public static List<Email> findQueued(EntityManager em, byte maxTries) {
@@ -21,7 +28,6 @@ public interface EmailRepository extends MailingRepository<Email, String>{
   }
 
 	  */
-	 List<Email> findByDateAndStatus(Long date, EMAIL_STATUS... statuses);
 	
 	 
 	 /**

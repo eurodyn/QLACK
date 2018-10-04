@@ -9,36 +9,39 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * DTO for Email data.
  */
 @Getter
 @Setter
+@ToString
 public class EmailDTO implements Serializable {
 
   private String id;
 
-  private String messageId;
+//  private String messageId;
   private @NotBlank String subject;
   private @NotBlank String body;
-  private @NotBlank String from;
-  private @NotEmpty List<String> toContact;
-  private List<String> ccContact;
-  private List<String> bccContact;
-  private List<String> replyToContact;
+  private @NotBlank String fromEmail;
+  private @NotEmpty List<String> toEmails;
+  private List<String> ccEmails;
+  private List<String> bccEmails;
+  private List<String> replyToEmails;
   private @NotNull EMAIL_TYPE emailType;
   private String status;
   private List<AttachmentDTO> attachments;
   private Date dateSent;
   private String serverResponse;
+  private Date serverResponseDate;
 
   public EmailDTO() {
     this.emailType = EMAIL_TYPE.TEXT;
   }
 
-  public void setToContact(List<String> toContact) {
-    this.toContact = toContact;
+  public void setToContact(List<String> toEmails) {
+    this.toEmails = toEmails;
   }
 
   public void setToContact(String toContact) {
@@ -61,31 +64,31 @@ public class EmailDTO implements Serializable {
   }
 
   public void resetAllRecipients() {
-    this.toContact = null;
-    this.ccContact = null;
-    this.bccContact = null;
+    this.toEmails = null;
+    this.ccEmails = null;
+    this.bccEmails = null;
   }
 
-  @Override
-  public String toString() {
-    StringBuffer strBuf = new StringBuffer();
-    strBuf.append("DTO id is: " + getId())
-        .append("Subject is: " + getSubject())
-        .append("To contact List: ")
-        .append(getToContact() != null ? getToContact().toString() : null)
-        .append("CC contact List: ")
-        .append(getCcContact() != null ? getCcContact().toString() : null)
-        .append("BCC contact List: ")
-        .append(getBccContact() != null ? getBccContact().toString() : null)
-        .append("body: ").append(body)
-        .append("status: ").append(status)
-        .append("Date sent: ").append(dateSent)
-        .append("Server Response: ").append(serverResponse)
-        .append("attachment: ").append(attachments)
-        .append("email type: ").append(emailType)
-        .append("message Id: ").append(messageId);
-    return strBuf.toString();
-  }
+//  @Override
+//  public String toString() {
+//    StringBuffer strBuf = new StringBuffer();
+//    strBuf.append("DTO id is: " + getId())
+//        .append("Subject is: " + getSubject())
+//        .append("To contact List: ")
+//        .append(getToContact() != null ? getToContact().toString() : null)
+//        .append("CC contact List: ")
+//        .append(getCcContact() != null ? getCcContact().toString() : null)
+//        .append("BCC contact List: ")
+//        .append(getBccContact() != null ? getBccContact().toString() : null)
+//        .append("body: ").append(body)
+//        .append("status: ").append(status)
+//        .append("Date sent: ").append(dateSent)
+//        .append("Server Response: ").append(serverResponse)
+//        .append("attachment: ").append(attachments)
+//        .append("email type: ").append(emailType)
+////        .append("message Id: ").append(messageId);
+//    return strBuf.toString();
+//  }
 
   public static enum EMAIL_TYPE {
     TEXT, HTML

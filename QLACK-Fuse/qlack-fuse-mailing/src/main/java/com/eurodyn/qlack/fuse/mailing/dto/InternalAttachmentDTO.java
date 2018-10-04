@@ -10,7 +10,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class InternalAttachmentDTO extends MailBaseDTO {
+public class InternalAttachmentDTO  extends MailBaseDTO {
 
   private String messagesId;
   private String filename;

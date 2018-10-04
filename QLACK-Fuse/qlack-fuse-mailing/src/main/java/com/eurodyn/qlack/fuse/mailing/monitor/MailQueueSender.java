@@ -51,30 +51,31 @@ public class MailQueueSender {
   private void setupCommons(Email email, @Valid EmailDTO vo) throws EmailException {
     email.setHostName(mailingProperties.getServerHost());
     email.setSmtpPort(mailingProperties.getServerPort());
-    email.setFrom(vo.getFrom());
+    email.setFrom(vo.getFromEmail());
+    		//getFrom());
     email.setSubject(vo.getSubject());
     email.setSentDate(new Date());
 
-    if (CollectionUtils.isNotEmpty(vo.getToContact())) {
-      for (String recipient : vo.getToContact()) {
+    if (CollectionUtils.isNotEmpty(vo.getToEmails())) {
+      for (String recipient : vo.getToEmails()) {
         email.addTo(recipient);
       }
     }
 
-    if (CollectionUtils.isNotEmpty(vo.getCcContact())) {
-      for (String recipient : vo.getCcContact()) {
+    if (CollectionUtils.isNotEmpty(vo.getToEmails())) {
+      for (String recipient : vo.getToEmails()) {
         email.addCc(recipient);
       }
     }
 
-    if (CollectionUtils.isNotEmpty(vo.getBccContact())) {
-      for (String recipient : vo.getBccContact()) {
+    if (CollectionUtils.isNotEmpty(vo.getBccEmails())) {
+      for (String recipient : vo.getBccEmails()) {
         email.addBcc(recipient);
       }
     }
 
-    if (CollectionUtils.isNotEmpty(vo.getReplyToContact())) {
-      for (String recipient : vo.getReplyToContact()) {
+    if (CollectionUtils.isNotEmpty(vo.getReplyToEmails())) {
+      for (String recipient : vo.getReplyToEmails()) {
         email.addReplyTo(recipient);
       }
     }
@@ -120,7 +121,7 @@ public class MailQueueSender {
       setupCommons(email, vo);
 
       LOGGER.log(Level.FINEST, "Sending email {0} to {1} with TLS={2}.", new Object[]{
-          vo.getSubject(), Arrays.asList(vo.getToContact()), mailingProperties.isStartTls()
+          vo.getSubject(), Arrays.asList(vo.getToEmails()), mailingProperties.isStartTls()
       });
 
       /** Enable authentication */

@@ -1,15 +1,13 @@
 package com.eurodyn.qlack.fuse.mailing.repository;
 
-import java.util.List;
-
 import com.eurodyn.qlack.fuse.mailing.model.InternalMessages;
 
 public interface InternalMessagesRepository extends MailingRepository<InternalMessages, String>{
 
 	// findUserInbox
-	 List<InternalMessages> findbyUserid(String userId);
-	 
-	 List<InternalMessages> findUserSent(String userId); 
+//	 List<InternalMessages> findbyUserid(String userId);
+//	 
+//	 List<InternalMessages> findUserSent(String userId); 
 	
 //	 long countByUserAndStatus(String userId, String status);
 	 /**
