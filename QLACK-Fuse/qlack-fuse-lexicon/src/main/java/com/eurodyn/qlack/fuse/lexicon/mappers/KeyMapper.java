@@ -15,6 +15,10 @@ public interface KeyMapper extends LexiconMapper<Key, KeyDTO> {
 	
 	default KeyDTO mapToDTOwithTranslations(Key entity, boolean addtranslations) {
 
+		if (entity == null) {
+			return null;
+		}
+
 		KeyDTO dto = mapToDTO(entity);
 		Map<String, String> translations = new HashMap<>();
 		
