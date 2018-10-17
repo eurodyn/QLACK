@@ -17,6 +17,6 @@ public class ReplyFilterConstants {
   // will use to filter by.
   //
   // Example:
-  // @ReplyFilter(ReplyFilterConstants.SPRING_PAGE_DEFAULT_FIELDS +",content[field1,field2,-field3]")
+  // @ReplyFilter(ReplyFilterConstants.SPRING_PAGE_DEFAULT_FIELDS + ",content[field1,field2,-field3]")
   public final static String SPRING_PAGE_DEFAULT_FIELDS = "first,last,number,numberOfElements,pageable,size,sort,totalElements,totalPages";
 }

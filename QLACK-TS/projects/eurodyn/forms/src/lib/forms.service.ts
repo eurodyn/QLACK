@@ -107,4 +107,13 @@ export class QFormsService {
     return this.appendPagingToFilter(this.formGroupToQueryString(fb, aliases,  includeEmpty), page,
       size,  sort, sortDirection);
   }
+
+  /**
+   * Cleans up a form object from null or empty (string) fields without mutating it. It returns a raw, cleaned up
+   * Object.
+   * @param fb
+   */
+  cleanupForm(fb: FormGroup) {
+    return _.pickBy(fb.getRawValue(), _.identity);
+  }
 }
