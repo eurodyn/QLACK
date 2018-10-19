@@ -38,10 +38,10 @@
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
     </dependency>
-    <dependency>
+   <!--  <dependency>
       <groupId>org.elasticsearch.client</groupId>
       <artifactId>rest</artifactId>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct-jdk8</artifactId>
@@ -54,6 +54,33 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
     </dependency>
+    
+    <!-- new ones -->
+    <dependency>
+  <groupId>org.apache.httpcomponents</groupId>
+  <artifactId>httpclient</artifactId>
+  	</dependency>
+	
+	
+	<dependency>
+    <groupId>org.apache.httpcomponents</groupId>
+    <artifactId>httpasyncclient</artifactId>
+    </dependency>
+	
+	
+	
+	<dependency>
+		<groupId>org.springframework.data</groupId>
+		<artifactId>spring-data-elasticsearch</artifactId>
+		<version>3.1.1.RELEASE</version>
+	</dependency>
+	<dependency>
+		<groupId>org.elasticsearch</groupId>
+		<artifactId>elasticsearch</artifactId>
+		<version>6.4.2</version>
+	</dependency>
+      
+    
   </dependencies>
 
 </project>

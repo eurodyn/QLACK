@@ -10,8 +10,10 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -47,7 +49,6 @@ public class ESClient {
   @PostConstruct
   public void init() {
     LOGGER.log(Level.CONFIG, "Initialising connection to ES: {0}", properties.getEsHosts());
-
     /** Process Http hosts for ES */
     final HttpHost[] httpHosts = Arrays.stream(properties.getEsHosts().split(",")).map(host ->
         new HttpHost(host.split(":")[1], Integer.parseInt(host.split(":")[2]), host.split(":")[0])

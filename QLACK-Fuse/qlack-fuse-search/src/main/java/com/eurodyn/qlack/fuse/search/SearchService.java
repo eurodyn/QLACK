@@ -62,7 +62,11 @@ public class SearchService {
   public SearchService(ESClient esClient) {
     this.esClient = esClient;
   }
-
+/**
+ * 
+ * @param dto
+ * @return
+ */
   public SearchResultDTO search(QuerySpec dto) {
     StringBuilder endpointBuilder = new StringBuilder();
 
@@ -411,7 +415,13 @@ public class SearchService {
           MessageFormat.format("Could not check if document with id: {0} exists", id));
     }
   }
-
+	/**
+	 * 
+	 * @param indexName
+	 * @param typeName
+	 * @param id
+	 * @return
+	 */
   public SearchHitDTO findById(String indexName, String typeName, String id) {
     String endpoint = indexName + "/" + typeName + "/" + id;
     try {
