@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.util.data.fields;
+package com.eurodyn.qlack.util.data.filter;
 
 import com.eurodyn.qlack.util.data.jackson.QInstantFromISOUTCDeserializer;
 import com.eurodyn.qlack.util.data.jackson.QInstantToISOUTCSerializer;
@@ -20,7 +20,7 @@ import java.time.Instant;
  */
 
 //TODO Creating our own ObjectMapper to register squiggly overrides the default ObjectMapper from Spring which effectively
-//ignores any other annotation-based/bean-based/configuration-based configuration for Jacksona user might need (i.e. all
+//ignores any other annotation-based/bean-based/configuration-based configuration for Jackson a user might need (i.e. all
 // configuration has to take place here). How can we do this better?
 @Configuration
 public class ReplyFilterBean {

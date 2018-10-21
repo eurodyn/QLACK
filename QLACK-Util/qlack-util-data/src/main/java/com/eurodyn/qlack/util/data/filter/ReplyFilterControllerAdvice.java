@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.util.data.fields;
+package com.eurodyn.qlack.util.data.filter;
 
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.github.bohnman.squiggly.context.provider.SimpleSquigglyContextProvider;

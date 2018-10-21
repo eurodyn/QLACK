@@ -24,5 +24,6 @@
     <module>qlack-fuse-fileupload</module>
     <module>qlack-fuse-scheduler</module>
     <module>qlack-fuse-audit</module>
+    <module>qlack-fuse-crypto</module>
   </modules>
 </project>
