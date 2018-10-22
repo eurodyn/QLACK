@@ -2,9 +2,11 @@ package com.eurodyn.qlack.fuse.crypto;
 
 import com.eurodyn.qlack.fuse.crypto.dto.SecurityProviderDTO;
 import com.eurodyn.qlack.fuse.crypto.dto.SecurityServiceDTO;
+import javax.crypto.Cipher;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.List;
@@ -67,6 +69,11 @@ public class CryptoInfoService {
         .collect(Collectors.toList());
   }
 
+  /**
+   * Pretty prints a list of services.
+   *
+   * @param services The list of services to prety print.
+   */
   public String prettyPrint(List<SecurityServiceDTO> services) {
     StringBuffer s = new StringBuffer();
     services.stream().sorted((o1, o2) -> (o1.getType() + o1.getAlgorithm()).compareTo(o2.getType() + o2.getAlgorithm()))
@@ -77,4 +84,13 @@ public class CryptoInfoService {
     return s.toString();
   }
 
+  /**
+   * Checks if unlimited strength cryptography is available. The check is taking place by comparing the maximum size
+   * available of an AES key. If this method returns false, you can enable unlimited strength cryptography by
+   * downloading https://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html (or in JDK > 8 by
+   * setting Security.setProperty("crypto.policy", "unlimited")).
+   */
+  public boolean isUnlimitedStrengthActive() throws NoSuchAlgorithmException {
+    return Cipher.getMaxAllowedKeyLength("AES") > 128;
+  }
 }

@@ -20,11 +20,8 @@ public class CryptoDigestService {
 
   /**
    * HMAC with SHA256.
-   * @param secret
-   * @param message
-   * @return
-   * @throws NoSuchAlgorithmException
-   * @throws InvalidKeyException
+   * @param secret The secret to use.
+   * @param message The message to hash.
    */
   public String hmacSha256(String secret, String message)
       throws NoSuchAlgorithmException, InvalidKeyException {
@@ -36,12 +33,18 @@ public class CryptoDigestService {
   }
 
   /**
-   * Calculates the MD5 of the given string,
-   * @param message
-   * @return
+   * Calculates the MD5 of the given string.
+   * @param message The message to hash.
    */
   public String md5(String message) {
     return DigestUtils.md5Hex(message);
   }
 
+  /**
+   * Calculates the SHA256 of the given string.
+   * @param message The message to hash.
+   */
+  public String sha256(String message) {
+    return DigestUtils.sha256Hex(message);
+  }
 }
