@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreateKeyPairRequest {
+public class CreateKeyPairDTO {
 
   // The name of the provider to use while generating the key-pair. If left empty, a provider
   // implementing the requested generatorAlgorithm  will be picked up by the JVM.

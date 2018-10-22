@@ -5,26 +5,22 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.cert.Certificate;
-
 /**
- * Encapsulation of a keystore key having a public key, a private key and a certificate.
+ * An encapsulation of a key comprising of a public key, a private key and a certificate in PEM format.
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class KeystoreKey {
+public class CPPPemHolderDTO {
 
   // The certificate of the key.
-  private Certificate certificate;
+  private String certificate;
 
   // The public key of the key.
-  private PublicKey publicKey;
+  private String publicKey;
 
   // The private key of the key.
-  private PrivateKey privateKey;
+  private String privateKey;
 
 }

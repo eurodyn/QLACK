@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SecurityService {
+public class SecurityServiceDTO {
 
   // The name of the provider for this service.
   private String provider;
@@ -26,4 +26,5 @@ public class SecurityService {
   public String getAlgorithm() {
     return algorithm;
   }
+
 }

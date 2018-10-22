@@ -1,6 +1,6 @@
 package com.eurodyn.qlack.fuse.crypto;
 
-import com.eurodyn.qlack.fuse.crypto.dto.KeystoreKey;
+import com.eurodyn.qlack.fuse.crypto.dto.CPPHolderDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +33,7 @@ public class CryptoKeystoreService {
    * @param keystoreType The type of the keystore.
    * @param keystoreProvider The security provider generated the keystore.
    */
-  public KeystoreKey readKeyFromKeystore(InputStream keystore, String keystorePassword, String keyName,
+  public CPPHolderDTO readKeyFromKeystore(InputStream keystore, String keystorePassword, String keyName,
       String keyPassword, String keystoreType, String keystoreProvider)
       throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException,
       UnrecoverableKeyException, NoSuchProviderException {
@@ -47,7 +47,7 @@ public class CryptoKeystoreService {
       ks.load(fis, keystorePassword.toCharArray());
       Key key = ks.getKey(keyName, keyPassword.toCharArray());
       Certificate certificate = ks.getCertificate(keyName);
-      return new KeystoreKey(certificate, certificate.getPublicKey(), (PrivateKey) key);
+      return new CPPHolderDTO(certificate, certificate.getPublicKey(), (PrivateKey) key);
     }
   }
 
@@ -59,7 +59,7 @@ public class CryptoKeystoreService {
    * @param keyName The name of the key to read.
    * @param keyPassword The key's password.
    */
-  public KeystoreKey readKeyFromKeystore(InputStream keystore, String keystorePassword, String keyName,
+  public CPPHolderDTO readKeyFromKeystore(InputStream keystore, String keystorePassword, String keyName,
       String keyPassword)
       throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException,
       UnrecoverableKeyException, NoSuchProviderException {

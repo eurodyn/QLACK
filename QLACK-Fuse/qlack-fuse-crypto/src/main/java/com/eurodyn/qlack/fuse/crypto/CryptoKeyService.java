@@ -1,6 +1,6 @@
 package com.eurodyn.qlack.fuse.crypto;
 
-import com.eurodyn.qlack.fuse.crypto.dto.CreateKeyPairRequest;
+import com.eurodyn.qlack.fuse.crypto.dto.CreateKeyPairDTO;
 import javax.crypto.KeyGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -55,10 +55,9 @@ public class CryptoKeyService {
 
   /**
    * Generates a new keypair consisting of a public key, a private key, and a certificate.
-   *
    * @param createKeyPairRequest The details of the keypair to create.
    */
-  public KeyPair createKeyPair(CreateKeyPairRequest createKeyPairRequest)
+  public KeyPair createKeyPair(CreateKeyPairDTO createKeyPairRequest)
       throws NoSuchProviderException, NoSuchAlgorithmException {
     KeyPairGenerator keyPairGenerator;
 

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SecurityProvider {
+public class SecurityProviderDTO {
 
   // The name of the provider.
   private String name;

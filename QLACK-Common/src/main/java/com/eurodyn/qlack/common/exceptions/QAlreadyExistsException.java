@@ -12,4 +12,8 @@ public class QAlreadyExistsException extends QException {
   public QAlreadyExistsException(String message) {
     super(message);
   }
+
+  public QAlreadyExistsException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }
