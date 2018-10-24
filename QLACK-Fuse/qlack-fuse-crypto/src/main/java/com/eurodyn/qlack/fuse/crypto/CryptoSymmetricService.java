@@ -1,7 +1,6 @@
 package com.eurodyn.qlack.fuse.crypto;
 
-
-import org.bouncycastle.util.encoders.Hex;
+import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.stereotype.Service;
@@ -37,7 +36,7 @@ public class CryptoSymmetricService {
    * @return Returns a hexed representation of the encrypted message.
    */
   public static String encrypt(final String message, final String password, String salt) {
-    salt = Hex.toHexString(salt.getBytes(StandardCharsets.UTF_8));
+    salt = new String(org.springframework.security.crypto.codec.Hex.encode(salt.getBytes(StandardCharsets.UTF_8)));
     final TextEncryptor textEncryptor = Encryptors.text(password, salt);
 
     return textEncryptor.encrypt(message);
@@ -64,7 +63,7 @@ public class CryptoSymmetricService {
    * @return Returns the decrypted version of the originally encrypted message.
    */
   public static String decrypt(final String ciphertext, final String password, String salt) {
-    salt = Hex.toHexString(salt.getBytes(StandardCharsets.UTF_8));
+    salt = new String(Hex.encode(salt.getBytes(StandardCharsets.UTF_8)));
     final TextEncryptor textEncryptor = Encryptors.text(password, salt);
 
     return textEncryptor.decrypt(ciphertext);
