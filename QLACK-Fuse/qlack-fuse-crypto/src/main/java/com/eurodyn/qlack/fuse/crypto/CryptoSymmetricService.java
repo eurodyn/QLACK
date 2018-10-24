@@ -23,7 +23,7 @@ public class CryptoSymmetricService {
    * @param password The password/secret to use. Always kept secret.
    * @return Returns a hexed representation of the encrypted message.
    */
-  public static String encrypt(final String message, final String password) {
+  public String encrypt(final String message, final String password) {
     return encrypt(message, password, password);
   }
 
@@ -35,7 +35,7 @@ public class CryptoSymmetricService {
    * @param salt The salt to initialise the cipher with. Can be shared.
    * @return Returns a hexed representation of the encrypted message.
    */
-  public static String encrypt(final String message, final String password, String salt) {
+  public String encrypt(final String message, final String password, String salt) {
     salt = new String(org.springframework.security.crypto.codec.Hex.encode(salt.getBytes(StandardCharsets.UTF_8)));
     final TextEncryptor textEncryptor = Encryptors.text(password, salt);
 
@@ -50,7 +50,7 @@ public class CryptoSymmetricService {
    * @param password The password/secret to use. Always kept secret.
    * @return Returns the decrypted version of the originally encrypted message.
    */
-  public static String decrypt(final String ciphertext, final String password) {
+  public String decrypt(final String ciphertext, final String password) {
     return decrypt(ciphertext, password, password);
   }
 
@@ -62,7 +62,7 @@ public class CryptoSymmetricService {
    * @param salt The salt used to initialise the cipher.
    * @return Returns the decrypted version of the originally encrypted message.
    */
-  public static String decrypt(final String ciphertext, final String password, String salt) {
+  public String decrypt(final String ciphertext, final String password, String salt) {
     salt = new String(Hex.encode(salt.getBytes(StandardCharsets.UTF_8)));
     final TextEncryptor textEncryptor = Encryptors.text(password, salt);
 
