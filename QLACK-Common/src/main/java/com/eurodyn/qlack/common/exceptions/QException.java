@@ -1,6 +1,7 @@
 package com.eurodyn.qlack.common.exceptions;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 
 /**
  * A generic superclass to indicate any kind of runtime exception. This needs to remain a
@@ -15,6 +16,10 @@ public abstract class QException extends RuntimeException implements Serializabl
 
   protected QException(String message) {
     super(message);
+  }
+
+  protected QException(String message, Object... args) {
+    super(MessageFormat.format(message, args));
   }
 
   protected QException(String message, Throwable cause) {
