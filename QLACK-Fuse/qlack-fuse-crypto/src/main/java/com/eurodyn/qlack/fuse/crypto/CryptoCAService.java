@@ -38,7 +38,9 @@ public class CryptoCAService {
   }
 
   /**
-   * Create a new Certificate Authority. This method also supports creating a sub-CA by providing the issuer's information.
+   * Create a new Certificate Authority. This method also supports creating a sub-CA by providing the issuer's
+   * information.
+   *
    * @param createCADTO The details of the CA to be created.
    */
   public CPPPemHolderDTO createCA(CreateCADTO createCADTO)
@@ -46,7 +48,7 @@ public class CryptoCAService {
     // Create a keypair for this CA.
     KeyPair keyPair = cryptoKeyService.createKeyPair(createCADTO.getCreateKeyPairRequestDTO());
 
-    // Get hold of the private key.
+    // Get hold of the public key.
     byte[] publicKey = keyPair.getPublic().getEncoded();
     SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey);
 
@@ -69,11 +71,12 @@ public class CryptoCAService {
               .setProvider(createCADTO.getSignatureProvider())
               .build(cryptoConversionService.pemToPrivateKey(
                   createCADTO.getIssuerPrivateKey(),
-                  createCADTO.getSignatureProvider(),
-                  createCADTO.getSignatureAlgorithm())));
+                  createCADTO.getIssuerPrivateKeyProvider(),
+                  createCADTO.getIssuerPrivateKeyAlgorithm())));
     } else {
       certHolder = certGenerator.build(
           new JcaContentSignerBuilder(createCADTO.getSignatureAlgorithm())
+              .setProvider(createCADTO.getSignatureProvider())
               .build(keyPair.getPrivate()));
     }
 

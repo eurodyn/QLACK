@@ -35,4 +35,6 @@ public class CreateCADTO {
 
   private String issuerCN;
   private String issuerPrivateKey;
+  private String issuerPrivateKeyProvider;
+  private String issuerPrivateKeyAlgorithm;
 }
