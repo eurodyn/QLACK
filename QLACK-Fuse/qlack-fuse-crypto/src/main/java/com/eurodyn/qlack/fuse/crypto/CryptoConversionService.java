@@ -8,8 +8,10 @@ import org.bouncycastle.util.io.pem.PemWriter;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -17,6 +19,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -28,6 +33,7 @@ import java.util.Base64;
 @Service
 @Validated
 public class CryptoConversionService {
+
   private final static String RSA_PUBLIC_KEY = "RSA PUBLIC KEY";
   private final static String RSA_PRIVATE_KEY = "RSA PRIVATE KEY";
   private final static String CERTIFICATE = "CERTIFICATE";
@@ -155,5 +161,15 @@ public class CryptoConversionService {
     key = factory.generatePrivate(keySpec);
 
     return key;
+  }
+
+  /**
+   * Parses a certificate in PEM format encoded as X.509.
+   * @param cert The certificate in PEM format.
+   */
+  public X509Certificate pemToCertificate(String cert) throws CertificateException {
+    CertificateFactory fact = CertificateFactory.getInstance("X.509");
+
+    return (X509Certificate) fact.generateCertificate(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
   }
 }
