@@ -1,7 +1,9 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import * as _ from 'lodash';
 import {FormGroup} from '@angular/forms';
 import {QFilterAlias} from './filter-alias';
+import {Observable} from 'rxjs';
+import {HttpClient, HttpEvent, HttpRequest} from '@angular/common/http';
 
 /**
  * Utilities working with forms and the resulting HTTPClient requests taking into account the
@@ -12,7 +14,8 @@ import {QFilterAlias} from './filter-alias';
 })
 export class QFormsService {
 
-  constructor() { }
+  constructor() {
+  }
 
   /**
    * Converts a FormGroup into a query string to be used together with Spring Data for
@@ -104,7 +107,35 @@ export class QFormsService {
    */
   makeQueryString(fb: FormGroup, aliases: QFilterAlias[], includeEmpty: boolean,
                   page: number, size: number, sort: string, sortDirection: string): string {
-    return this.appendPagingToFilter(this.formGroupToQueryString(fb, aliases,  includeEmpty), page,
-      size,  sort, sortDirection);
+    return this.appendPagingToFilter(this.formGroupToQueryString(fb, aliases, includeEmpty), page,
+      size, sort, sortDirection);
+  }
+
+  /**
+   * Cleans up a form object from null or empty (string) fields without mutating it. It returns a raw, cleaned up
+   * Object.
+   * @param fb
+   */
+  cleanupForm(fb: FormGroup) {
+    return _.pickBy(fb.getRawValue(), _.identity);
+  }
+
+  /**
+   * Posts a form using an HttpRequest, ideal when your form contains binary data such as files.
+   * @param http The HttpClient to use for posting.
+   * @param fg The FormGroup with the data to post.
+   * @param url The URL to post to.
+   * @param reportProgress Whether to report uploading progress or not.
+   */
+  uploadForm(http: HttpClient, fg: FormGroup, url: string, reportProgress: boolean): Observable<HttpEvent<{}>> {
+    const formData = new FormData();
+    for (const formField in fg.value) {
+      formData.append(formField, fg.value[formField]);
+    }
+    const req = new HttpRequest('POST', url, formData, {
+      reportProgress: reportProgress,
+    });
+
+    return http.request(req);
   }
 }

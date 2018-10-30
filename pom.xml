@@ -16,10 +16,15 @@
   </modules>
 
   <properties>
-    <spring.boot.version>2.0.6.RELEASE</spring.boot.version>
+    <spring.boot.version>2.0.4.RELEASE</spring.boot.version>
     <lombok.version>1.18.2</lombok.version>
+    <querydsl.version>4.2.1</querydsl.version>
+    <apt-maven-plugin.version>1.1.3</apt-maven-plugin.version>
+    <bouncycastle.version>1.60</bouncycastle.version>
   </properties>
 
+  <!--TODO consider moving away from defining versions with dependencyManagement, as dependencyManagement versions are
+      not visible everywhere. Instead use properties. -->
   <dependencyManagement>
     <dependencies>
       <!-- Spring Boot -->

@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.util.data.fields;
+package com.eurodyn.qlack.util.data.filter;
 
 import static java.lang.annotation.ElementType.METHOD;
 
