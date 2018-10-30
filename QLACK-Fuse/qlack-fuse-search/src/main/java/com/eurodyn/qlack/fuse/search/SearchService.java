@@ -62,11 +62,7 @@ public class SearchService {
   public SearchService(ESClient esClient) {
     this.esClient = esClient;
   }
-/**
- * 
- * @param dto
- * @return
- */
+
   public SearchResultDTO search(QuerySpec dto) {
     StringBuilder endpointBuilder = new StringBuilder();
 
@@ -135,7 +131,7 @@ public class SearchService {
     Response response;
     try {
       ContentType contentType = ContentType.APPLICATION_JSON.withCharset(Charset.forName("UTF-8"));
-      response = esClient.getClient()
+      response = esClient.getRestClient()
           .performRequest("GET", endpointBuilder.toString(), params,
               new NStringEntity(mapper.writeValueAsString(internalRequest), contentType));
     } catch (IOException e) {
@@ -406,7 +402,7 @@ public class SearchService {
   public boolean exists(String indexName, String typeName, String id) {
     String endpoint = indexName + "/" + typeName + "/" + id;
     try {
-      Response response = esClient.getClient().performRequest("HEAD", endpoint);
+      Response response = esClient.getRestClient().performRequest("HEAD", endpoint);
       return response.getStatusLine().getStatusCode() == 200;
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE,
@@ -415,17 +411,11 @@ public class SearchService {
           MessageFormat.format("Could not check if document with id: {0} exists", id));
     }
   }
-	/**
-	 * 
-	 * @param indexName
-	 * @param typeName
-	 * @param id
-	 * @return
-	 */
+
   public SearchHitDTO findById(String indexName, String typeName, String id) {
     String endpoint = indexName + "/" + typeName + "/" + id;
     try {
-      Response response = esClient.getClient().performRequest("GET", endpoint);
+      Response response = esClient.getRestClient().performRequest("GET", endpoint);
       if (response.getStatusLine().getStatusCode() == 200) {
         Hit hit = mapper.readValue(response.getEntity().getContent(), Hit.class);
         return map(hit);
@@ -445,7 +435,7 @@ public class SearchService {
     Response response;
     try {
       ContentType contentType = ContentType.APPLICATION_JSON.withCharset(Charset.forName("UTF-8"));
-      response = esClient.getClient().performRequest("GET", "_search/scroll", new HashMap<>(),
+      response = esClient.getRestClient().performRequest("GET", "_search/scroll", new HashMap<>(),
           new NStringEntity(mapper.writeValueAsString(internalRequest), contentType));
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Could not execute scroll query.", e);

@@ -4,6 +4,10 @@ import java.io.Serializable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import javax.persistence.Id;
+
+import org.springframework.data.elasticsearch.annotations.Document;
+
 
 /**
  * Holds the minimum necessary information to uniquely identify a document in
@@ -12,6 +16,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+//@Document(indexName = "qlackdocuments")
 public class ESDocumentIdentifierDTO implements Serializable {
 
   private static final long serialVersionUID = 3216613727616909251L;
@@ -22,6 +27,7 @@ public class ESDocumentIdentifierDTO implements Serializable {
   protected String type;
 
   // The unique ID of this document.
+  @Id
   protected String id;
 
   /**

@@ -1,23 +1,23 @@
 package com.eurodyn.qlack.fuse.search;
 
-import com.eurodyn.qlack.fuse.search.exception.SearchException;
-import com.eurodyn.qlack.fuse.search.mappers.CreateIndexRequestMapper;
-import com.eurodyn.qlack.fuse.search.request.CreateIndexRequest;
-import com.eurodyn.qlack.fuse.search.request.UpdateMappingRequest;
-import com.eurodyn.qlack.fuse.search.util.ESClient;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.nio.entity.NStringEntity;
-import org.elasticsearch.client.Response;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.http.nio.entity.NStringEntity;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.client.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+import com.eurodyn.qlack.fuse.search.exception.SearchException;
+import com.eurodyn.qlack.fuse.search.mappers.CreateIndexRequestMapper;
+import com.eurodyn.qlack.fuse.search.request.CreateIndexRequest;
+import com.eurodyn.qlack.fuse.search.request.UpdateMappingRequest;
+import com.eurodyn.qlack.fuse.search.util.ESClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 @Validated
@@ -51,9 +51,12 @@ public class AdminService {
        * https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html).
        */
       try {
-        esClient.getClient().performRequest("PUT", createIndexRequest.getName(), new HashMap<>(),
+        
+        // Execute indexing request.
+        
+        esClient.getRestClient().performRequest("PUT", createIndexRequest.getName(), new HashMap<>(),
             createIndexRequestMapper.mapToNStringEntity(createIndexRequest));
-
+        
         retVal = true;
       } catch (IOException e) {
         LOGGER.log(Level.SEVERE,
@@ -75,7 +78,9 @@ public class AdminService {
 
     try {
       // Delete the index.
-      esClient.getClient().performRequest("DELETE", indexName);
+      DeleteRequest deleteRequest = new DeleteRequest(indexName);
+      esClient.getClient().delete(deleteRequest);
+      
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, MessageFormat.format("Could not delete index {0}.", indexName), e);
       throw new SearchException(MessageFormat.format("Could not delete index {0}.", indexName),
@@ -88,7 +93,7 @@ public class AdminService {
   public boolean indexExists(String indexName) {
     Response response;
     try {
-      response = esClient.getClient().performRequest("HEAD", indexName);
+      response = esClient.getRestClient().performRequest("HEAD", indexName);
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Could not check if index exists.", e);
       throw new SearchException("Could not check if index exists.", e);
@@ -107,7 +112,7 @@ public class AdminService {
     try {
       String endpoint = request.getIndexName() + "/_mapping/" + request.getTypeName();
 
-      esClient.getClient().performRequest("PUT", endpoint, new HashMap<>(),
+      esClient.getRestClient().performRequest("PUT", endpoint, new HashMap<>(),
           createIndexRequestMapper.mapToNStringEntity(request));
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Could update index mapping.", e);
@@ -126,7 +131,7 @@ public class AdminService {
 
     String endpoint = indexName + "/_close";
     try {
-      esClient.getClient().performRequest("POST", endpoint);
+      esClient.getRestClient().performRequest("POST", endpoint);
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Could not close index.", e);
       throw new SearchException("Could not close index.");
@@ -143,7 +148,7 @@ public class AdminService {
 
     String endpoint = indexName + "/_open";
     try {
-      esClient.getClient().performRequest("POST", endpoint);
+      esClient.getRestClient().performRequest("POST", endpoint);
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Could not open index.", e);
       throw new SearchException("Could not open index.", e);
@@ -167,7 +172,7 @@ public class AdminService {
     try {
       closeIndex(indexName);
 
-      esClient.getClient().performRequest("PUT", endpoint, new HashMap<>(),
+      esClient.getRestClient().performRequest("PUT", endpoint, new HashMap<>(),
           new NStringEntity(new ObjectMapper().writeValueAsString(settings)));
 
       openIndex(indexName);
@@ -180,7 +185,7 @@ public class AdminService {
 
   public boolean checkIsUp() {
     try {
-      Response response = esClient.getClient().performRequest("GET", "_cluster/health");
+      Response response = esClient.getRestClient().performRequest("GET", "_cluster/health");
       return response.getStatusLine().getStatusCode() == 200;
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Could not check cluster health", e);
