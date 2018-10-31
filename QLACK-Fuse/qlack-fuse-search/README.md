@@ -66,7 +66,7 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 @EnableElasticsearchRepositories({
     "com.eurodyn.qlack.fuse.search",
 // + The location of ElasticsearchRepositories:
-    "ch.admin.blv.etv.repository.es" 
+    "domain.appName.repository.es" 
 })
 @EnableCaching
 @ComponentScan({
@@ -81,7 +81,7 @@ ElasticsearchRepository declaration example:
 
 ```java
 
-package ch.admin.blv.etv.repository.es;
+package domain.appName.repository.es;
 
 //...
 
