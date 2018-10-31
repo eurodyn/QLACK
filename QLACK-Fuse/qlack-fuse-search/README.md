@@ -60,14 +60,6 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 // ...
 
 
-@EnableElasticsearchRepositories({
-       "com.eurodyn.qlack.fuse.search",
-       // + The location of ElasticsearchRepositories:
-       "ch.admin.blv.etv.repository.es"
-
-})
-
-
 @SpringBootApplication
 @EnableAsync
 @EnableJpaRepositories({
@@ -118,7 +110,7 @@ ElasticsearchRepository call example:
     //...
 
     // simple search with like:
-    applicationAnimalsRepository.findByNameike(text);
+    applicationAnimalsRepository.findByNameLike(text);
 
 ```
 
