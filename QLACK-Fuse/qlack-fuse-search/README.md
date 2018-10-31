@@ -110,3 +110,35 @@ ElasticsearchRepository call example:
 
 ```
 
+ES Document example:
+```java
+
+import static org.springframework.data.elasticsearch.annotations.FieldType.Text;
+//..
+
+@Document(indexName = "animal")
+public class Animal  {
+
+ 
+  @Field(type = Text, index = true)
+  private String id;
+
+ // Searchable with the french analyzer and Retrievable
+  @Field(type = Text, index = true, searchAnalyzer="french", analyzer = "french")
+  private String name;
+
+  // Retrievable but not searchable
+  @Field(type = Text, index = false)
+  private String type;
+
+ // Searchable and Retrievable 
+  @Field(type = Text, index = true)
+  private int age;
+
+//...
+}
+```java
+
+
+
+
