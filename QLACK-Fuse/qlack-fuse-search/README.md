@@ -55,10 +55,6 @@ At App.java:
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 // ..
 
-@SpringBootApplication
-
-// ...
-
 
 @SpringBootApplication
 @EnableAsync
