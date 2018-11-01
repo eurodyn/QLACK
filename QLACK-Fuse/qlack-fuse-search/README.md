@@ -18,10 +18,17 @@ Add at application.properties :
 ################################################################################
 # Elasticsearch configuration
 ################################################################################
+# Qlack uses 2 different Elasticsearch clients:
 
+# RestHighLevelClient ES client 
+qlack.fuse.search.es_hosts=http:localhost:9401
+
+# Repo ES client (org.elasticsearch.client.Client)
 qlack.fuse.search.host.name=localhost
 qlack.fuse.search.host.port=9401
 qlack.fuse.search.cluster.name=docker-cluster
+
+
 ```
 > `docker-cluster` is the docker default cluster.name, it will be different in any other Elasticsearch environment.
 
@@ -137,8 +144,5 @@ public class Animal  {
 
 //...
 }
-```java
-
-
-
+```
 
