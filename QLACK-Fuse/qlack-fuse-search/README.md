@@ -29,10 +29,14 @@ qlack.fuse.search.host.port=9401
 qlack.fuse.search.cluster.name=docker-cluster
 
 
+# Spring boot 2.1.0 migration see link below.
+spring.main.allow-bean-definition-overriding=true
+
+
 ```
 > `docker-cluster` is the docker default cluster.name, it will be different in any other Elasticsearch environment.
 
-
+[Spring boot 2.1.0 migration Guide](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide)
 
 ### Enable Elasticsearch Spring boot repositories
 
