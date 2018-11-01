@@ -59,39 +59,34 @@ public class ESClient {
         .collect(Collectors.toList())
         .toArray(new HttpHost[properties.getEsHosts().split(",").length]);
 
-    restClient = RestClient.builder(httpHosts)
-        .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
+    rhClient = new RestHighLevelClient(RestClient.builder(httpHosts).setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
 
-          @Override
-          public HttpAsyncClientBuilder customizeHttpClient(
-              HttpAsyncClientBuilder httpClientBuilder) {
-            if (StringUtils.isNotEmpty(properties.getEsUsername())
-                && StringUtils.isNotEmpty(properties.getEsPassword())) {
+      @Override
+      public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
+          if (StringUtils.isNotEmpty(properties.getEsUsername())
+                  && StringUtils.isNotEmpty(properties.getEsPassword())) {
               final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
               credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(
-                  properties.getEsUsername(), properties.getEsPassword()));
+                      properties.getEsUsername(), properties.getEsPassword()));
 
-              httpClientBuilder =
-                  httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-            }
+              httpClientBuilder = httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+          }
 
-            if ("false".equals(properties.isVerifyHostname())) {
+          if ("false".equals(properties.isVerifyHostname())) {
               httpClientBuilder = httpClientBuilder.setSSLHostnameVerifier(new HostnameVerifier() {
 
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                  return true;
-                }
+                  @Override
+                  public boolean verify(String hostname, SSLSession session) {
+                      return true;
+                  }
               });
-            }
-
-            return httpClientBuilder;
           }
-        }).build();
 
-    rhClient = new RestHighLevelClient(restClient);
+          return httpClientBuilder;
+      }
+    }));
   }
-
+    
   /**
    * Default shutdown hook.
    *

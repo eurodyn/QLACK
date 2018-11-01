@@ -9,18 +9,15 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
-//import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.Response;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-
 import com.eurodyn.qlack.fuse.search.dto.ESDocumentIdentifierDTO;
 import com.eurodyn.qlack.fuse.search.dto.IndexingDTO;
 import com.eurodyn.qlack.fuse.search.exception.SearchException;
@@ -54,20 +51,11 @@ public class IndexingService {
 					.source(mapper.writeValueAsString(dto.getSourceObject()), XContentType.JSON);
 
 			
-			  String endpoint = dto.getIndex() + "/" + dto.getType() + "/" + dto.getId();
-		      Map<String, String> params =
-		          dto.isRefresh() ? Collections.singletonMap("refresh", "wait_for") : new HashMap<>();
+//			  String endpoint = dto.getIndex() + "/" + dto.getType() + "/" + dto.getId();
+//		      Map<String, String> params =dto.isRefresh() ? Collections.singletonMap("refresh", "wait_for") : new HashMap<>();
 
 		      // Execute indexing request.
-		      ContentType contentType = ContentType.APPLICATION_JSON.withCharset(Charset.forName("UTF-8"));
-//			IndexResponse response = esClient.getClient().index(indexRequest, RequestOptions.DEFAULT);
-	         IndexResponse response = esClient.getClient().index(indexRequest);
-
-			
-			
-//		      Response response = esClient.getClient().performRequest("PUT", endpoint, params,
-//		          new NStringEntity(mapper.writeValueAsString(dto.getSourceObject()), contentType));
-//			
+			IndexResponse response = esClient.getClient().index(indexRequest, RequestOptions.DEFAULT);
 			
 			LOGGER.log(Level.INFO, MessageFormat.format("Index document created with id: {0}, {1}", dto.getId(),response));
 
@@ -77,26 +65,22 @@ public class IndexingService {
 		}
 	}
 
-	public void unindexDocument(ESDocumentIdentifierDTO dto) {
-		try {
+  public void unindexDocument(ESDocumentIdentifierDTO dto) {
+    try {
 
-	      String endpoint = dto.getIndex() + "/" + dto.getType() + "/" + dto.getId();
-	      Map<String, String> params =
-	          dto.isRefresh() ? Collections.singletonMap("refresh", "wait_for") : new HashMap<>();
+      //String endpoint = dto.getIndex() + "/" + dto.getType() + "/" + dto.getId();
+      //Map<String, String> params = dto.isRefresh() ? Collections.singletonMap("refresh", "wait_for") : new HashMap<>();
 
-			DeleteRequest request = new DeleteRequest(dto.getIndex(),dto.getType(), dto.getId());
-//			DeleteResponse response = esClient.getClient().delete(request, RequestOptions.DEFAULT);
-	          
-	          DeleteResponse response = esClient.getClient().delete(request);
-//	          Response response = esClient.getClient().getLowLevelClient().performRequest("DELETE", endpoint, params);
-			//.delete(request, RequestOptions.DEFAULT);
-//		      esClient.getClient().performRequest("DELETE", endpoint, params);
+      DeleteRequest request = new DeleteRequest(dto.getIndex(), dto.getType(), dto.getId());
+      DeleteResponse response = esClient.getClient().delete(request, RequestOptions.DEFAULT);
 
-			LOGGER.log(Level.INFO, MessageFormat.format("Index document deleted with id: {0}", dto.getId()),response );
-			
-		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, MessageFormat.format("Could not delete document with id: {0}", dto.getId()), e);
-			throw new SearchException(MessageFormat.format("Could not delete document with id: {0}", dto.getId()));
-		}
-	}
+      LOGGER.log(Level.INFO, MessageFormat.format("Index document deleted with id: {0}", dto.getId()), response);
+
+    } catch (IOException e) {
+      LOGGER.log(Level.SEVERE,
+          MessageFormat.format("Could not delete document with id: {0}", dto.getId()), e);
+      throw new SearchException(
+          MessageFormat.format("Could not delete document with id: {0}", dto.getId()));
+    }
+  }
 }

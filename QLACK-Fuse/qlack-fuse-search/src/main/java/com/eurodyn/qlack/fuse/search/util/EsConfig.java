@@ -4,7 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -32,9 +32,11 @@ public class EsConfig {
             .put("client.transport.sniff", false)
             .put("transport.host", env.getProperty("qlack.fuse.search.host.name")).build();
 
-    return new PreBuiltTransportClient(settings).addTransportAddress(new InetSocketTransportAddress(
-        InetAddress.getByName(env.getProperty("qlack.fuse.search.host.name")),
-        Integer.parseInt(env.getProperty("qlack.fuse.search.host.port"))));
+    
+    return new  PreBuiltTransportClient(settings).addTransportAddress( new
+      TransportAddress(InetAddress.getByName(env.getProperty("qlack.fuse.search.host.name")),
+      Integer.parseInt(env.getProperty("qlack.fuse.search.host.port"))));
+
   }
 
   @Bean
