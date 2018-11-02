@@ -1,5 +1,8 @@
 package com.eurodyn.qlack.fuse.crypto;
 
+import static com.eurodyn.qlack.fuse.crypto.CryptoConstants.AES;
+import static com.eurodyn.qlack.fuse.crypto.CryptoConstants.AES_WEAK_LENGTH;
+
 import com.eurodyn.qlack.fuse.crypto.dto.SecurityProviderDTO;
 import com.eurodyn.qlack.fuse.crypto.dto.SecurityServiceDTO;
 import javax.crypto.Cipher;
@@ -91,6 +94,6 @@ public class CryptoInfoService {
    * setting Security.setProperty("crypto.policy", "unlimited")).
    */
   public boolean isUnlimitedStrengthActive() throws NoSuchAlgorithmException {
-    return Cipher.getMaxAllowedKeyLength("AES") > 128;
+    return Cipher.getMaxAllowedKeyLength(AES) > AES_WEAK_LENGTH;
   }
 }

@@ -1,5 +1,13 @@
 package com.eurodyn.qlack.fuse.crypto;
 
+import static com.eurodyn.qlack.fuse.crypto.CryptoConstants.BC;
+import static com.eurodyn.qlack.fuse.crypto.CryptoConstants.CERTIFICATE;
+import static com.eurodyn.qlack.fuse.crypto.CryptoConstants.PEM_BEGIN;
+import static com.eurodyn.qlack.fuse.crypto.CryptoConstants.PEM_END;
+import static com.eurodyn.qlack.fuse.crypto.CryptoConstants.RSA;
+import static com.eurodyn.qlack.fuse.crypto.CryptoConstants.RSA_PRIVATE_KEY;
+import static com.eurodyn.qlack.fuse.crypto.CryptoConstants.RSA_PUBLIC_KEY;
+
 import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
@@ -33,14 +41,6 @@ import java.util.Base64;
 @Service
 @Validated
 public class CryptoConversionService {
-
-  private final static String RSA_PUBLIC_KEY = "RSA PUBLIC KEY";
-  private final static String RSA_PRIVATE_KEY = "RSA PRIVATE KEY";
-  private final static String CERTIFICATE = "CERTIFICATE";
-  private final static String BC = "BC";
-  private final static String RSA = "RSA";
-  private final static String PEM_BEGIN = "-----BEGIN.*-----";
-  private final static String PEM_END = "-----END.*-----";
 
   /**
    * Converts a {@link Key} to its primary encoding format as Base64 string.
@@ -165,6 +165,7 @@ public class CryptoConversionService {
 
   /**
    * Parses a certificate in PEM format encoded as X.509.
+   *
    * @param cert The certificate in PEM format.
    */
   public X509Certificate pemToCertificate(String cert) throws CertificateException {

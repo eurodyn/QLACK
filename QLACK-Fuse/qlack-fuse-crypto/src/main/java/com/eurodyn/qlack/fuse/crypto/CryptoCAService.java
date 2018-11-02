@@ -2,13 +2,12 @@ package com.eurodyn.qlack.fuse.crypto;
 
 import com.eurodyn.qlack.fuse.crypto.dto.CPPPemHolderDTO;
 import com.eurodyn.qlack.fuse.crypto.dto.CreateCADTO;
+import com.eurodyn.qlack.fuse.crypto.dto.SignDTO;
+import com.eurodyn.qlack.fuse.crypto.dto.SignDTO.SignDTOBuilder;
 import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cert.X509v1CertificateBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -17,7 +16,6 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Date;
 
 /**
  * Certificate Authority management.
@@ -26,14 +24,15 @@ import java.util.Date;
 @Validated
 public class CryptoCAService {
 
-  private static final String CN = "CN";
-
   private final CryptoKeyService cryptoKeyService;
+  private final CryptoSignService cryptoSignService;
   private final CryptoConversionService cryptoConversionService;
 
   public CryptoCAService(CryptoKeyService cryptoKeyService,
+      CryptoSignService cryptoSignService,
       CryptoConversionService cryptoConversionService) {
     this.cryptoKeyService = cryptoKeyService;
+    this.cryptoSignService = cryptoSignService;
     this.cryptoConversionService = cryptoConversionService;
   }
 
@@ -52,34 +51,35 @@ public class CryptoCAService {
     byte[] publicKey = keyPair.getPublic().getEncoded();
     SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey);
 
-    // Create a generator for the certificate including all certificate details.
-    X509v1CertificateBuilder certGenerator = new X509v1CertificateBuilder(
-        new X500Name(CN + "=" + createCADTO.getIssuerCN()), createCADTO.getSerial(),
-        new Date(createCADTO.getValidFrom().toEpochMilli()),
-        new Date(createCADTO.getValidTo().toEpochMilli()),
-        createCADTO.getLocale(),
-        new X500Name(CN + "=" + createCADTO.getSubjectCN()),
-        publicKeyInfo
-    );
+    // Prepare signing.
+    final SignDTOBuilder signDTOBuilder = SignDTO.builder()
+        .validForm(createCADTO.getValidFrom())
+        .validto(createCADTO.getValidTo())
+        .locale(createCADTO.getLocale())
+        .publicKey(keyPair.getPublic())
+        .signatureAlgorithm(createCADTO.getSignatureAlgorithm())
+        .signatureProvider(createCADTO.getSignatureProvider())
+        .subjectCN(createCADTO.getSubjectCN());
 
-    // Generate the certificate.
-    X509CertificateHolder certHolder;
+    // Choose which private key to use. If no parent key is found then this is a self-signed certificate and the
+    // private key created for the keypair will be used.
     if (StringUtils.isNotEmpty(createCADTO.getIssuerCN()) && StringUtils
         .isNotEmpty(createCADTO.getIssuerPrivateKey())) {
-      certHolder = certGenerator.build(
-          new JcaContentSignerBuilder(createCADTO.getSignatureAlgorithm())
-              .setProvider(createCADTO.getSignatureProvider())
-              .build(cryptoConversionService.pemToPrivateKey(
-                  createCADTO.getIssuerPrivateKey(),
-                  createCADTO.getIssuerPrivateKeyProvider(),
-                  createCADTO.getIssuerPrivateKeyAlgorithm())));
+      signDTOBuilder
+          .privateKey(cryptoConversionService.pemToPrivateKey(
+              createCADTO.getIssuerPrivateKey(),
+              createCADTO.getIssuerPrivateKeyProvider(),
+              createCADTO.getIssuerPrivateKeyAlgorithm()))
+          .issuerCN(createCADTO.getIssuerCN());
     } else {
-      certHolder = certGenerator.build(
-          new JcaContentSignerBuilder(createCADTO.getSignatureAlgorithm())
-              .setProvider(createCADTO.getSignatureProvider())
-              .build(keyPair.getPrivate()));
+      signDTOBuilder
+          .privateKey(keyPair.getPrivate())
+          .issuerCN(createCADTO.getSubjectCN());
     }
 
+    X509CertificateHolder certHolder = cryptoSignService.signKey(signDTOBuilder.build());
+
+    // Prepare reply.
     CPPPemHolderDTO cppPemKey = new CPPPemHolderDTO();
     cppPemKey.setPublicKey(cryptoConversionService.publicKeyToPEM(keyPair));
     cppPemKey.setPrivateKey(cryptoConversionService.privateKeyToPEM(keyPair));

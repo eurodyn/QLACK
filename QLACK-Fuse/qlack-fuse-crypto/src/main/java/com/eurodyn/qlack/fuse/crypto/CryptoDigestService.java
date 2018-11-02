@@ -1,5 +1,7 @@
 package com.eurodyn.qlack.fuse.crypto;
 
+import static com.eurodyn.qlack.fuse.crypto.CryptoConstants.HMACSHA256;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Hex;
@@ -25,8 +27,8 @@ public class CryptoDigestService {
    */
   public String hmacSha256(String secret, String message)
       throws NoSuchAlgorithmException, InvalidKeyException {
-    Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
-    SecretKeySpec secret_key = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
+    Mac sha256_HMAC = Mac.getInstance(HMACSHA256);
+    SecretKeySpec secret_key = new SecretKeySpec(secret.getBytes(), HMACSHA256);
     sha256_HMAC.init(secret_key);
 
     return Hex.encodeHexString(sha256_HMAC.doFinal(message.getBytes(StandardCharsets.UTF_8)));
