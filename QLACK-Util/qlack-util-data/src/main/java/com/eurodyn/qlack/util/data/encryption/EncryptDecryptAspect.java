@@ -56,13 +56,15 @@ public class EncryptDecryptAspect {
     for (Field field : fieldsListWithAnnotation) {
       String fieldName = StringUtils.capitalize(field.getName());
       String fieldValue = (String) MethodUtils.invokeExactMethod(o, "get" + fieldName);
-      switch (mode) {
-        case ENCRYPT:
-          MethodUtils.invokeExactMethod(o, "set" + fieldName, encryptorDecryptor.encrypt(fieldValue));
-          break;
-        case DECRYPT:
-          MethodUtils.invokeExactMethod(o, "set" + fieldName, encryptorDecryptor.decrypt(fieldValue));
-          break;
+      if (StringUtils.isNotBlank(fieldValue)) {
+        switch (mode) {
+          case ENCRYPT:
+            MethodUtils.invokeExactMethod(o, "set" + fieldName, encryptorDecryptor.encrypt(fieldValue));
+            break;
+          case DECRYPT:
+            MethodUtils.invokeExactMethod(o, "set" + fieldName, encryptorDecryptor.decrypt(fieldValue));
+            break;
+        }
       }
     }
 

@@ -1,5 +1,6 @@
 package com.eurodyn.qlack.fuse.crypto;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
@@ -7,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Symmetric encryption/decryption utility methods.
@@ -14,6 +17,8 @@ import java.nio.charset.StandardCharsets;
 @Service
 @Validated
 public class CryptoSymmetricService {
+  // JUL reference.
+  private static final Logger LOGGER = Logger.getLogger(CryptoSymmetricService.class.getName());
 
   /**
    * A convenience method to encrypt a message without providing an additional salt. Note that in this case the actual
@@ -36,6 +41,11 @@ public class CryptoSymmetricService {
    * @return Returns a hexed representation of the encrypted message.
    */
   public String encrypt(final String message, final String password, String salt) {
+    LOGGER.log(Level.FINEST, "Encrypting: {0}", message);
+    if (StringUtils.isBlank(message)) {
+      return message;
+    }
+
     salt = new String(org.springframework.security.crypto.codec.Hex.encode(salt.getBytes(StandardCharsets.UTF_8)));
     final TextEncryptor textEncryptor = Encryptors.text(password, salt);
 
@@ -63,6 +73,11 @@ public class CryptoSymmetricService {
    * @return Returns the decrypted version of the originally encrypted message.
    */
   public String decrypt(final String ciphertext, final String password, String salt) {
+    LOGGER.log(Level.FINEST, "Decrypting: {0}", ciphertext);
+    if (StringUtils.isBlank(ciphertext)) {
+      return ciphertext;
+    }
+
     salt = new String(Hex.encode(salt.getBytes(StandardCharsets.UTF_8)));
     final TextEncryptor textEncryptor = Encryptors.text(password, salt);
 

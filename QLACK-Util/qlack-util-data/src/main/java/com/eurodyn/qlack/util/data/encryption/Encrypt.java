@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * An annotation to use together with {@link EncryptDecryptAspect}. This annotation denoted a method that should be
  * scanned for fields that need to be encrypted.
  */
-@Target(METHOD)
+@Target({METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Encrypt {
 }
