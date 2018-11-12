@@ -122,6 +122,22 @@ export class QFormsService {
 
   /**
    * Posts a form using an HttpRequest, ideal when your form contains binary data such as files.
+   *
+   * Be aware that HttpRequest reports progress via HttpEvent, so a trivial .subscribe(onSuccess => {}, onError => {})
+   * will not work. You should instead subscribe to the returned events (there will be many, especially if you track
+   * progress update), check their type and decide whether you have a success, an error, or just a progress update.
+   * For example:
+   * uploadForm(...).subscribe(onEvent => {
+   *   if (onEvent.type == HttpEventType.Response) {
+   *     if (onEvent.status == 200) {
+   *       // All OK, you can navigate to a new route if required.
+   *     } else {
+   *       // Something went wrong while uploading the file.
+   *     }
+   *   }
+   * }, onError => {
+   *   // Something went wrong before uploading the file (for example, maximum file-size restriction).
+   * })
    * @param http The HttpClient to use for posting.
    * @param fg The FormGroup with the data to post.
    * @param url The URL to post to.
