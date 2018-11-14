@@ -15,7 +15,15 @@ QLACK-JavaBlueprint/qjb-back-end/target
 QLACK-JavaBlueprint/qjb-front-end/target
 QLACK-Util/qlack-util-data/target
 QLACK-Fuse/qlack-fuse-crypto/target/
+QLACK-Fuse/qlack-fuse-security/target/
+QLACK-Fuse/qlack-fuse-security-war/target/
 
+<<<<<<< HEAD
+=======
+*.log
+*.gz
+
+>>>>>>> 2f535fc8e63a9ad6d4a44af8729af290a26d65e8
 ### STS ###
 .apt_generated
 .classpath
@@ -37,5 +45,9 @@ QLACK-Fuse/qlack-fuse-crypto/target/
 /nbbuild/
 /dist/
 /nbdist/
+<<<<<<< HEAD
 /.nb-gradle/
 
+=======
+/.nb-gradle/
+>>>>>>> 2f535fc8e63a9ad6d4a44af8729af290a26d65e8

@@ -15,7 +15,7 @@
 package com.eurodyn.qlack.fuse.aaa.exception;
 
 
-public class DynamicOperationException extends AAAAException {
+public class DynamicOperationException extends AAAException {
 
   public DynamicOperationException(String msg) {
     super(msg);

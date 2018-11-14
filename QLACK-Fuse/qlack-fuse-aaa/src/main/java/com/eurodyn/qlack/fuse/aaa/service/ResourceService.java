@@ -4,7 +4,9 @@ import com.eurodyn.qlack.fuse.aaa.dto.ResourceDTO;
 import com.eurodyn.qlack.fuse.aaa.mappers.ResourceMapper;
 import com.eurodyn.qlack.fuse.aaa.model.Resource;
 import com.eurodyn.qlack.fuse.aaa.repository.ResourceRepository;
+
 import java.util.Collection;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -12,59 +14,22 @@ import org.springframework.validation.annotation.Validated;
 /**
  * @author European Dynamics SA
  */
-@Service
-@Validated
-@Transactional
-public class ResourceService {
+public interface ResourceService {
 
+    String createResource(ResourceDTO resourceDTO);
 
-  // Repositories
-  private final ResourceRepository resourceRepository;
-  private final ResourceMapper resourceMapper;
+    void updateResource(ResourceDTO resourceDTO);
 
-  public ResourceService(ResourceRepository resourceRepository, ResourceMapper resourceMapper) {
-    this.resourceRepository = resourceRepository;
-    this.resourceMapper = resourceMapper;
-  }
+    void deleteResource(String resourceID);
 
-  public String createResource(ResourceDTO resourceDTO) {
-    Resource resource = resourceMapper.mapToEntity(resourceDTO);
-    resourceRepository.save(resource);
+    void deleteResources(Collection<String> resourceIDs);
 
-    return resource.getId();
-  }
+    void deleteResourceByObjectId(String objectID);
 
-  public void updateResource(ResourceDTO resourceDTO) {
-    Resource resource = resourceRepository.fetchById(resourceDTO.getId());
-    resourceMapper.mapToExistingEntity(resourceDTO, resource);
-  }
+    void deleteResourcesByObjectIds(Collection<String> objectIDs);
 
-  public void deleteResource(String resourceID) {
-    resourceRepository.delete(resourceRepository.fetchById(resourceID));
-  }
+    ResourceDTO getResourceById(String resourceID);
 
-  public void deleteResources(Collection<String> resourceIDs) {
-    for (String resourceID : resourceIDs) {
-      resourceRepository.delete(resourceRepository.fetchById(resourceID));
-    }
-  }
-
-  public void deleteResourceByObjectId(String objectID) {
-    resourceRepository.delete(resourceRepository.findByObjectId(objectID));
-  }
-
-  public void deleteResourcesByObjectIds(Collection<String> objectIDs) {
-    for (String objectID : objectIDs) {
-      resourceRepository.delete(resourceRepository.findByObjectId(objectID));
-    }
-  }
-
-  public ResourceDTO getResourceById(String resourceID) {
-    return resourceMapper.mapToDTO(resourceRepository.fetchById(resourceID));
-  }
-
-  public ResourceDTO getResourceByObjectId(String objectID) {
-    return resourceMapper.mapToDTO(resourceRepository.findByObjectId(objectID));
-  }
+    ResourceDTO getResourceByObjectId(String objectID);
 
 }
