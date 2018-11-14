@@ -16,6 +16,7 @@
 
     <modules>
         <module>qlack-fuse-aaa</module>
+        <module>qlack-fuse-aaa-war</module>
         <module>qlack-fuse-mailing</module>
         <module>qlack-fuse-settings</module>
         <module>qlack-fuse-lexicon</module>
