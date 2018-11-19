@@ -66,7 +66,11 @@ public class CryptoConversionService {
   private String convertKeyToPEM(KeyPair keyPair, String keyType) throws IOException {
     try (StringWriter pemStrWriter = new StringWriter()) {
       try (JcaPEMWriter pemWriter = new JcaPEMWriter(pemStrWriter)) {
-        pemWriter.writeObject(new PemObject(keyType, keyPair.getPrivate().getEncoded()));
+        if (keyType.equals(RSA_PRIVATE_KEY)) {
+          pemWriter.writeObject(new PemObject(keyType, keyPair.getPrivate().getEncoded()));
+        } else if (keyType.equals(RSA_PUBLIC_KEY)) {
+          pemWriter.writeObject(new PemObject(keyType, keyPair.getPublic().getEncoded()));
+        }
         pemWriter.flush();
         return pemStrWriter.toString();
       }
