@@ -10,10 +10,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * The implementation logic for the {@link ExceptionWrapper} annotation. This aspect wraps any
- * exception being thrown with a custom, user-provided exception. It can be used to isolate
- * different layers of your application from one another, or protect your REST endpoints from
- * leaking exceptions to your front-end.
+ * The implementation logic for the {@link ExceptionWrapper} annotation. This aspect wraps any exception being thrown
+ * with a custom, user-provided exception. It can be used to isolate different layers of your application from one
+ * another, or protect your REST endpoints from leaking exceptions to your front-end.
  */
 @Aspect
 @Component
@@ -46,9 +45,7 @@ public class ExceptionWrapperAspect {
     } catch (NoSuchMethodException | IllegalAccessException | InstantiationException
         | InvocationTargetException ie) {
       LOGGER
-          .log(Level.SEVERE,
-              MessageFormat.format("Could not wrap exception {0}.", originalException.getMessage()),
-              ie);
+          .log(Level.SEVERE, MessageFormat.format("Could not wrap exception {0}.", originalException.getMessage()), ie);
     }
   }
 }

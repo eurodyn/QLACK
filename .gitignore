@@ -15,3 +15,5 @@ QLACK-JavaBlueprint/qjb-back-end/target
 QLACK-JavaBlueprint/qjb-front-end/target
 QLACK-Util/qlack-util-data/target
 QLACK-Fuse/qlack-fuse-crypto/target
+QLACK-Util/qlack-util-data-mongo/target/maven-archiver
+QLACK-Util/qlack-util-data-mongo/target

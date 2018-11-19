@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface ExceptionWrapper {
   // The log message to be forwarded as an error cause higher up the calling stack.
-  String logMessage() default "An unexpected error occurred. Please try again later.";
+  String logMessage() default "An unexpected error occurred.";
 
   // Your custom exception to be used as a wrapper.
   Class<? extends Exception> wrapper();
