@@ -23,7 +23,8 @@ import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
 import com.eurodyn.qlack.fuse.aaa.service.AccountingService;
 import com.eurodyn.qlack.fuse.aaa.service.LdapUserService;
 import com.eurodyn.qlack.fuse.aaa.service.UserService;
-import com.eurodyn.qlack.fuse.aaa.util.AAALegacyPasswordEncoder;
+import com.eurodyn.qlack.fuse.aaa.util.Md5PasswordEncoder;
+import com.eurodyn.qlack.util.data.SpringBeansUtils;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -33,7 +34,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
+import lombok.extern.java.Log;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -48,6 +51,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+@Log
 @Service
 @Validated
 @Transactional
@@ -67,6 +71,7 @@ public class UserServiceImpl implements UserService {
     private final UserAttributeRepository userAttributeRepository;
     private final SessionRepository sessionRepository;
     private final GroupRepository groupRepository;
+
     // Mappers
     private final UserMapper userMapper;
     private final SessionMapper sessionMapper;
@@ -192,7 +197,15 @@ public class UserServiceImpl implements UserService {
             // Generate password hash to compare with password stored in the DB.
             String checkPassword;
 
-            if (passwordEncoder instanceof AAALegacyPasswordEncoder) {
+            // Retrieve target class from proxied bean interface.
+            Object targetPasswordEncoder = null;
+            try {
+                targetPasswordEncoder = SpringBeansUtils.getTargetObject(passwordEncoder, PasswordEncoder.class);
+            } catch (Exception e) {
+                log.log(Level.WARNING, e.getMessage(), e);
+            }
+
+            if (targetPasswordEncoder instanceof Md5PasswordEncoder) {
                 checkPassword = user.getSalt() + password;
             } else {
                 checkPassword = password;
@@ -381,9 +394,17 @@ public class UserServiceImpl implements UserService {
             return;
         }
 
-        if (passwordEncoder instanceof AAALegacyPasswordEncoder) {
-            AAALegacyPasswordEncoder encoder = (AAALegacyPasswordEncoder) passwordEncoder;
-            byte[] salt = encoder.genereteSalt(SALT_LENGTH);
+        // Retrieve target class from proxied bean interface.
+        Object targetPasswordEncoder = null;
+        try {
+            targetPasswordEncoder = SpringBeansUtils.getTargetObject(passwordEncoder, PasswordEncoder.class);
+        } catch (Exception e) {
+            log.log(Level.WARNING, e.getMessage(), e);
+        }
+
+        if (targetPasswordEncoder instanceof Md5PasswordEncoder) {
+            Md5PasswordEncoder encoder = (Md5PasswordEncoder) passwordEncoder;
+            byte[] salt = encoder.generateSalt(SALT_LENGTH);
 
             // Generate salt and hash password
             user.setSalt(new String(salt));

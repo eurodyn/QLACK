@@ -23,98 +23,98 @@ import org.hibernate.annotations.OnDeleteAction;
 @Setter
 public class User extends AAAModel {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  @Version
-  private long dbversion;
+    @Version
+    private long dbversion;
 
-  @Column(name = "pswd")
-  private String password;
+    @Column(name = "pswd")
+    private String password;
 
-  private String salt;
+    private String salt;
 
-  private byte status;
+    private byte status;
 
-  private String username;
+    private String username;
 
-  private boolean superadmin;
+    private boolean superadmin;
 
-  /**
-   * An indicator that this user's password is not held in the database of AAA.
-   */
-  private Boolean external = false;
+    /**
+     * An indicator that this user's password is not held in the database of AAA.
+     */
+    private Boolean external = false;
 
-  //bi-directional many-to-one association to UserHasOperation
-  @OneToMany(mappedBy = "user")
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  private List<UserHasOperation> userHasOperations;
+    // bi-directional many-to-one association to UserHasOperation
+    @OneToMany(mappedBy = "user")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<UserHasOperation> userHasOperations;
 
-  //bi-directional many-to-one association to Session
-  @OneToMany(mappedBy = "user")
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  private List<Session> sessions;
+    // bi-directional many-to-one association to Session
+    @OneToMany(mappedBy = "user")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Session> sessions;
 
-  //bi-directional many-to-many association to Group
-  @ManyToMany(mappedBy = "users")
-  private List<Group> groups;
+    // bi-directional many-to-many association to Group
+    @ManyToMany(mappedBy = "users")
+    private List<Group> groups;
 
-  //bi-directional many-to-one association to UserAttribute
-  @OneToMany(mappedBy = "user")
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  private List<UserAttribute> userAttributes;
+    // bi-directional many-to-one association to UserAttribute
+    @OneToMany(mappedBy = "user")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<UserAttribute> userAttributes;
 
-  // bi-directional many-to-one association to VerificationToken.
-  @OneToMany(mappedBy = "user")
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  private List<VerificationToken> verificationTokens;
+    // bi-directional many-to-one association to VerificationToken.
+    @OneToMany(mappedBy = "user")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<VerificationToken> verificationTokens;
 
-  public User() {
-    setId(UUID.randomUUID().toString());
-  }
-
-  public UserHasOperation addUserHasOperation(UserHasOperation userHasOperations) {
-    if (getUserHasOperations() == null) {
-      setUserHasOperations(new ArrayList<UserHasOperation>());
+    public User() {
+        setId(UUID.randomUUID().toString());
     }
-    getUserHasOperations().add(userHasOperations);
-    userHasOperations.setUser(this);
 
-    return userHasOperations;
-  }
+    public UserHasOperation addUserHasOperation(UserHasOperation userHasOperations) {
+        if (getUserHasOperations() == null) {
+            setUserHasOperations(new ArrayList<UserHasOperation>());
+        }
+        getUserHasOperations().add(userHasOperations);
+        userHasOperations.setUser(this);
 
-  public UserHasOperation removeUserHasOperation(UserHasOperation userHasOperations) {
-    getUserHasOperations().remove(userHasOperations);
-    userHasOperations.setUser(null);
+        return userHasOperations;
+    }
 
-    return userHasOperations;
-  }
+    public UserHasOperation removeUserHasOperation(UserHasOperation userHasOperations) {
+        getUserHasOperations().remove(userHasOperations);
+        userHasOperations.setUser(null);
 
-  public Session addSession(Session session) {
-    getSessions().add(session);
-    session.setUser(this);
+        return userHasOperations;
+    }
 
-    return session;
-  }
+    public Session addSession(Session session) {
+        getSessions().add(session);
+        session.setUser(this);
 
-  public Session removeSession(Session session) {
-    getSessions().remove(session);
-    session.setUser(null);
+        return session;
+    }
 
-    return session;
-  }
+    public Session removeSession(Session session) {
+        getSessions().remove(session);
+        session.setUser(null);
 
-  public UserAttribute addUserAttribute(UserAttribute userAttribute) {
-    getUserAttributes().add(userAttribute);
-    userAttribute.setUser(this);
+        return session;
+    }
 
-    return userAttribute;
-  }
+    public UserAttribute addUserAttribute(UserAttribute userAttribute) {
+        getUserAttributes().add(userAttribute);
+        userAttribute.setUser(this);
 
-  public UserAttribute removeUserAttribute(UserAttribute userAttribute) {
-    getUserAttributes().remove(userAttribute);
-    userAttribute.setUser(null);
+        return userAttribute;
+    }
 
-    return userAttribute;
-  }
+    public UserAttribute removeUserAttribute(UserAttribute userAttribute) {
+        getUserAttributes().remove(userAttribute);
+        userAttribute.setUser(null);
+
+        return userAttribute;
+    }
 
 }

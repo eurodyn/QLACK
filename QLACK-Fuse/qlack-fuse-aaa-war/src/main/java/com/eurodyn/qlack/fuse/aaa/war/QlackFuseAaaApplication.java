@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.fuse.aaa;
+package com.eurodyn.qlack.fuse.aaa.war;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,7 +12,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan(basePackages = {"com.eurodyn.qlack.fuse.aaa.service",
     "com.eurodyn.qlack.fuse.aaa.mappers",
     "com.eurodyn.qlack.fuse.aaa.config",
-    "com.eurodyn.qlack.fuse.aaa.ws"
+    "com.eurodyn.qlack.fuse.aaa.ws",
+    "com.eurodyn.qlack.fuse.aaa.war.config"
 })
 public class QlackFuseAaaApplication {
 

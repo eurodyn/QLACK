@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * Provides the legacy password encoder as the default for the AAA.
  * !!! It should not be used as it is not secured.
  */
-public class AAALegacyPasswordEncoder implements PasswordEncoder {
+public class Md5PasswordEncoder implements PasswordEncoder {
 
     @Override
     public String encode(CharSequence rawPassword) {
@@ -21,7 +21,8 @@ public class AAALegacyPasswordEncoder implements PasswordEncoder {
      */
     @Override
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
-        byte[] expected = Hex.decode(rawPassword);
+        String rawHash = DigestUtils.md5Hex(rawPassword.toString());
+        byte[] expected = Hex.decode(rawHash);
         byte[] actual = Hex.decode(encodedPassword);
 
         if (expected.length != actual.length) {
@@ -37,7 +38,7 @@ public class AAALegacyPasswordEncoder implements PasswordEncoder {
         return result == 0;
     }
 
-    public byte[] genereteSalt(int saltLength) {
+    public byte[] generateSalt(int saltLength) {
         return KeyGenerators.secureRandom(saltLength).generateKey();
     }
 

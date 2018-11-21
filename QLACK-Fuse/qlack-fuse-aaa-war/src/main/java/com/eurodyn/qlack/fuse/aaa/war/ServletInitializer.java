@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.fuse.aaa;
+package com.eurodyn.qlack.fuse.aaa.war;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

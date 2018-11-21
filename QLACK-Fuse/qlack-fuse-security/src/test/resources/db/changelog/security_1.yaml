@@ -1,0 +1,56 @@
+databaseChangeLog:
+- changeSet:
+    id: security_1
+    author: European Dynamics SA
+    changes:
+    - insert:
+        columns:
+        - column:
+            name: id
+            value: 1
+        - column:
+            name: username
+            value: bcrypt-user
+        - column:
+            name: pswd
+            value: $2a$10$0GLA.f5f.yaMthHOQKo8mecysISMMeDaJY6x1MCicvEEb/R3LxWsi
+        - column:
+            name: status
+            value: 1
+        - column:
+            name: superadmin
+            value: 0
+        - column:
+            name: external
+            value: 0
+        - column:
+            name: dbversion
+            value: 0
+        tableName: aaa_user
+    - insert:
+        columns:
+        - column:
+            name: id
+            value: 2
+        - column:
+            name: username
+            value: aaa-legacy-user
+        - column:
+            name: pswd
+            value: 8f2a134fc3622bbe7274fe07012809c4
+        - column:
+            name: salt
+            value: MsRrehBH4fmQW1u3
+        - column:
+            name: status
+            value: 1
+        - column:
+            name: superadmin
+            value: 0
+        - column:
+            name: external
+            value: 0
+        - column:
+            name: dbversion
+            value: 0
+        tableName: aaa_user

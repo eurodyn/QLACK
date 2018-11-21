@@ -28,6 +28,8 @@
         <junit.version>4.12</junit.version>
         <hibernate.version>5.3.7.Final</hibernate.version>
         <hikaricp.version>3.2.0</hikaricp.version>
+        <liquibase.version>3.6.2</liquibase.version>
+        <h2.version>1.4.197</h2.version>
     </properties>
 
     <!--TODO consider moving away from defining versions with dependencyManagement, as dependencyManagement versions are
@@ -39,7 +41,8 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring.boot.version}</version>
-                <type>pom</type>
+                <type
+                >pom</type>
                 <scope>import</scope>
             </dependency>
 
@@ -170,6 +173,11 @@
                 <version>${mysql.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-core</artifactId>
+                <version>${liquibase.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>io.rest-assured</groupId>
                 <artifactId>rest-assured</artifactId>
                 <version>${rest-assured.version}</version>
@@ -179,6 +187,12 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <scope>test</scope>
+                <version>${h2.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
