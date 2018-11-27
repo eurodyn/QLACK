@@ -16,4 +16,8 @@ public class QDoesNotExistException extends QException {
   public QDoesNotExistException(String message, Throwable cause) {
     super(message, cause);
   }
+
+  public QDoesNotExistException(String message, Object... args) {
+    super(message, args);
+  }
 }
