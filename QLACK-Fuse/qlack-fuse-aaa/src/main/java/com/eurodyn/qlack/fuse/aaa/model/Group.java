@@ -24,63 +24,64 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "aaa_group")
 @Getter
 @Setter
-public class Group extends  AAAModel {
+public class Group extends AAAModel {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  @Version
-  private long dbversion;
+    @Version
+    private long dbversion;
 
-  private String description;
+    @Column(name = "description")
+    private String description;
 
-  private String name;
+    @Column(name = "name")
+    private String name;
 
-  @Column(name = "object_id")
-  private String objectId;
+    @Column(name = "object_id")
+    private String objectId;
 
-  @ManyToOne
-  @JoinColumn(name = "parent")
-  private Group parent;
+    @ManyToOne
+    @JoinColumn(name = "parent")
+    private Group parent;
 
-  @OneToMany(mappedBy = "parent")
-  private List<Group> children;
+    @OneToMany(mappedBy = "parent")
+    private List<Group> children;
 
-  //bi-directional many-to-one association to GroupHasOperation
-  @OneToMany(mappedBy = "group")
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  private List<GroupHasOperation> groupHasOperations;
+    /**
+     * bi-directional many-to-one association to GroupHasOperation
+     */
+    @OneToMany(mappedBy = "group")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<GroupHasOperation> groupHasOperations;
 
-  //bi-directional many-to-many association to Group
-  @ManyToMany
-  @JoinTable(
-      name = "aaa_user_has_group",
-      joinColumns = {
-          @JoinColumn(name = "group_id")
-      },
-      inverseJoinColumns = {
-          @JoinColumn(name = "user_id")
-      })
-  private List<User> users;
+    /**
+     * bi-directional many-to-many association to Group
+     */
+    @ManyToMany
+    @JoinTable(name = "aaa_user_has_group",
+        joinColumns = {@JoinColumn(name = "group_id")},
+        inverseJoinColumns = {@JoinColumn(name = "user_id")})
+    private List<User> users;
 
-  public Group() {
-    setId(UUID.randomUUID().toString());
-  }
-
-  public GroupHasOperation addGroupHasOperation(GroupHasOperation groupHasOperation) {
-    if (getGroupHasOperations() == null) {
-      setGroupHasOperations(new ArrayList<GroupHasOperation>());
+    public Group() {
+        setId(UUID.randomUUID().toString());
     }
-    getGroupHasOperations().add(groupHasOperation);
-    groupHasOperation.setGroup(this);
 
-    return groupHasOperation;
-  }
+    public GroupHasOperation addGroupHasOperation(GroupHasOperation groupHasOperation) {
+        if (getGroupHasOperations() == null) {
+            setGroupHasOperations(new ArrayList<>());
+        }
+        getGroupHasOperations().add(groupHasOperation);
+        groupHasOperation.setGroup(this);
 
-  public GroupHasOperation removeGroupHasOperation(GroupHasOperation groupHasOperation) {
-    getGroupHasOperations().remove(groupHasOperation);
-    groupHasOperation.setGroup(null);
+        return groupHasOperation;
+    }
 
-    return groupHasOperation;
-  }
+    public GroupHasOperation removeGroupHasOperation(GroupHasOperation groupHasOperation) {
+        getGroupHasOperations().remove(groupHasOperation);
+        groupHasOperation.setGroup(null);
+
+        return groupHasOperation;
+    }
 
 }

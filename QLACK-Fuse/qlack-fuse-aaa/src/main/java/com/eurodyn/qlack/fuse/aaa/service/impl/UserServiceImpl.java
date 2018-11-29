@@ -6,8 +6,10 @@ import com.eurodyn.qlack.fuse.aaa.criteria.UserSearchCriteria.UserAttributeCrite
 import com.eurodyn.qlack.fuse.aaa.dto.SessionDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserAttributeDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserDTO;
+import com.eurodyn.qlack.fuse.aaa.dto.UserDetailsDTO;
 import com.eurodyn.qlack.fuse.aaa.mappers.SessionMapper;
 import com.eurodyn.qlack.fuse.aaa.mappers.UserAttributeMapper;
+import com.eurodyn.qlack.fuse.aaa.mappers.UserDetailsMapper;
 import com.eurodyn.qlack.fuse.aaa.mappers.UserMapper;
 import com.eurodyn.qlack.fuse.aaa.model.Group;
 import com.eurodyn.qlack.fuse.aaa.model.QSession;
@@ -21,7 +23,6 @@ import com.eurodyn.qlack.fuse.aaa.repository.SessionRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.UserAttributeRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
 import com.eurodyn.qlack.fuse.aaa.service.AccountingService;
-import com.eurodyn.qlack.fuse.aaa.service.LdapUserService;
 import com.eurodyn.qlack.fuse.aaa.service.UserService;
 import com.eurodyn.qlack.fuse.aaa.util.Md5PasswordEncoder;
 import com.eurodyn.qlack.util.data.SpringBeansUtils;
@@ -46,6 +47,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,7 +67,6 @@ public class UserServiceImpl implements UserService {
 
     // Service REFs
     private final AccountingService accountingService;
-    private final LdapUserService ldapUserService;
 
     // Repositories
     private final UserRepository userRepository;
@@ -74,6 +76,7 @@ public class UserServiceImpl implements UserService {
 
     // Mappers
     private final UserMapper userMapper;
+    private final UserDetailsMapper userDetailsMapper;
     private final SessionMapper sessionMapper;
     private final UserAttributeMapper userAttributeMapper;
 
@@ -82,12 +85,11 @@ public class UserServiceImpl implements UserService {
     private final QSession qSession = QSession.session;
 
     @Autowired
-    public UserServiceImpl(AccountingService accountingService, LdapUserService ldapUserService,
-        UserRepository userRepository, UserAttributeRepository userAttributeRepository,
-        SessionRepository sessionRepository, GroupRepository groupRepository, UserMapper userMapper,
-        SessionMapper sessionMapper, UserAttributeMapper userAttributeMapper, @Lazy PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(AccountingService accountingService, UserRepository userRepository,
+        UserAttributeRepository userAttributeRepository, SessionRepository sessionRepository, GroupRepository groupRepository,
+        UserMapper userMapper, SessionMapper sessionMapper, UserAttributeMapper userAttributeMapper,
+        @Lazy PasswordEncoder passwordEncoder, UserDetailsMapper userDetailsMapper) {
         this.accountingService = accountingService;
-        this.ldapUserService = ldapUserService;
         this.userRepository = userRepository;
         this.userAttributeRepository = userAttributeRepository;
         this.sessionRepository = sessionRepository;
@@ -96,6 +98,7 @@ public class UserServiceImpl implements UserService {
         this.sessionMapper = sessionMapper;
         this.userAttributeMapper = userAttributeMapper;
         this.passwordEncoder = passwordEncoder;
+        this.userDetailsMapper = userDetailsMapper;
     }
 
     public String createUser(UserDTO dto) {
@@ -160,6 +163,11 @@ public class UserServiceImpl implements UserService {
         return userMapper.mapToDTO(userRepository.findByUsername(userName));
     }
 
+    public UserDetailsDTO getUserDetailsByName(String userName) {
+        User user = userRepository.findByUsername(userName);
+        return userDetailsMapper.mapToDTO(user);
+    }
+
     public void updateUserStatus(String userID, byte status) {
         User user = userRepository.fetchById(userID);
         user.setStatus(status);
@@ -213,11 +221,6 @@ public class UserServiceImpl implements UserService {
 
             if (passwordEncoder.matches(checkPassword, user.getPassword())) {
                 userIdToReturn = user.getId();
-            }
-        } else {
-            // TODO remove LDAP authentication from here
-            if (ldapUserService.isLdapEnabled()) {
-                userIdToReturn = ldapUserService.canAuthenticate(username, password);
             }
         }
 
@@ -498,6 +501,11 @@ public class UserServiceImpl implements UserService {
         }
 
         return isAttributeValueUnique;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return getUserDetailsByName(username);
     }
 
 }

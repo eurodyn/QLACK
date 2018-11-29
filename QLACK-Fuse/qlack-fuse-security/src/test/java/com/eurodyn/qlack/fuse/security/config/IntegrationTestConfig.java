@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     "com.eurodyn.qlack.fuse.aaa.mappers",
     "com.eurodyn.qlack.fuse.aaa.config",
     "com.eurodyn.qlack.fuse.aaa.ws",
-    "com.eurodyn.qlack.fuse.security.manager"
+    "com.eurodyn.qlack.fuse.security.providers"
 })
 @EnableTransactionManagement
 public class IntegrationTestConfig {

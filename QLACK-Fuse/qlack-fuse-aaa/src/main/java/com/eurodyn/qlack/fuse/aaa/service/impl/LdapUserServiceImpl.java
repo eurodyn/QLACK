@@ -1,6 +1,10 @@
 package com.eurodyn.qlack.fuse.aaa.service.impl;
 
-
+import com.eurodyn.qlack.fuse.aaa.model.Group;
+import com.eurodyn.qlack.fuse.aaa.model.User;
+import com.eurodyn.qlack.fuse.aaa.model.UserAttribute;
+import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
+import com.eurodyn.qlack.fuse.aaa.service.LdapUserService;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -8,8 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.naming.AuthenticationException;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -20,26 +22,21 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchResult;
 import javax.persistence.EntityManager;
-
+import lombok.extern.java.Log;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import com.eurodyn.qlack.fuse.aaa.model.Group;
-import com.eurodyn.qlack.fuse.aaa.model.User;
-import com.eurodyn.qlack.fuse.aaa.model.UserAttribute;
-import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
-import com.eurodyn.qlack.fuse.aaa.service.LdapUserService;
-
+@Log
 @Service
 @Validated
 public class LdapUserServiceImpl implements LdapUserService {
-
-    private static final Logger LOGGER = Logger.getLogger(LdapUserServiceImpl.class.getName());
 
     private EntityManager em;
 
     private final UserRepository userRepository;
 
+    @Autowired
     public LdapUserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -144,37 +141,38 @@ public class LdapUserServiceImpl implements LdapUserService {
         env.put(Context.SECURITY_CREDENTIALS, password);
 
         try {
-            DirContext ctx = new InitialDirContext(env);
-            return ctx;
+            return new InitialDirContext(env);
         } catch (AuthenticationException e) {
-            LOGGER.log(Level.FINE, "Cannot bind user to ldap service", e);
+            log.log(Level.FINE, "Cannot bind user to ldap service", e);
             return null;
         } catch (NamingException e) {
-            LOGGER.log(Level.WARNING, "Cannot bind user to ldap service", e);
+            log.log(Level.WARNING, "Cannot bind user to ldap service", e);
             return null;
         }
     }
 
     private Map<String, List<String>> ldapSearch(DirContext ctx, String username) {
         try {
-            NamingEnumeration<SearchResult> results =
-                ctx.search(ldapBaseDN, "(" + ldapMappingUid + "=" + username + ")", null);
+            NamingEnumeration<SearchResult> results = ctx.search(ldapBaseDN, "(" + ldapMappingUid + "=" + username + ")", null);
+
             if (results.hasMore()) {
                 SearchResult result = results.next();
                 Attributes attributes = result.getAttributes();
 
                 Map<String, List<String>> untypedResult = new HashMap<>();
                 NamingEnumeration<? extends Attribute> attributesEnumeration = attributes.getAll();
+
                 while (attributesEnumeration.hasMore()) {
                     Attribute attribute = attributesEnumeration.next();
                     String id = attribute.getID();
-                    LOGGER.log(Level.FINEST, "{0}:", id);
+                    log.log(Level.FINEST, "{0}:", id);
 
                     List<String> untypedValues = new ArrayList<>();
                     NamingEnumeration<?> valuesEnumeration = attribute.getAll();
+
                     while (valuesEnumeration.hasMore()) {
                         Object value = valuesEnumeration.next();
-                        LOGGER.log(Level.FINEST, "\t{0}", value);
+                        log.log(Level.FINEST, "\t{0}", value);
                         if (value instanceof String) {
                             String string = (String) value;
                             untypedValues.add(string);
@@ -191,7 +189,7 @@ public class LdapUserServiceImpl implements LdapUserService {
                 return null;
             }
         } catch (NamingException e) {
-            LOGGER.log(Level.WARNING, "Cannot search ldap context", e);
+            log.log(Level.WARNING, "Cannot search ldap context", e);
             return null;
         }
     }
@@ -200,7 +198,7 @@ public class LdapUserServiceImpl implements LdapUserService {
         try {
             ctx.close();
         } catch (NamingException e) {
-            LOGGER.log(Level.WARNING, "Cannot close ldap context", e);
+            log.log(Level.WARNING, "Cannot close ldap context", e);
         }
     }
 
@@ -247,7 +245,6 @@ public class LdapUserServiceImpl implements LdapUserService {
     }
 
     private void createUserAttributesFromLdap(User user, Map<String, List<String>> ldap) {
-
         for (Entry<String, String> entry : attributesMap.entrySet()) {
             String aaaAttr = entry.getKey();
             String ldapAttr = entry.getValue();

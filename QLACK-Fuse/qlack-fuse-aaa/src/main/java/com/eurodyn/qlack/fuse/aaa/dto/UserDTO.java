@@ -8,16 +8,25 @@ import lombok.Setter;
 @Setter
 public class UserDTO extends BaseDTO {
 
-  private String id;
-  private String username;
-  private String password;
-  private byte status;
-  private boolean superadmin;
-  private boolean external;
-  private Set<UserAttributeDTO> userAttributes;
-  // The session Id created for this user. Expect this to be populated, only, when attempting to
-  // login the user.
-  private String sessionId;
+    private String id;
+
+    private String username;
+
+    private String password;
+
+    private byte status;
+
+    private boolean superadmin;
+
+    private boolean external;
+
+    private Set<UserAttributeDTO> userAttributes;
+
+    /**
+     * The session Id created for this user. Expect this to be populated
+     * only when attempting to login the user.
+     */
+    private String sessionId;
 
 //  public UserAttributeDTO getAttribute(String name) {
 //    UserAttributeDTO retVal = null;

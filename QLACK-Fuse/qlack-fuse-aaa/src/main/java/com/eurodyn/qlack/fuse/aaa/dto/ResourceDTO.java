@@ -10,8 +10,10 @@ import lombok.Setter;
 @Setter
 public class ResourceDTO extends BaseDTO {
 
-  private String name;
-  private String description;
-  private String objectID;
+    private String name;
+
+    private String description;
+
+    private String objectID;
 
 }

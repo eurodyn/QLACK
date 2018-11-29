@@ -3,11 +3,12 @@ package com.eurodyn.qlack.fuse.aaa.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * @author EUROPEAN DYNAMICS SA
+ */
 @Getter
 @Setter
-public class GroupHasOperationDTO extends BaseDTO {
-
-    private GroupDTO group;
+public class UserHasOperationDTO extends BaseDTO {
 
     private OperationDTO operation;
 

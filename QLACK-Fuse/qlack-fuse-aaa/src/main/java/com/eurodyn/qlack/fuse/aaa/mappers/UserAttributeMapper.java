@@ -9,7 +9,8 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserAttributeMapper extends AAAMapper<UserAttribute, UserAttributeDTO> {
 
-  @Override
-  @Mapping(source = "user.id", target = "userId")
-  UserAttributeDTO mapToDTO(UserAttribute userAttribute);
+    @Override
+    @Mapping(source = "user.id", target = "userId")
+    UserAttributeDTO mapToDTO(UserAttribute userAttribute);
+
 }

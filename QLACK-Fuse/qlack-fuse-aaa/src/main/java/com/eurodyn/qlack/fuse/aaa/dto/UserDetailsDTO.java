@@ -1,0 +1,89 @@
+package com.eurodyn.qlack.fuse.aaa.dto;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+/**
+ * Implements Spring's UserDetails interface.
+ *
+ * @author EUROPEAN DYNAMICS SA
+ */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserDetailsDTO extends BaseDTO implements UserDetails {
+
+    private String id;
+
+    private String username;
+
+    private String password;
+
+    private String salt;
+
+    private byte status;
+
+    private boolean superadmin;
+
+    private boolean external;
+
+    private List<UserHasOperationDTO> userHasOperations = new ArrayList<>();
+
+    private List<GroupHasOperationDTO> groupHasOperations = new ArrayList<>();
+
+    private List<GroupDTO> groups = new ArrayList<>();
+
+    /**
+     * AAA groups are matched to Spring authorities.
+     *
+     * @return AAA groups as authorities
+     */
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return groups;
+    }
+
+    /**
+     * An account non expired option does not exist in AAA domain, so it is always set to true.
+     *
+     * @return true
+     */
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    /**
+     * An account non locked option does not exist in AAA domain, so it is always set to true.
+     *
+     * @return true
+     */
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    /**
+     * A credentials non expired option does not exist in AAA domain, so it is always set to true.
+     *
+     * @return true
+     */
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return status == 1;
+    }
+
+}

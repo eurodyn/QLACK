@@ -31,39 +31,55 @@ public class User extends AAAModel {
     @Column(name = "pswd")
     private String password;
 
+    @Column(name = "salt")
     private String salt;
 
+    @Column(name = "status")
     private byte status;
 
+    @Column(name = "username")
     private String username;
 
+    @Column(name = "superadmin")
     private boolean superadmin;
 
     /**
      * An indicator that this user's password is not held in the database of AAA.
      */
+    @Column(name = "external")
     private Boolean external = false;
 
-    // bi-directional many-to-one association to UserHasOperation
+    /**
+     * bi-directional many-to-one association to UserHasOperation
+     */
+
     @OneToMany(mappedBy = "user")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<UserHasOperation> userHasOperations;
 
-    // bi-directional many-to-one association to Session
+    /**
+     * bi-directional many-to-one association to Session
+     */
     @OneToMany(mappedBy = "user")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Session> sessions;
 
-    // bi-directional many-to-many association to Group
+    /**
+     * bi-directional many-to-many association to Group
+     */
     @ManyToMany(mappedBy = "users")
     private List<Group> groups;
 
-    // bi-directional many-to-one association to UserAttribute
+    /**
+     * bi-directional many-to-one association to UserAttribute
+     */
     @OneToMany(mappedBy = "user")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<UserAttribute> userAttributes;
 
-    // bi-directional many-to-one association to VerificationToken.
+    /**
+     * bi-directional many-to-one association to VerificationToken
+     */
     @OneToMany(mappedBy = "user")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<VerificationToken> verificationTokens;
@@ -74,7 +90,7 @@ public class User extends AAAModel {
 
     public UserHasOperation addUserHasOperation(UserHasOperation userHasOperations) {
         if (getUserHasOperations() == null) {
-            setUserHasOperations(new ArrayList<UserHasOperation>());
+            setUserHasOperations(new ArrayList<>());
         }
         getUserHasOperations().add(userHasOperations);
         userHasOperations.setUser(this);
