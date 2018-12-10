@@ -15,7 +15,7 @@ public class ReturnOptional {
     if (arg != null && arg.isPresent()) {
       return arg.get();
     } else {
-      throw new QDoesNotExistException(MessageFormat.format("Did not find object with parameters {0}.", message));
+      throw new QDoesNotExistException(message);
     }
   }
 
