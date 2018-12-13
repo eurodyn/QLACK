@@ -13,6 +13,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+
+import io.swagger.annotations.Api;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Path("/user")
+@Api(value = "QLACK User API")
 @Component
 public class UserWS {
 

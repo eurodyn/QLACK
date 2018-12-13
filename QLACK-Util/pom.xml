@@ -19,5 +19,6 @@
     <module>qlack-util-jwt</module>
     <module>qlack-util-querydsl</module>
     <module>qlack-util-data</module>
+      <module>qlack-util-swagger</module>
   </modules>
 </project>

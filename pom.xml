@@ -30,6 +30,7 @@
         <hikaricp.version>3.2.0</hikaricp.version>
         <liquibase.version>3.6.2</liquibase.version>
         <h2.version>1.4.197</h2.version>
+        <swagger-ui.version>3.20.1</swagger-ui.version>
     </properties>
 
     <!--TODO consider moving away from defining versions with dependencyManagement, as dependencyManagement versions are
@@ -203,6 +204,21 @@
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt</artifactId>
                 <version>0.9.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-rs-service-description</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>swagger-ui</artifactId>
+                <version>${swagger-ui.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
