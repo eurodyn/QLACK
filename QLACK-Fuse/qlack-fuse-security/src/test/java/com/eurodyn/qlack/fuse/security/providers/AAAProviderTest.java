@@ -26,7 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class AAAProviderTest {
 
     @Autowired
-    private AAAProvider authenticationProvider;
+    private AAAUsernamePasswordProvider authenticationProvider;
 
     private UsernamePasswordAuthenticationToken bcryptValidToken;
     private UsernamePasswordAuthenticationToken bcryptInvalidToken;

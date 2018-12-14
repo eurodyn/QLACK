@@ -8,7 +8,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class AAAProvider extends DaoAuthenticationProvider {
+public class AAAUsernamePasswordProvider extends DaoAuthenticationProvider {
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication)
@@ -17,7 +17,7 @@ public class AAAProvider extends DaoAuthenticationProvider {
             logger.debug("Authentication failed: no credentials provided");
 
             throw new BadCredentialsException(messages.getMessage(
-                "AbstractUserDetailsAuthenticationProvider.badCredentials",
+                "AaaProvider.badCredentials",
                 "Bad credentials"));
         }
 
@@ -34,7 +34,7 @@ public class AAAProvider extends DaoAuthenticationProvider {
             logger.debug("Authentication failed: password does not match stored value");
 
             throw new BadCredentialsException(messages.getMessage(
-                "AbstractUserDetailsAuthenticationProvider.badCredentials",
+                "AaaProvider.badCredentials",
                 "Bad credentials"));
         }
     }

@@ -2,79 +2,55 @@ package com.eurodyn.qlack.util.jwt.dto;
 
 import java.util.HashMap;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * A class encapsulating all data necessary to create a JWT.
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class JWTGenerateRequestDTO {
-  // The secret to be used to sign the JWT. Use only Latin-1/ISO-8859-1 characters.
-  private String secret;
 
-  // The subject of this JWT. It can be anything as long as it makes sense to your application.
-  private String subject;
+    /**
+     * The secret to be used to sign the JWT.
+     */
+    private String secret;
 
-  // The issuer of this JWT. It can be anything as long as it makes sense to your application.
-  private String issuer;
+    /**
+     * The subject of this JWT. It can be anything as long as it makes sense to your application.
+     */
+    private String subject;
 
-  // The Id to isse the JWT with.
-  private String id;
+    /**
+     * The issuer of this JWT. It can be anything as long as it makes sense to your application.
+     */
+    private String issuer;
 
-  // Claims to be included in the JWT.
-  private Map<String, Object> claims = new HashMap<>();
+    /**
+     * The Id to isse the JWT with.
+     */
+    private String id;
 
-  // The Time-To-Live (TTL) for the token in milliseconds. This is effectively setting the
-  // expiration date for the JWT.
-  private long ttl;
+    /**
+     * Claims to be included in the JWT.
+     */
+    private Map<String, Object> claims = new HashMap<>();
 
-  public String getSecret() {
-    return secret;
-  }
+    /**
+     * The Time-To-Live (TTL) for the token in milliseconds.
+     * This is effectively setting the expiration date for the JWT.
+     */
+    private long ttl;
 
-  public void setSecret(String secret) {
-    this.secret = secret;
-  }
+    public JWTGenerateRequestDTO(String secret, String subject, long ttl) {
+        this.secret = secret;
+        this.subject = subject;
+        this.ttl = ttl;
+    }
 
-  public String getSubject() {
-    return subject;
-  }
-
-  public void setSubject(String subject) {
-    this.subject = subject;
-  }
-
-  public String getIssuer() {
-    return issuer;
-  }
-
-  public void setIssuer(String issuer) {
-    this.issuer = issuer;
-  }
-
-  public long getTtl() {
-    return ttl;
-  }
-
-  public void setTtl(long ttl) {
-    this.ttl = ttl;
-  }
-
-  public Map<String, Object> getClaims() {
-    return claims;
-  }
-
-  public void setClaims(Map<String, Object> claims) {
-    this.claims = claims;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public void addClaim(String name, String value) {
-    claims.put(name, value);
-  }
 }

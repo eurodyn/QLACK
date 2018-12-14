@@ -2,7 +2,8 @@ package com.eurodyn.qlack.fuse.security.war.config;
 
 import com.eurodyn.qlack.fuse.aaa.service.UserService;
 import com.eurodyn.qlack.fuse.security.access.AAAPermissionEvaluator;
-import com.eurodyn.qlack.fuse.security.providers.AAAProvider;
+import com.eurodyn.qlack.fuse.security.filters.JwtTokenAuthenticationFilter;
+import com.eurodyn.qlack.fuse.security.providers.AAAUsernamePasswordProvider;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
-import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -30,9 +31,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserService userService;
 
     @Autowired
-    private AAAPermissionEvaluator aaaPermissionEvaluator;
-
-    @Autowired
     public SecurityConfig(DataSource dataSource, UserService userService) {
         this.dataSource = dataSource;
         this.userService = userService;
@@ -44,8 +42,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .jdbcAuthentication()
             .dataSource(dataSource)
             .rolePrefix("")
-            // .usersByUsernameQuery(usersQuery)
-            // .authoritiesByUsernameQuery(rolesQuery)
             .passwordEncoder(passwordEncoder());
     }
 
@@ -58,15 +54,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and().csrf().disable()
+            .addFilterBefore(jwtTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
             .authorizeRequests()
             .expressionHandler(webExpressionHandler())
+            .antMatchers(cxfPath + "/user/login").permitAll()
             .antMatchers(cxfPath + "/auth/unauthorized").permitAll()
-            .antMatchers(cxfPath + "/auth/authorized").access("hasPermission(principal,'auth')")
-            .anyRequest().authenticated()
-            // .anyRequest().permitAll()
-            .and().httpBasic().realmName("REALM").authenticationEntryPoint(basicAuthEntryPoint())
-            .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+            .antMatchers(cxfPath + "/auth/authorized").authenticated() //.access("hasPermission(principal,'auth')")
+            .anyRequest().permitAll();
+    }
+
+    @Bean
+    public JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter() {
+        return new JwtTokenAuthenticationFilter();
     }
 
     @Bean
@@ -77,15 +78,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public BasicAuthenticationEntryPoint basicAuthEntryPoint() {
-        BasicAuthenticationEntryPoint baep = new BasicAuthenticationEntryPoint();
-        baep.setRealmName("REALM");
-        return baep;
-    }
-
-    @Bean
-    public AAAProvider authenticationProvider() {
-        AAAProvider authProvider = new AAAProvider();
+    public AAAUsernamePasswordProvider authenticationProvider() {
+        AAAUsernamePasswordProvider authProvider = new AAAUsernamePasswordProvider();
         authProvider.setUserDetailsService(userService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;

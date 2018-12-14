@@ -9,6 +9,7 @@ QLACK-Fuse/qlack-fuse-fileupload/target
 QLACK-Fuse/qlack-fuse-imaging/target
 QLACK-Fuse/qlack-fuse-scheduler/target
 QLACK-Util/qlack-util-jwt/target
+QLACK-Util/qlack-util-swagger/target
 /target/
 QLACK-Fuse/qlack-fuse-audit/target
 QLACK-Util/qlack-util-querydsl/target

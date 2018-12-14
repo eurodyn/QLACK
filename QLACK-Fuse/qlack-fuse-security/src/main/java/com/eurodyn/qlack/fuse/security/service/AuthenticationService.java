@@ -14,4 +14,14 @@ public interface AuthenticationService {
      */
     Authentication authenticate(Authentication authentication) throws AuthenticationException;
 
+    /**
+     * Provides access to Spring's authentication method.
+     *
+     * @param username Username
+     * @param password User password
+     * @return Authentication object with user details
+     * @throws AuthenticationException If authentication fails
+     */
+    Authentication authenticate(String username, String password) throws AuthenticationException;
+
 }

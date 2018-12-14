@@ -10,8 +10,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories("com.eurodyn.qlack.fuse.aaa.repository")
 @EntityScan("com.eurodyn.qlack.fuse.aaa.model")
 @ComponentScan(basePackages = {
+    "com.eurodyn.qlack.fuse.aaa.config",
     "com.eurodyn.qlack.fuse.aaa.service",
     "com.eurodyn.qlack.fuse.aaa.mappers",
+    "com.eurodyn.qlack.fuse.aaa.ws",
     "com.eurodyn.qlack.fuse.security"
 })
 public class QlackFuseSecurityApplication {

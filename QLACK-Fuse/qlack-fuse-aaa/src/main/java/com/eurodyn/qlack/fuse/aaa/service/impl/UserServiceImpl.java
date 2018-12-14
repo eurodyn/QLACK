@@ -132,27 +132,27 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public void deleteUser(String userID) {
-        User user = userRepository.fetchById(userID);
+    public void deleteUser(String userId) {
+        User user = userRepository.fetchById(userId);
         userRepository.delete(user);
     }
 
-    public UserDTO getUserById(String userID) {
-        User user = userRepository.fetchById(userID);
+    public UserDTO getUserById(String userId) {
+        User user = userRepository.fetchById(userId);
 
         return userMapper.mapToDTO(user);
     }
 
-    public Set<UserDTO> getUsersById(Collection<String> userIDs) {
-        Predicate predicate = qUser.id.in(userIDs);
+    public Set<UserDTO> getUsersById(Collection<String> userIds) {
+        Predicate predicate = qUser.id.in(userIds);
 
         return userRepository.findAll(predicate).stream()
             .map(userMapper::mapToDTO)
             .collect(Collectors.toSet());
     }
 
-    public Map<String, UserDTO> getUsersByIdAsHash(Collection<String> userIDs) {
-        Predicate predicate = qUser.id.in(userIDs);
+    public Map<String, UserDTO> getUsersByIdAsHash(Collection<String> userIds) {
+        Predicate predicate = qUser.id.in(userIds);
 
         return userRepository.findAll(predicate).stream()
             .map(userMapper::mapToDTO)
@@ -168,18 +168,18 @@ public class UserServiceImpl implements UserService {
         return userDetailsMapper.mapToDTO(user);
     }
 
-    public void updateUserStatus(String userID, byte status) {
-        User user = userRepository.fetchById(userID);
+    public void updateUserStatus(String userId, byte status) {
+        User user = userRepository.fetchById(userId);
         user.setStatus(status);
     }
 
-    public byte getUserStatus(String userID) {
-        User user = userRepository.fetchById(userID);
+    public byte getUserStatus(String userId) {
+        User user = userRepository.fetchById(userId);
         return user.getStatus();
     }
 
-    public boolean isSuperadmin(String userID) {
-        User user = userRepository.fetchById(userID);
+    public boolean isSuperadmin(String userId) {
+        User user = userRepository.fetchById(userId);
         if (user != null) {
             return user.isSuperadmin();
         } else {
@@ -187,8 +187,8 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public boolean isExternal(String userID) {
-        User user = userRepository.fetchById(userID);
+    public boolean isExternal(String userId) {
+        User user = userRepository.fetchById(userId);
         return user.getExternal() != null && user.getExternal();
     }
 
@@ -227,8 +227,8 @@ public class UserServiceImpl implements UserService {
         return userIdToReturn;
     }
 
-    public UserDTO login(String userID, String applicationSessionID, boolean terminateOtherSessions) {
-        User user = userRepository.fetchById(userID);
+    public UserDTO login(String userId, String applicationSessionId, boolean terminateOtherSessions) {
+        User user = userRepository.fetchById(userId);
 
         // Check if other sessions of this user need to be terminated first.
         if (terminateOtherSessions) {
@@ -244,7 +244,7 @@ public class UserServiceImpl implements UserService {
         // Create a new session for the user.
         SessionDTO session = new SessionDTO();
         session.setUserId(user.getId());
-        session.setApplicationSessionID(applicationSessionID);
+        session.setApplicationSessionID(applicationSessionId);
         String sessionId = accountingService.createSession(session);
 
         // Create a DTO representation of the user and populate the session Id of the session that was
@@ -255,13 +255,13 @@ public class UserServiceImpl implements UserService {
         return userDTO;
     }
 
-    public void logout(String userID, String applicationSessionID) {
-        User user = userRepository.fetchById(userID);
+    public void logout(String userId, String applicationSessionId) {
+        User user = userRepository.fetchById(userId);
 
         if (user.getSessions() != null) {
             for (Session session : user.getSessions()) {
-                if (((session.getApplicationSessionId().equals(applicationSessionID)))
-                    || ((applicationSessionID == null) && (session.getApplicationSessionId() == null))) {
+                if (((session.getApplicationSessionId().equals(applicationSessionId)))
+                    || ((applicationSessionId == null) && (session.getApplicationSessionId() == null))) {
                     accountingService.terminateSession(session.getId());
                 }
             }
@@ -277,8 +277,8 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public List<SessionDTO> isUserAlreadyLoggedIn(String userID) {
-        Predicate predicate = qSession.user.id.eq(userID).and(qSession.terminatedOn.isNull());
+    public List<SessionDTO> isUserAlreadyLoggedIn(String userId) {
+        Predicate predicate = qSession.user.id.eq(userId).and(qSession.terminatedOn.isNull());
         List<SessionDTO> retVal = sessionMapper.mapToDTO(sessionRepository
             .findAll(predicate, Sort.by("createdOn").ascending()));
 
@@ -307,14 +307,14 @@ public class UserServiceImpl implements UserService {
         return passwordUpdated;
     }
 
-    public boolean belongsToGroupByName(String userID, String groupName, boolean includeChildren) {
-        User user = userRepository.fetchById(userID);
+    public boolean belongsToGroupByName(String userId, String groupName, boolean includeChildren) {
+        User user = userRepository.fetchById(userId);
         Group group = groupRepository.findByName(groupName);
         boolean retVal = group.getUsers().contains(user);
 
         if (!retVal && includeChildren) {
             for (Group child : group.getChildren()) {
-                if (belongsToGroupByName(userID, child.getName(), includeChildren)) {
+                if (belongsToGroupByName(userId, child.getName(), includeChildren)) {
                     return true;
                 }
             }
@@ -353,24 +353,24 @@ public class UserServiceImpl implements UserService {
         userAttributeMapper.mapToExistingEntity(attributeDTO, attribute);
     }
 
-    public void deleteAttribute(String userID, String attributeName) {
-        UserAttribute attribute = userAttributeRepository.findByUserIdAndName(userID, attributeName);
+    public void deleteAttribute(String userId, String attributeName) {
+        UserAttribute attribute = userAttributeRepository.findByUserIdAndName(userId, attributeName);
         if (attribute != null) {
             userAttributeRepository.delete(attribute);
         }
     }
 
-    public UserAttributeDTO getAttribute(String userID, String attributeName) {
-        UserAttribute attribute = userAttributeRepository.findByUserIdAndName(userID, attributeName);
+    public UserAttributeDTO getAttribute(String userId, String attributeName) {
+        UserAttribute attribute = userAttributeRepository.findByUserIdAndName(userId, attributeName);
         return userAttributeMapper.mapToDTO(attribute);
     }
 
-    public Set<String> getUserIDsForAttribute(Collection<String> userIDs, String attributeName, String attributeValue) {
+    public Set<String> getUserIDsForAttribute(Collection<String> userIds, String attributeName, String attributeValue) {
         BooleanExpression predicate = qUser.userAttributes.any().name.eq(attributeName)
             .and(qUser.userAttributes.any().data.eq(attributeValue));
 
-        if ((userIDs != null) && (!userIDs.isEmpty())) {
-            predicate.and(qUser.id.in(userIDs));
+        if ((userIds != null) && (!userIds.isEmpty())) {
+            predicate.and(qUser.id.in(userIds));
         }
 
         return userRepository.findAll(predicate).stream()
@@ -483,8 +483,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(predicate).size();
     }
 
-    public boolean isAttributeValueUnique(String attributeValue,
-        String attributeName, String userID) {
+    public boolean isAttributeValueUnique(String attributeValue, String attributeName, String userID) {
 
         boolean isAttributeValueUnique = false;
         QUserAttribute quserAttribute = QUserAttribute.userAttribute;

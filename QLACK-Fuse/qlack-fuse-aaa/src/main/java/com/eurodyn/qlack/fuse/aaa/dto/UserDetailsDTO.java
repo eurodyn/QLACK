@@ -35,6 +35,12 @@ public class UserDetailsDTO extends BaseDTO implements UserDetails {
 
     private boolean external;
 
+    /**
+     * The session Id created for this user. Expect this to be populated
+     * only when attempting to login the user.
+     */
+    private String sessionId;
+
     private List<UserHasOperationDTO> userHasOperations = new ArrayList<>();
 
     private List<GroupHasOperationDTO> groupHasOperations = new ArrayList<>();
