@@ -13,8 +13,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
     "com.eurodyn.qlack.fuse.aaa.mappers",
     "com.eurodyn.qlack.fuse.aaa.config",
     "com.eurodyn.qlack.fuse.aaa.ws",
-        "com.eurodyn.qlack.fuse.aaa.war.config",
-        "com.eurodyn.qlack.util.swagger.config"
+    "com.eurodyn.qlack.fuse.aaa.war.config",
+    "com.eurodyn.qlack.util.swagger.config"
 })
 public class QlackFuseAaaApplication {
 
