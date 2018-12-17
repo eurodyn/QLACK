@@ -4,12 +4,10 @@ import com.eurodyn.qlack.fuse.aaa.service.UserService;
 import com.eurodyn.qlack.fuse.security.access.AAAPermissionEvaluator;
 import com.eurodyn.qlack.fuse.security.filters.JwtTokenAuthenticationFilter;
 import com.eurodyn.qlack.fuse.security.providers.AAAUsernamePasswordProvider;
-import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -26,23 +24,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${cxf.path}")
     private String cxfPath;
 
-    private final DataSource dataSource;
-
     private final UserService userService;
 
     @Autowired
-    public SecurityConfig(DataSource dataSource, UserService userService) {
-        this.dataSource = dataSource;
+    public SecurityConfig(UserService userService) {
         this.userService = userService;
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authenticationProvider())
-            .jdbcAuthentication()
-            .dataSource(dataSource)
-            .rolePrefix("")
-            .passwordEncoder(passwordEncoder());
     }
 
     @Override
@@ -65,11 +51,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .anyRequest().permitAll();
     }
 
+    /**
+     * Enable JWT authentication.
+     */
     @Bean
     public JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter() {
         return new JwtTokenAuthenticationFilter();
     }
 
+    /**
+     * Configures AAA operations to be evaluated as spring permissions.
+     */
     @Bean
     public DefaultWebSecurityExpressionHandler webExpressionHandler() {
         DefaultWebSecurityExpressionHandler webSecurityExpressionHandler = new DefaultWebSecurityExpressionHandler();
@@ -77,6 +69,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return webSecurityExpressionHandler;
     }
 
+    /**
+     * Configures AAA authentication provider with a user service and a password encoder.
+     * The AAA user service should be used.
+     */
     @Bean
     public AAAUsernamePasswordProvider authenticationProvider() {
         AAAUsernamePasswordProvider authProvider = new AAAUsernamePasswordProvider();
@@ -85,6 +81,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return authProvider;
     }
 
+    /**
+     * Sets bcrypt as the password encoding practice.
+     */
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
