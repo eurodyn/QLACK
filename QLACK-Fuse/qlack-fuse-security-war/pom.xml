@@ -31,6 +31,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.eurodyn.qlack.util</groupId>
+            <artifactId>qlack-util-swagger</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Spring Boot dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

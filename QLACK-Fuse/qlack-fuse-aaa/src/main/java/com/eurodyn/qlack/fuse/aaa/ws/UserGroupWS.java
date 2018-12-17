@@ -2,6 +2,8 @@ package com.eurodyn.qlack.fuse.aaa.ws;
 
 import com.eurodyn.qlack.fuse.aaa.dto.GroupDTO;
 import com.eurodyn.qlack.fuse.aaa.service.UserGroupService;
+import io.swagger.annotations.Api;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -21,6 +23,9 @@ import org.springframework.stereotype.Component;
  * @author European Dynamics
  */
 @Path("/group")
+@Api(value = "User Group API")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 @Component
 public class UserGroupWS {
 
@@ -35,28 +40,24 @@ public class UserGroupWS {
     }
 
     @POST
-    @Produces(MediaType.APPLICATION_JSON)
     @Path("/create")
     public String create(GroupDTO group) throws ServiceException {
         return userGroupService.createGroup(group);
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     @Path("/read/{id:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
     public GroupDTO read(@PathParam("id") String id, @QueryParam("lazyRelatives") boolean lazyRelatives) throws ServiceException {
         return userGroupService.getGroupByID(id, lazyRelatives);
     }
 
     @PUT
-    @Produces(MediaType.APPLICATION_JSON)
     @Path("/update")
     public void update(GroupDTO group) throws ServiceException {
         userGroupService.updateGroup(group);
     }
 
     @DELETE
-    @Produces(MediaType.APPLICATION_JSON)
     @Path("/delete/{id:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
     public void delete(@PathParam("id") String id) throws ServiceException {
         userGroupService.deleteGroup(id);

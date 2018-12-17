@@ -6,6 +6,7 @@ import com.eurodyn.qlack.fuse.aaa.service.UserService;
 import com.eurodyn.qlack.fuse.security.service.AuthenticationService;
 import com.eurodyn.qlack.util.jwt.JWTUtil;
 import com.eurodyn.qlack.util.jwt.dto.JWTGenerateRequestDTO;
+import io.swagger.annotations.Api;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Path("/auth")
+@Api("Authentication API")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Component

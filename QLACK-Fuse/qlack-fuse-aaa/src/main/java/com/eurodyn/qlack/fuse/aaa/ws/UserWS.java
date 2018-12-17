@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Path("/user")
-@Api(value = "QLACK User API")
+@Api(value = "User API")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Component

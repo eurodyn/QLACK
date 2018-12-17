@@ -2,6 +2,8 @@ package com.eurodyn.qlack.fuse.aaa.ws;
 
 import com.eurodyn.qlack.fuse.aaa.dto.ResourceDTO;
 import com.eurodyn.qlack.fuse.aaa.service.ResourceService;
+import io.swagger.annotations.Api;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -20,6 +22,9 @@ import org.springframework.stereotype.Component;
  * @author European Dynamics
  */
 @Path("/resource")
+@Api(value = "Resource API")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 @Component
 public class ResourceWS {
 
@@ -34,28 +39,24 @@ public class ResourceWS {
         }
 
         @POST
-        @Produces(MediaType.APPLICATION_JSON)
         @Path("/create")
         public String create(ResourceDTO resource) throws ServiceException {
             return resourceService.createResource(resource);
         }
 
         @GET
-        @Produces(MediaType.APPLICATION_JSON)
         @Path("/read/{id:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
         public ResourceDTO read(@PathParam("id") String id) throws ServiceException {
                 return resourceService.getResourceById(id);
         }
 
         @PUT
-        @Produces(MediaType.APPLICATION_JSON)
         @Path("/update")
         public void update(ResourceDTO resource) throws ServiceException {
             resourceService.updateResource(resource);
         }
 
         @DELETE
-        @Produces(MediaType.APPLICATION_JSON)
         @Path("/delete/{id:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
         public void delete(@PathParam("id") String id) throws ServiceException {
             resourceService.deleteResource(id);

@@ -14,7 +14,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
     "com.eurodyn.qlack.fuse.aaa.service",
     "com.eurodyn.qlack.fuse.aaa.mappers",
     "com.eurodyn.qlack.fuse.aaa.ws",
-    "com.eurodyn.qlack.fuse.security"
+    "com.eurodyn.qlack.fuse.security",
+    "com.eurodyn.qlack.util.swagger"
 })
 public class QlackFuseSecurityApplication {
 

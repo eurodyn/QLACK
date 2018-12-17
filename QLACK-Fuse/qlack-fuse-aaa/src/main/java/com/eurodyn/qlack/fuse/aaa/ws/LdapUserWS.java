@@ -1,6 +1,7 @@
 package com.eurodyn.qlack.fuse.aaa.ws;
 
 import com.eurodyn.qlack.fuse.aaa.service.LdapUserService;
+import io.swagger.annotations.Api;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Component;
  * @author European Dynamics
  */
 @Path("/ldap")
+@Api(value = "Ldap User API")
+@Produces(MediaType.APPLICATION_JSON)
 @Component
 public class LdapUserWS {
 
@@ -32,14 +35,12 @@ public class LdapUserWS {
 
 
         @GET
-        @Produces(MediaType.APPLICATION_JSON)
         @Path("/enabled")
         public boolean isEnabled() throws ServiceException {
             return ldapUserService.isLdapEnabled();
         }
 
         @POST
-        @Produces(MediaType.APPLICATION_JSON)
         @Path("/authenticate")
         public String authenticate(@QueryParam("username") String username, @QueryParam("username") String password) throws ServiceException {
             return ldapUserService.canAuthenticate(username, password);

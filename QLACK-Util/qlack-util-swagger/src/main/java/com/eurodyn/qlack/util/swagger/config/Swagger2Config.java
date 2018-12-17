@@ -50,6 +50,7 @@ public class Swagger2Config {
         feature.setPrettyPrint(true);
         feature.setLicense(license);
         feature.setLicenseUrl(licenseUrl);
+        feature.setScanAllResources(true);
         return feature;
     }
 }
