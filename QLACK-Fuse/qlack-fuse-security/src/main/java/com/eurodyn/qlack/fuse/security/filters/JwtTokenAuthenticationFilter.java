@@ -25,6 +25,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /**
  * An implementation of a filter that runs at least once in every request.
  * It checks if there is a header that contains a JWT. If exists
+ *
  * @author EUROPEAN DYNAMICS SA
  */
 @Log
