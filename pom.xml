@@ -232,6 +232,11 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.6.2</version>
                     <configuration>
+                        <compilerArgs>
+                            <!-- The -parameters argument is crucial for the correct function
+                             of the authentication interceptor, due to heavy use of the Reflection API -->
+                            <arg>-parameters</arg>
+                        </compilerArgs>
                         <showDeprecation>true</showDeprecation>
                         <source>1.8</source>
                         <target>1.8</target>
