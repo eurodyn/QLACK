@@ -1,26 +1,36 @@
-package com.eurodyn.qlack.fuse.aaa.aop;
+package com.eurodyn.qlack.fuse.security.aop;
 
-import com.eurodyn.qlack.fuse.aaa.annotation.ResourceAccess;
-import com.eurodyn.qlack.fuse.aaa.annotation.ResourceOperation;
+import com.eurodyn.qlack.common.annotation.ResourceAccess;
+import com.eurodyn.qlack.common.annotation.ResourceId;
+import com.eurodyn.qlack.common.annotation.ResourceOperation;
+import com.eurodyn.qlack.fuse.aaa.dto.GroupDTO;
+import com.eurodyn.qlack.fuse.aaa.dto.GroupHasOperationDTO;
+import com.eurodyn.qlack.fuse.aaa.dto.ResourceOperationDTO;
+import com.eurodyn.qlack.fuse.aaa.dto.UserDetailsDTO;
+import com.eurodyn.qlack.fuse.aaa.dto.UserHasOperationDTO;
 import com.eurodyn.qlack.fuse.aaa.exception.AuthorizationException;
-import com.eurodyn.qlack.fuse.aaa.model.GroupHasOperation;
-import com.eurodyn.qlack.fuse.aaa.model.UserHasOperation;
-import com.eurodyn.qlack.fuse.aaa.service.OperationService;
-import com.eurodyn.qlack.fuse.aaa.service.UserService;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.extern.java.Log;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 /**
+ * Authorizes requests by validating users' role, operation and resources permissions
+ * against the provided access rules. The access rules are described using {@link ResourceAccess},
+ * {@link ResourceOperation} and {@link ResourceId} on the REST endpoint the request is issued for
+ * or on the corresponding DTO fields that represent a resourceId field
  * @author European Dynamics
  */
 @Aspect
@@ -28,101 +38,156 @@ import org.springframework.stereotype.Component;
 @Log
 public class ResourceAccessInterceptor {
 
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    OperationService operationService;
-
-    @Pointcut("execution(@com.eurodyn.qlack.fuse.aaa.annotation.ResourceAccess * *(..))")
+    @Pointcut("execution(@com.eurodyn.qlack.common.annotation.ResourceAccess * *(..))")
     public void annotation() {
     }
 
-    //Check if user group is a match
-    //If not (?) then if user group operations match with provided operations
-    //If not, check if user operations match with provided operations
-    //If any operation matches and resourceId is present match resource?
-    @Before("annotation() && @annotation(resourceAccess)")
-    public void secured(JoinPoint joinPoint, ResourceAccess resourceAccess) throws AuthorizationException {
-        UsernamePasswordAuthenticationToken user = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+    /**
+     * Retrieves User & Group operations from user principal
+     * @param user a {@link UserDetailsDTO} object that holds user information
+     * @param operation the operation name to check permissions for
+     * @return the operations and resources of the current user
+     */
+    private List<ResourceOperationDTO> getResourceOperations(UserDetailsDTO user, String operation) {
+        List<ResourceOperationDTO> resourceOperations = new ArrayList<>();
 
-        boolean isUserSuperAdmin = false;
 
-        //First check if user is a super admin
-        if (!isUserSuperAdmin) {
-            String[] groups = resourceAccess.roleAccess();
+        List<UserHasOperationDTO> uho = user.getUserHasOperations();
+        List<GroupHasOperationDTO> gho = user.getGroupHasOperations();
 
-            //dummy data - will be replaced by Groups from the UserDetails object
-            List<String> dummygroupsOfUser = new ArrayList<>();
-            dummygroupsOfUser.add("Administrator");
-            dummygroupsOfUser.add("User");
-
-            // boolean authorizesOnRole = Arrays.stream(groups).anyMatch(new HashSet<>(dummygroupsOfUser)::contains);
-            // List<ResourceOperationDTO> ops = new ArrayList<>();
-            // If not authorized on role level, check specific operation permissions
-            // if (!authorizesOnRole) {
-            //     log.info("The groups this user is assigned to are not authorized to access this resource.");
-            //     ResourceOperation[] operations = resourceAccess.operations();
-
-            // OPTION - A - list of DTOs
-            // List<ResourceOperationDTO> resourceOperations = Arrays.stream(operations)
-            //     .map(o -> new ResourceOperationDTO(o.operation(), o.resourceId()))
-            //     .collect(Collectors.toList());
-
-            //OPTION - B - separate String lists
-            // List<String> resourceOperations = Arrays.stream(operations)
-            //             //     .map(o -> o.operation())
-            //             //     .collect(Collectors.toList());
-
-            for (ResourceOperation ro : resourceAccess.operations()) {
-                if (ro.resourceId() != null) {
-
-                } else {
-
-                }
-
+        for (UserHasOperationDTO userHasOperationDTO : uho) {
+            if (userHasOperationDTO.getOperation().getName().equals(operation)) {
+                ResourceOperationDTO roDTO = new ResourceOperationDTO();
+                roDTO.setOperation(operation);
+                roDTO.setResourceId(userHasOperationDTO.getResource() != null && userHasOperationDTO.getResource().getObjectId() != null
+                    ? userHasOperationDTO.getResource().getObjectId() : "");
+                resourceOperations.add(roDTO);
             }
-            //Provided lists from UserDetailsDTO
-            List<GroupHasOperation> gho = new ArrayList<>();
-            List<UserHasOperation> uho = new ArrayList<>();
-
-            //dummy data
-            List<String> dummyOperationsOfUser = new ArrayList<>();
-            dummyOperationsOfUser.add("READ_USER");
-            dummyOperationsOfUser.add("READ_COMPANY_USER");
-
-            boolean groupHasOperation = false;
-            boolean userHasOperation;
-
-            userHasOperation = uho.stream().anyMatch(new HashSet<>(dummyOperationsOfUser)::contains);
-
-            //TODO - For each operationResource pair
-            //TODO - if a resourceId is defined search within to find operation and resource match
-
-            if (userHasOperation) { //then there is a match - next step is to check if the foundUho for resourceId match
-                // List<UserHasOperation> foundUho = uho.stream().anyMatch(dummyOperationsOfUser).findFirst().orElseThrow(() -> new AuthorizationException(""));
-
-
-            } else {
-                groupHasOperation = gho.stream().anyMatch(new HashSet<>(dummyOperationsOfUser)::contains);
-            }
-
-            // TODO - An issue arises here. I should find out how the ResourceOperation array will be mapped in order to be compared
-            // TODO - to the list from UserDetailsDTO. If mapping is not viable then a simple array iteration will suffice;
-            boolean authorizesOnOperation = userHasOperation || groupHasOperation;
-
-            if (!authorizesOnOperation) {
-                throw new AuthorizationException("403 - Unauthorized Access. This user is not authorized for the specific operation.");
-            } else {
-                //If operation is found check for resource
-
-            }
-
-            // TODO - should also check for resource permissions by getting the resourceId from the ws, and then get it from the db
-            // TODO - then it should be compared to the ones on groupHasOperation and userHasOperation objects
         }
+
+        for (GroupHasOperationDTO groupHasOperationDTO : gho) {
+            if (groupHasOperationDTO.getOperation().getName().equals(operation)) {
+                ResourceOperationDTO roDTO = new ResourceOperationDTO();
+                roDTO.setOperation(operation);
+                roDTO.setResourceId(groupHasOperationDTO.getResource() != null && groupHasOperationDTO.getResource().getObjectId() != null
+                    ? groupHasOperationDTO.getResource().getObjectId() : "");
+                resourceOperations.add(roDTO);
+            }
+        }
+
+        return resourceOperations;
+    }
+
+    /**
+     *
+     * @param user a {@link UserDetailsDTO} object that holds user information
+     * @param operation the operation name to check permissions for
+     * @param resourceId the value of either resourceIdField or resourceIdParameter
+     * @param joinPoint the annotations' joinPoint
+     * @param searchInParams flag used for resource level access authorization
+     * @return
+     * @throws IllegalAccessException
+     */
+    private boolean userHasOperation(UserDetailsDTO user, String operation, String resourceId, JoinPoint joinPoint, boolean searchInParams)
+        throws IllegalAccessException {
+
+        // Get the user and group operations on resources
+        List<ResourceOperationDTO> resourceOperations = getResourceOperations(user, operation);
+
+        // If no operations for current user, the user is not authorized
+        if (resourceOperations.size() == 0) {
+            return false;
+        }
+
+        // If the user has permission for the current operation(s) and resourceId is not provided then authorize the user
+        // (Authorization on operation level)
+        if (resourceId.isEmpty()) {
+            return true;
+        }
+
+        // Find match between the parameters (GET, DELETE scenarios) or DTO fields(POST, PUT scenarios)
+        // (Authorize on a resource level)
+        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+        Parameter[] params = method.getParameters();
+        int index = 0;
+        for (Parameter parameter : params) {
+            if (searchInParams) {
+                String parameterName = parameter.getName();
+                if (parameterName.equals(resourceId)) {
+                    Object annotationResourceIdValue = joinPoint.getArgs()[index];
+                    for (ResourceOperationDTO roDTO : resourceOperations) {
+                        if (roDTO.getResourceId().equals(String.valueOf(annotationResourceIdValue))) {
+                            return true;
+                        }
+                    }
+                }
+            } else {
+                Field[] fields = parameter.getType().getDeclaredFields();
+                for (Field field : fields) {
+                    field.setAccessible(true);
+                    ResourceId resourceIdAnnotation = field.getAnnotation(ResourceId.class);
+                    if (resourceIdAnnotation != null) {
+                        String annotationResourceId = resourceIdAnnotation.value();
+                        if (!annotationResourceId.equals(resourceId)) {
+                            continue;
+                        }
+                        Object annotationResourceIdValue = field.get(joinPoint.getArgs()[index]);
+                        for (ResourceOperationDTO roDTO : resourceOperations) {
+                            if (roDTO.getResourceId().equals(String.valueOf(annotationResourceIdValue))) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            index++;
+        }
+        return false;
+    }
+
+    /**
+     * Authorizes user on a role, operation and resources level
+     * @param joinPoint the annotations' joinPoint
+     * @param resourceAccess The {@link ResourceAccess} object
+     * @throws AuthorizationException if authorization fails
+     * @throws IllegalAccessException if a class field cannot be accessed through Java Reflection API
+     */
+    @Before("annotation() && @annotation(resourceAccess)")
+    public void authorize(JoinPoint joinPoint, ResourceAccess resourceAccess) throws AuthorizationException, IllegalAccessException {
+        boolean allowAccess;
+        UserDetailsDTO user = (UserDetailsDTO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // superadmin users are authorized
+        if (user.isSuperadmin()) {
+            allowAccess = true;
+        } else {
+            List<GroupDTO> groups = user.getGroups();
+            String[] roleAccess = resourceAccess.roleAccess();
+
+            boolean authorizesOnRole = Arrays.stream(roleAccess).anyMatch(
+                new HashSet<>(groups.stream().map(g -> g.getName()).collect(Collectors.toList()))::contains);
+
+            // If not authorized on role level, check specific operation permissions
+            if (authorizesOnRole) {
+                allowAccess = true;
+            } else {
+                allowAccess = false;
+                log.info("The groups this user is assigned to are not authorized to access this resource.");
+
+                ResourceOperation[] resourceOperations = resourceAccess.operations();
+                for (ResourceOperation resourceOperation : resourceOperations) {
+                    String resourceId = (!resourceOperation.resourceIdField().isEmpty() ? resourceOperation.resourceIdField()
+                        : resourceOperation.resourceIdParameter());
+                    boolean searchInParams = !resourceOperation.resourceIdParameter().isEmpty();
+                    allowAccess =
+                        allowAccess || userHasOperation(user, resourceOperation.operation(), resourceId, joinPoint, searchInParams);
+                }
+            }
+        }
+
+        if (!allowAccess) {
+            throw new AuthorizationException("403 - Unauthorized Access. This user is not authorized for the specific operation.");
+        }
+
     }
 }
-// return operationService.isPermittedForGroupNameByResource(resourceAccess.roleAccess()[0], resourceAccess.operations()[0]);
-// }
-    // }
