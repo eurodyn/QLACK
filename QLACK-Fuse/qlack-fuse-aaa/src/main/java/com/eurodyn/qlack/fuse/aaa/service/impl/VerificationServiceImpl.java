@@ -1,5 +1,6 @@
 package com.eurodyn.qlack.fuse.aaa.service.impl;
 
+import com.eurodyn.qlack.fuse.aaa.service.VerificationService;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
@@ -17,7 +18,7 @@ import com.eurodyn.qlack.fuse.aaa.repository.VerificationTokenRepository;
 @Service
 @Validated
 @Transactional
-public class VerificationServiceImpl {
+public class VerificationServiceImpl implements VerificationService {
 
     // Service references.
     private VerificationTokenRepository verificationTokenRepository;
