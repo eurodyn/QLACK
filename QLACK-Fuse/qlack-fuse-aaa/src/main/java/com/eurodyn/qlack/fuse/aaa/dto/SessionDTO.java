@@ -1,8 +1,9 @@
 package com.eurodyn.qlack.fuse.aaa.dto;
 
-import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Set;
 
 /**
  * This is transfer object for AaaSession entity.
