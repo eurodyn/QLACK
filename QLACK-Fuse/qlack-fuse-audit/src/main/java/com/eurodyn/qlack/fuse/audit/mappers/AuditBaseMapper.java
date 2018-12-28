@@ -2,8 +2,10 @@ package com.eurodyn.qlack.fuse.audit.mappers;
 
 import com.eurodyn.qlack.fuse.audit.dto.AuditBaseDTO;
 import com.eurodyn.qlack.fuse.audit.model.AuditBaseEntity;
-import java.util.List;
 import org.mapstruct.MappingTarget;
+import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public interface AuditBaseMapper<E extends AuditBaseEntity, D extends AuditBaseDTO> {
 
@@ -45,4 +47,13 @@ public interface AuditBaseMapper<E extends AuditBaseEntity, D extends AuditBaseD
    * @return the mapped list of entities
    */
   List<E> mapToEntity(List<D> dto);
+
+  /**
+   * Maps a Spring {@link Page} of entities to a Spring {@link Page} of DTOs.
+   * @param all
+   * @return
+   */
+  default Page<D> map(Page<E> all) {
+    return all.map(this::mapToDTO);
+  }
 }
