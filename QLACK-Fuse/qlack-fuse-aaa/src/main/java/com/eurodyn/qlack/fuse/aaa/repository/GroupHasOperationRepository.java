@@ -1,8 +1,11 @@
 package com.eurodyn.qlack.fuse.aaa.repository;
 
 import com.eurodyn.qlack.fuse.aaa.model.GroupHasOperation;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
+@Repository
 public interface GroupHasOperationRepository extends AAARepository<GroupHasOperation, String> {
 
   GroupHasOperation findByGroupIdAndOperationName(String groupId, String operationName);
