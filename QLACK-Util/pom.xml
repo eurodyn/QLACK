@@ -20,5 +20,6 @@
     <module>qlack-util-querydsl</module>
     <module>qlack-util-data</module>
     <module>qlack-util-data-mongo</module>
+    <module>qlack-util-hibernate</module>
   </modules>
 </project>
