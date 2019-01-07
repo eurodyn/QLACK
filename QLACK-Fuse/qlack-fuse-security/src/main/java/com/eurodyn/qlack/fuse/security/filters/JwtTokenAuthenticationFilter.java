@@ -1,6 +1,8 @@
 package com.eurodyn.qlack.fuse.security.filters;
 
+import com.eurodyn.qlack.common.exceptions.QInvalidNonceException;
 import com.eurodyn.qlack.fuse.aaa.dto.UserDetailsDTO;
+import com.eurodyn.qlack.fuse.security.service.CachingUserDetailsService;
 import com.eurodyn.qlack.util.jwt.JWTUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -13,13 +15,14 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
@@ -40,17 +43,30 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
     @Value("${security.jwt.expiration:#{24*60*60}}")
     private int jwtExpiration;
 
+    @Autowired
+    private CachingUserDetailsService userDetailsService;
+
+    @Autowired
+    private AbstractUserDetailsAuthenticationProvider authenticationProvider;
+
     private AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource = new WebAuthenticationDetailsSource();
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    /**
+     * A flag that indicates if the jti claim will be required for requests.
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc7519#section-4.1.7">JWT ID (JTI)</a>
+     */
+    private boolean requireJtiClaim = false;
 
-    @Autowired
-    private AuthenticationProvider authenticationProvider;
+    private ConcurrentMapCache jtiCache;
 
     @Override
     public void afterPropertiesSet() {
         Assert.notNull(authenticationProvider, "An AuthenticationProvider is required");
+
+        if (requireJtiClaim) {
+            jtiCache = new ConcurrentMapCache("jti", false);
+        }
     }
 
     @Override
@@ -76,6 +92,23 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
             String username = claims.getSubject();
 
+            // TODO real implementation (EXPERIMENT - DOESN'T WORK)
+            if (requireJtiClaim) {
+                String jti = claims.getId();
+
+                if (StringUtils.isEmpty(jti)) {
+                    throw new QInvalidNonceException("No JWT ID included in the request.");
+                }
+
+                String jtiUser = jtiCache.get(jti, String.class);
+
+                if (jtiUser != null && jtiUser.equals(username)) {
+                    throw new QInvalidNonceException("JWT ID was already used.");
+                } else {
+                    jtiCache.put(jti, username);
+                }
+            }
+
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetailsDTO userDetails = (UserDetailsDTO) userDetailsService.loadUserByUsername(username);
 
@@ -96,5 +129,14 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
+    public boolean isRequireJtiClaim() {
+        return requireJtiClaim;
+    }
+
+    // TODO uncomment when there is a JTI implementation
+    // public void setRequireJtiClaim(boolean requireJtiClaim) {
+    //     this.requireJtiClaim = requireJtiClaim;
+    // }
 
 }

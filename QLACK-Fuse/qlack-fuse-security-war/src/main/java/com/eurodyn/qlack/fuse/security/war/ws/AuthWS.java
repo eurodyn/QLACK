@@ -47,7 +47,9 @@ public class AuthWS {
 
     @POST
     @Path("/login")
-    public Response login(UserDetailsDTO user) throws ServiceException {
+    public Response login(UserDetailsDTO dto) throws ServiceException {
+        UserDetailsDTO user = dto != null ? dto : new UserDetailsDTO();
+
         UserDetailsDTO authenticatedUser = (UserDetailsDTO) authenticationService
             .authenticate(user.getUsername(), user.getPassword())
             .getPrincipal();
@@ -63,7 +65,9 @@ public class AuthWS {
 
     @POST
     @Path("/logout")
-    public void logout(UserDTO user) throws ServiceException {
+    public void logout(UserDTO dto) throws ServiceException {
+        UserDTO user = dto != null ? dto : new UserDTO();
+
         String userId = userService.canAuthenticate(user.getUsername(), user.getPassword());
         userService.logout(userId, user.getSessionId());
     }
