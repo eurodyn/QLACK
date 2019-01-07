@@ -1,16 +1,18 @@
-package com.eurodyn.qlack.fuse.security.war.ws;
+package com.eurodyn.qlack.fuse.security.ws;
 
 import com.eurodyn.qlack.fuse.aaa.dto.UserDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserDetailsDTO;
 import com.eurodyn.qlack.fuse.aaa.service.UserService;
 import com.eurodyn.qlack.fuse.security.service.AuthenticationService;
 import com.eurodyn.qlack.util.jwt.JWTUtil;
+import com.eurodyn.qlack.util.jwt.dto.JWTClaimsRequestDTO;
 import com.eurodyn.qlack.util.jwt.dto.JWTGenerateRequestDTO;
 import io.swagger.annotations.Api;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -25,6 +27,9 @@ import org.springframework.stereotype.Component;
 @Consumes(MediaType.APPLICATION_JSON)
 @Component
 public class AuthWS {
+
+    @Context
+    private HttpHeaders headers;
 
     @Value("${security.jwt.secret:aqlacksecret}")
     private String jwtSecret;
@@ -66,22 +71,14 @@ public class AuthWS {
     @POST
     @Path("/logout")
     public void logout(UserDTO dto) throws ServiceException {
-        UserDTO user = dto != null ? dto : new UserDTO();
+        String token = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
+        String username = String.valueOf(JWTUtil.getSubject(new JWTClaimsRequestDTO(token, jwtSecret)));
 
-        String userId = userService.canAuthenticate(user.getUsername(), user.getPassword());
-        userService.logout(userId, user.getSessionId());
-    }
+        UserDTO user = userService.getUserByName(username);
 
-    @POST
-    @Path("/unauthorized")
-    public String unauthorizedRequest() {
-        return "OK";
-    }
-
-    @POST
-    @Path("/authorized")
-    public String authorizedRequest() {
-        return "OK";
+        if (user != null) {
+            userService.logout(user.getId(), user.getSessionId());
+        }
     }
 
 }

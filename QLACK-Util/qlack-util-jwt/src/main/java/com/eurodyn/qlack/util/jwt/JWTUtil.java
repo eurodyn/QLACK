@@ -89,6 +89,15 @@ public class JWTUtil {
         return response;
     }
 
+    public static Object getSubject(JWTClaimsRequestDTO request) {
+        return Jwts.parser()
+            .setSigningKey(Base64.encodeBase64String(request.getSecret().getBytes()))
+            .setAllowedClockSkewSeconds(request.getAllowedTimeSkew())
+            .parseClaimsJws(request.getJwt())
+            .getBody()
+            .getSubject();
+    }
+
     /**
      * Returns the value of a specific claim in JWT while also verifying the JWT.
      *

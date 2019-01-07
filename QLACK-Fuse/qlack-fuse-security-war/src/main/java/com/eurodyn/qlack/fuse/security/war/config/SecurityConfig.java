@@ -45,9 +45,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .addFilterBefore(jwtTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
             .authorizeRequests()
             .expressionHandler(webExpressionHandler())
-            .antMatchers(cxfPath + "/user/login").permitAll()
-            .antMatchers(cxfPath + "/auth/unauthorized").permitAll()
-            .antMatchers(cxfPath + "/auth/authorized").authenticated() //.access("hasPermission(principal,'auth')")
+            .antMatchers(cxfPath + "/auth/login").permitAll()
+            .antMatchers(cxfPath + "/auth/logout").authenticated()
+            .antMatchers(cxfPath + "/test/unauthorized").permitAll()
+            .antMatchers(cxfPath + "/test/authorized").authenticated() //.access("hasPermission(principal,'auth')")
             .anyRequest().permitAll();
     }
 
