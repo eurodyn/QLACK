@@ -1,28 +1,27 @@
 #!/usr/bin/env bash
 
-echo ------------------------------------------------------
+set -e
+
 echo Creating diff database
-echo ------------------------------------------------------
 ${DB}-create.sh
 
-echo ------------------------------------------------------
+sleep 1
+
 echo Populating diff database with existing changelogs
-echo ------------------------------------------------------
 /opt/liquibase/liquibase \
 --driver=$DRIVER \
---classpath=/opt/liquibase/lib/mariadb-java-client.jar \
+--classpath=/opt/liquibase/lib/mariadb-java-client.jar:/opt/liquibase/lib/mysql-connector-java.jar \
 --url=jdbc:$DB://$DB_HOST:$DB_PORT/qlack_liquibase \
 --username=$DB_USER \
 --password=$DB_PASS \
 --changeLogFile=$CHANGELOG \
 update
 
-echo ------------------------------------------------------
+set +e
 echo Finding differences
-echo ------------------------------------------------------
 /opt/liquibase/liquibase \
 --driver=$DRIVER \
---classpath=/opt/liquibase/lib/mariadb-java-client.jar \
+--classpath=/opt/liquibase/lib/mariadb-java-client.jar:/opt/liquibase/lib/mysql-connector-java.jar \
 --url=jdbc:$DB://$DB_HOST:$DB_PORT/qlack_liquibase \
 --username=$DB_USER \
 --password=$DB_PASS \
@@ -32,7 +31,28 @@ diffChangeLog \
 --referenceUsername=$DB_USER \
 --referencePassword=$DB_PASS
 
-echo ------------------------------------------------------
+# Check if there are no changes and exit in that case.
+CHANGESETS=$(grep -E '<changeSet' -c $DIFFLOG)
+if [ $CHANGESETS -eq 0 ]; then
+  echo -e "\n"
+  echo "----------------------------------"
+  echo "NO CHANGES FOUND !!!"
+  echo "----------------------------------"
+  rm $DIFFLOG
+  exit 1
+else
+  echo "Found $CHANGESETS changes."
+fi
+
+set -e
+# --changeSetAuthor seems to be ignored, so manually changing this.
+echo Modifying author to: $AUTHOR
+sed -i "s/author=\".*\" id/author=\"${AUTHOR}\" id/g" $DIFFLOG
+
+# Add logicalFilePath.
+FILE=$(echo $DIFFLOG | sed 's:.*/::')
+echo Adding logicalFilePath: $FILE
+sed -i "s|<databaseChangeLog\(.*\)>|<databaseChangeLog\1 logicalFilePath=\"${FILE}\">|" $DIFFLOG
+
 echo Dropping diff database
-echo ------------------------------------------------------
 ${DB}-drop.sh

@@ -2,6 +2,8 @@
 A Docker container allowing to automatically detect changes in your database
 and export detected changes to Liquibase _changesets_.
 
+[![QLACK Tools liquibase](http://img.youtube.com/vi/K08foBXwo_Y/0.jpg)](http://www.youtube.com/watch?v=K08foBXwo_Y "QLACK Tools liquibase")
+
 ## Preface
 This QLACK tool tries to provide solutions to some usual development use cases
 pertaining to the evolution of your database schema in your project.
@@ -126,6 +128,8 @@ such as docker.for.mac.localhost, docker.for.windows.localhost, etc.
 `CHANGELOG`: The changelog of your project, so that Liquibase scripts
 can be replied from it.
 
+`AUTHOR`: The author of the changelog.
+
 Caveat #1: In case your changelog incorporates
 includes, make sure that these are referenced in a way that can be found
 in all environments. For example, since Liquibase automatically looks
@@ -158,6 +162,7 @@ docker run --rm \
 -e DB_PASS=root \
 -e CHANGELOG=/db/changelog/db.changelog-master.yaml \
 -e DIFFLOG=/db/changelog/changes/difflog.xml \
+-e AUTHOR="John Doe" \
 -v /Users/jdoe/Projects/proj1/src/main/resources/db:/db \
 eurodyn/qlack-tools-liquibase:1 \
 diffChangeLog.sh
