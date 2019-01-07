@@ -56,3 +56,13 @@ sed -i "s|<databaseChangeLog\(.*\)>|<databaseChangeLog\1 logicalFilePath=\"${FIL
 
 echo Dropping diff database
 ${DB}-drop.sh
+
+echo Marking changes as executed.
+/opt/liquibase/liquibase \
+--driver=$DRIVER \
+--classpath=/opt/liquibase/lib/mariadb-java-client.jar:/opt/liquibase/lib/mysql-connector-java.jar \
+--url=jdbc:$DB://$DB_HOST:$DB_PORT/$DB_SCHEMA \
+--username=$DB_USER \
+--password=$DB_PASS \
+--changeLogFile=$CHANGELOG \
+changelogSync
