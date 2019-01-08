@@ -5,8 +5,6 @@ set -e
 echo Creating diff database
 ${DB}-create.sh
 
-sleep 1
-
 echo Populating diff database with existing changelogs
 /opt/liquibase/liquibase \
 --driver=$DRIVER \
@@ -17,8 +15,19 @@ echo Populating diff database with existing changelogs
 --changeLogFile=$CHANGELOG \
 update
 
+# Check if the passed CHANGELOG is a file or a directory.
+# - In case it is a file, use the file name as provided.
+# - In case it is a directory, automatically increment and produce the next filename.
+if [[ -d $DIFFLOG ]]; then
+  echo "DIFFLOG is a directory. Will try to automatically determine the next changelog's sequence number."
+  LAST_FILE_FOUND=$(ls $DIFFLOG |sort |tail -1)
+  NEXT_VERSION=$(echo ${LAST_FILE_FOUND} |sed 's/[^0-9]*//g' |sed-incr.sh)
+  echo Next version: $NEXT_VERSION
+  DIFFLOG="$DIFFLOG/"$(echo ${LAST_FILE_FOUND} | sed -E "s/([a-z]*)([0-9]*)\.([a-z]*)/\1$NEXT_VERSION.\3/g")
+fi
 set +e
-echo Finding differences
+
+echo Writing diff log in: $DIFFLOG
 /opt/liquibase/liquibase \
 --driver=$DRIVER \
 --classpath=/opt/liquibase/lib/mariadb-java-client.jar:/opt/liquibase/lib/mysql-connector-java.jar \

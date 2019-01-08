@@ -146,6 +146,11 @@ necessary for this script to work correctly.
 you provide a path to a folder which is mount in your Docker container,
 so that the script is actually copied to your host running the Docker Engine.
 
+TIP: By specifying a folder instead of a file, you can let this script
+to try automatically detecting the next-version number of your Liquibase
+changelogs. The script looks for a pattern of _prefixnumber.someextension_,
+for example, myproject_0001.xml, dbupdate0001.xml, etc.
+
 Do not forget to mount the folder with the changesets of your progress,
 so that this script can find them to use them for populating a temporary
 database.
