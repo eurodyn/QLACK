@@ -60,10 +60,13 @@ public class AuthWS {
             .getPrincipal();
 
         String userId = authenticatedUser.getId();
-        UserDTO loggedUser = userService.login(userId, user.getSessionId(), true);
-        String jwt = JWTUtil.generateToken(new JWTGenerateRequestDTO(jwtSecret, loggedUser.getUsername(), jwtExpiration));
+        String sessionId = userService.login(userId, user.getSessionId(), true).getSessionId();
+        authenticatedUser.setSessionId(sessionId);
 
-        return Response.ok(loggedUser)
+        String jwt = JWTUtil.generateToken(new JWTGenerateRequestDTO(jwtSecret, authenticatedUser.getUsername(), jwtExpiration));
+
+
+        return Response.ok(authenticatedUser)
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .build();
     }
