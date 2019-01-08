@@ -72,7 +72,7 @@ public class AuthWS {
     @Path("/logout")
     public Response logout() throws ServiceException {
         String token = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
-        String username = String.valueOf(JWTUtil.getSubject(new JWTClaimsRequestDTO(token, jwtSecret)));
+        String username = String.valueOf(JWTUtil.getSubject(new JWTClaimsRequestDTO(token, jwtSecret, jwtExpiration)));
 
         UserDTO user = userService.getUserByName(username);
 

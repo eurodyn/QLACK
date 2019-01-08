@@ -22,6 +22,13 @@ public class JWTClaimsRequestDTO extends JWTTokenDTO {
         this.secret = secret;
     }
 
+    public JWTClaimsRequestDTO(String jwt, String secret, long allowedTimeSkew) {
+        super();
+        this.setJwt(jwt);
+        this.secret = secret;
+        this.allowedTimeSkew = allowedTimeSkew;
+    }
+
     public String getSecret() {
         return secret;
     }
