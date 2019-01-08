@@ -70,15 +70,20 @@ public class AuthWS {
 
     @POST
     @Path("/logout")
-    public void logout() throws ServiceException {
+    public Response logout() throws ServiceException {
         String token = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
         String username = String.valueOf(JWTUtil.getSubject(new JWTClaimsRequestDTO(token, jwtSecret)));
 
         UserDTO user = userService.getUserByName(username);
 
-        if (user != null) {
+        // TODO remove user from cache
+
+        // Logout from session.
+        if (user != null && user.getSessionId() != null) {
             userService.logout(user.getId(), user.getSessionId());
         }
+
+        return Response.ok().build();
     }
 
 }

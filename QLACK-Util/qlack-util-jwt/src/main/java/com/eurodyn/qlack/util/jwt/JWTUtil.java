@@ -90,10 +90,12 @@ public class JWTUtil {
     }
 
     public static Object getSubject(JWTClaimsRequestDTO request) {
+        String jwt = request.getJwt().replace(TOKEN_PREFIX, "");
+
         return Jwts.parser()
             .setSigningKey(Base64.encodeBase64String(request.getSecret().getBytes()))
             .setAllowedClockSkewSeconds(request.getAllowedTimeSkew())
-            .parseClaimsJws(request.getJwt())
+            .parseClaimsJws(jwt)
             .getBody()
             .getSubject();
     }
