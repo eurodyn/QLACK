@@ -6,6 +6,7 @@ import com.eurodyn.qlack.fuse.aaa.dto.UserDetailsDTO;
 import com.eurodyn.qlack.fuse.aaa.service.UserService;
 import com.eurodyn.qlack.fuse.security.cache.AAAUserCaching;
 import com.eurodyn.qlack.fuse.security.service.AuthenticationService;
+import com.eurodyn.qlack.fuse.security.service.NonceCachingService;
 import com.eurodyn.qlack.util.jwt.JWTUtil;
 import com.eurodyn.qlack.util.jwt.dto.JWTClaimsRequestDTO;
 import com.eurodyn.qlack.util.jwt.dto.JWTGenerateRequestDTO;
@@ -46,11 +47,15 @@ public class AuthWS {
 
     private final UserService userService;
 
+    private final NonceCachingService nonceCachingService;
+
     private final AAAUserCaching userCaching;
 
     @Autowired
-    public AuthWS(AuthenticationService authenticationService, UserService userService, AAAUserCaching userCaching) {
+    public AuthWS(AuthenticationService authenticationService, UserService userService, NonceCachingService nonceCachingService,
+        AAAUserCaching userCaching) {
         this.authenticationService = authenticationService;
+        this.nonceCachingService = nonceCachingService;
         this.userService = userService;
         this.userCaching = userCaching;
     }
@@ -89,6 +94,9 @@ public class AuthWS {
 
         // Remove user from cache.
         userCaching.getUserCache().removeUserFromCache(user.getUsername());
+
+        // Clear nonce cache if exists.
+        nonceCachingService.clear(user.getUsername());
 
         // Logout from session.
         if (user.getSessionId() != null) {

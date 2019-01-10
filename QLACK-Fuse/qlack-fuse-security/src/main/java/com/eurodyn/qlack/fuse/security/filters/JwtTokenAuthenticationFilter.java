@@ -3,6 +3,7 @@ package com.eurodyn.qlack.fuse.security.filters;
 import com.eurodyn.qlack.common.exceptions.QInvalidNonceException;
 import com.eurodyn.qlack.fuse.aaa.dto.UserDetailsDTO;
 import com.eurodyn.qlack.fuse.security.service.CachingUserDetailsService;
+import com.eurodyn.qlack.fuse.security.service.NonceCachingService;
 import com.eurodyn.qlack.util.jwt.JWTUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -17,8 +18,6 @@ import lombok.extern.java.Log;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
@@ -51,12 +50,12 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
     private CachingUserDetailsService userDetailsService;
 
     @Autowired
+    private NonceCachingService nonceCachingService;
+
+    @Autowired
     private AbstractUserDetailsAuthenticationProvider authenticationProvider;
 
     private AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource = new WebAuthenticationDetailsSource();
-
-    @Autowired
-    private CacheManager cacheManager;
 
     /**
      * A flag that indicates if a nonce value will be required for requests.
@@ -68,8 +67,6 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
      * @see <a href="https://tools.ietf.org/html/rfc7519#section-4.1.7">JWT ID (JTI)</a>
      */
     private boolean requireNonce = false;
-
-    public static final String NONCE_CACHE_PREFIX = "nonce-";
 
     private static final String NONCE_HEADER = "Nonce";
     private static final String NONCE_PARAM = "nonce";
@@ -157,16 +154,14 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
      * @param authentication Authentication object with user details
      */
     protected void handleNonce(HttpServletRequest request, Authentication authentication) {
-        // Retrieve the cache of an existing user or create one if it doesn't exist.
-        Cache nonceCache = cacheManager.getCache(NONCE_CACHE_PREFIX + authentication.getPrincipal());
-
+        String username = authentication.getPrincipal().toString();
         String nonce = request.getHeader(NONCE_HEADER);
 
         if (StringUtils.isEmpty(nonce)) {
             throw new QInvalidNonceException("No nonce parameter included in the request.");
         }
 
-        String cacheValue = nonceCache.get(nonce, String.class);
+        String cacheValue = nonceCachingService.getValueForUser(username, nonce, String.class);
 
         // If a nonce already exists for user, then reject the request by throwing an exception.
         if (cacheValue != null) {
@@ -186,8 +181,8 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
                 ". Nonce was invalid for user " + authentication.getPrincipal());
         }
 
-        // The value is currently not useful, so put the date in it.
-        nonceCache.put(nonce, new Date().toString());
+        // Currently the value is not useful, so put the date in it.
+        nonceCachingService.putForUser(username, nonce, new Date().toString());
     }
 
 }
