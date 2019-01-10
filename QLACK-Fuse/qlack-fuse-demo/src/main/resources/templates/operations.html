@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<style>
+    input[type=text], select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    input[type=password], select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    input[type=submit] {
+        width: 50%;
+        margin-left: 25%;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    input[type=submit]:hover {
+        background-color: #45a049;
+    }
+
+    div {
+        border-radius: 5px;
+        padding: 20px;
+    }
+
+    p {
+        font-size: large;
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+    }
+
+    body {
+        background-color: #f2f2f2;
+    }
+</style>
+<body onload="addWelcomeMessage()" >
+<h1>
+    QLACK Demo Application
+</h1>
+<h2 id="welcome"></h2>
+<h3>User operations</h3>
+
+<div>
+    <label >Username</label>
+    <input type="text" id="username" placeholder="Username of new user">
+    <label >Password</label>
+    <input type="password" id="password" placeholder="Password of new user">
+    <input type="submit" value="Create" onclick="createUser()">
+</div>
+<br>
+<div>
+    <label >Choose a user to delete</label>
+    <select id="users"></select>
+    <input type="submit" value="Delete" onclick="deleteUser()">
+</div>
+<br>
+<div>
+    <input type="submit" value="Logout" onclick="logoutUser()">
+</div>
+<br>
+<div>
+    <label id = "message" ></label>
+</div>
+
+<script>
+    var user = JSON.parse(sessionStorage.getItem("user"));
+    function addWelcomeMessage() {
+        document.getElementById("welcome").innerText = "Welcome, " + user.username;
+        var users = document.getElementById("users");
+        var option = document.createElement("option");
+        option.value = "7b1106f7-80bd-4cf7-a12d-27cfd8f1848e";
+        option.text ="user1"
+        users.add(option);
+        var option2 = document.createElement("option");
+        option2.value = "aba4bc90-e101-42fc-a789-62f8cf598ae0";
+        option2.text ="user2"
+        users.add(option2);
+    }
+    function createUser() {
+        var url = '/app/demo/create';
+        var method = 'POST';
+        var data = JSON.stringify(
+
+            {
+                "id":"",
+                "username": document.getElementById("username").value,
+                "password": document.getElementById("password").value,
+                "status": "1",
+                "superadmin": false,
+                "external": false,
+                "sessionId": "",
+                "userAttributes": []
+            }
+        );
+        var successMessage = "Successfully created user";
+        var failureMessage = "Could not create user";
+        request(url, method, data, successMessage, failureMessage);
+
+    }
+
+    function deleteUser() {
+        var url = '/app/demo/delete/' + document.getElementById("users").value;
+        var method = 'DELETE';
+        var successMessage = "Successfully deleted user";
+        var failureMessage = "Could not delete user";
+        request(url, method, null, successMessage, failureMessage);
+    }
+
+    function logoutUser() {
+        var url = 'app/auth/logout';
+        var method = 'POST';
+        request(url, method);
+    }
+
+    function clearSessionAndRedirect() {
+        sessionStorage.setItem("user",null);
+        sessionStorage.setItem("jwt",null);
+        window.location = "/login";
+    }
+
+    function request(url, method, data, successMessage, failureMessage) {
+        var http = new XMLHttpRequest();
+        var jwt = sessionStorage.getItem("jwt");
+        if(jwt) {
+            http.open(method, url, true);
+            http.setRequestHeader('Content-type', 'application/json');
+            http.setRequestHeader('Authorization', jwt);
+            http.onreadystatechange = function() {//Call a function when the state changes.
+
+                if(http.readyState == 4 && (http.status == 200 || http.status == 204)) {
+                    if (url.includes("logout")) {
+                        clearSessionAndRedirect();
+                    } else {
+                        document.getElementById("message").innerText = successMessage;
+                    }
+                } else {
+                    var resp = http.responseText;
+                    var msg = null;
+                    if (resp) {
+                        msg  = JSON.parse(resp).message;
+                    }
+                    document.getElementById("message").innerText = msg || failureMessage;
+                }
+            }
+            http.send(data);
+        } else {
+            document.getElementById("message").innerText = "You are unauthorized and will be redirected to login page in 5 seconds.";
+            setTimeout(function(){ clearSessionAndRedirect(); }, 5000);
+        }
+        document.getElementById("username").value = "";
+        document.getElementById("password").value = "";
+        document.getElementById("id").value = "";
+    }
+
+</script>
+</body>
+</html>

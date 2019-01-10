@@ -1,0 +1,78 @@
+:toc:
+
+= Qlack Demo Application
+This is a demo application, to demonstrate basic features of Qlack Framework. Authentication and Authorization are implemented.
+
+## Dependencies
+The demo application is dependent on the following modules: +
+
+ * qlack-common
+
+ * qlack-fuse-aaa
+
+ * qlack-fuse-security
+
+ * qlack-util-swagger
+
+
+## Setup
+
+Before running the application, you should add the `spring.datasource.username` and `spring.datasource.password` of the database. +
+These values can be configured in *_resources/application.properties_* file.  +
+Server `server.port` and `cxf.path` can also be updated here (default values are shown below).
+
+```
+# Server
+server.port=8090
+# CXF
+cxf.path=/app
+cxf.jaxrs.component-scan=true
+# Database
+spring.datasource.url=jdbc:mysql://localhost:3306/aaa?autoReconnect=true&createDatabaseIfNotExist=true&useSSL=false
+spring.datasource.username=[mysql_username]
+spring.datasource.password=[mysql_pwd]
+```
+
+## API Documentation
+
+Since the demo app is using the `qlack-util-swagger*, app's API can be accessed at http://localhost:8090/app/api-docs?url=/app/swagger.json#/
+
+## Pre-defined data
+
+For convenience, the demo application has the following predefined data (users, operations, resource and user's operations):
+
+ * Users (username/password) :
+  ** *admin / admin*
+  ** *user1 / user1*
+  ** *user2 / user2*
+
+ * Operations
+  ** *CREATE*
+  ** *DELETE*
+
+ * Resource
+  ** *_'DELETE'_* resource for user2
+
+ * User operation
+  ** *CREATE* operation of *user1*
+  ** *DELETE* operation of *user1*, which uses the aforementioned *_'DELETE'_* resource
+
+In case you want to edit/add data you can do so with the embedded *liquibase* configuration, which can be found in *_resources/db.changelog_*.
+
+## Workflow
+
+After running the application, which is available at http://localhost:8090/login, you can login (Authentication) +
+and then will be redirected to http://localhost:8090/operations, where *CREATE* and *DELETE* operations are available (Authorization). +
+
+You can create and delete users, depending on resource access. Based on the pre-defined data: +
+
+ * *admin* can *CREATE* and *DELETE* _user1_,_user2_
+ * *user1* can *CREATE* and *DELETE* _user2_
+ * *user2* is *UNAUTHORIZED* for _any_ operation
+
+
+
+
+
+
+

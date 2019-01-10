@@ -19,7 +19,7 @@ QLACK-Util/qlack-util-data/target
 QLACK-Fuse/qlack-fuse-crypto/target/
 QLACK-Fuse/qlack-fuse-security/target/
 QLACK-Fuse/qlack-fuse-security-war/target/
-
+QLACK-Fuse/qlack-fuse-demo/target
 *.log
 *.gz
 

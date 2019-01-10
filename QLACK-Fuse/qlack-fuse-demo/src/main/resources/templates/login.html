@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<style>
+    input[type=text], select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    input[type=password], select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    input[type=submit] {
+        width: 50%;
+        margin-left: 25%;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    input[type=submit]:hover {
+        background-color: #45a049;
+    }
+
+    div {
+        border-radius: 5px;
+        padding: 20px;
+    }
+
+    p {
+        font-size: large;
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+    }
+
+    body {
+        background-color: #f2f2f2;
+    }
+</style>
+<body>
+<h1>Qlack Demo Application</h1>
+<h3>Login</h3>
+<div>
+    <label>Username</label>
+    <input type="text" id="username" placeholder="Your username...">
+    <label>Password</label>
+    <input type="password" id="password" placeholder="Your password.." onkeyup="handle(event)">
+    <input type="submit" value="Login" onclick="login()">
+</div>
+<br>
+<div>
+    <label id="warning"></label>
+</div>
+<script>
+    function handle(event) {
+        if (event.key == "Enter") {
+            login();
+        }
+    }
+
+    function login() {
+        var username = document.getElementById("username").value.trim();
+        var password = document.getElementById("password").value.trim();
+
+        if (!username || !password) {
+            document.getElementById('warning').innerText = "Please enter your credentials";
+        } else {
+            var http = new XMLHttpRequest();
+            var url = '/app/auth/login';
+            var data = JSON.stringify(
+                {
+                    "username": username,
+                    "password": password
+                }
+            );
+            http.open('POST', url, true);
+            http.setRequestHeader('Content-type', 'application/json');
+            http.onreadystatechange = function () {
+                if (http.readyState == 4 && http.status == 200) {
+                    sessionStorage.setItem("user", http.responseText);
+                    sessionStorage.setItem("jwt", http.getResponseHeader("Authorization"));
+                    window.location = "/operations";
+                } else if (http.status == 403) {
+                    var resp = http.responseText;
+                    var msg = null;
+                    if (resp) {
+                        msg = JSON.parse(resp).message;
+                    }
+                    document.getElementById('warning').innerText = msg || resp;
+                }
+            }
+            http.send(data);
+        }
+    }
+</script>
+
+</body>
+</html>
