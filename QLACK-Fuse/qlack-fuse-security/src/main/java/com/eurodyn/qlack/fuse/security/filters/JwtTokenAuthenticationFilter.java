@@ -7,18 +7,22 @@ import com.eurodyn.qlack.util.jwt.JWTUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import java.io.IOException;
+import java.util.Date;
 import java.util.logging.Level;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.java.Log;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.Assert;
@@ -51,22 +55,30 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
     private AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource = new WebAuthenticationDetailsSource();
 
+    @Autowired
+    private CacheManager cacheManager;
+
     /**
-     * A flag that indicates if the jti claim will be required for requests.
+     * A flag that indicates if a nonce value will be required for requests.
      *
+     * @see <a href="https://en.wikipedia.org/wiki/Cryptographic_nonce">Cryptographic nonce</a>
+     *
+     * Another possible solution would to be create an implementation
+     * of the JTI value included in the JWT spec.
      * @see <a href="https://tools.ietf.org/html/rfc7519#section-4.1.7">JWT ID (JTI)</a>
      */
-    private boolean requireJtiClaim = false;
+    private boolean requireNonce = false;
 
-    private ConcurrentMapCache jtiCache;
+    public static final String NONCE_CACHE_PREFIX = "nonce-";
+
+    private static final String NONCE_HEADER = "Nonce";
+    private static final String NONCE_PARAM = "nonce";
+
+    private static final int UUID_LENGTH = 36;
 
     @Override
     public void afterPropertiesSet() {
         Assert.notNull(authenticationProvider, "An AuthenticationProvider is required");
-
-        if (requireJtiClaim) {
-            jtiCache = new ConcurrentMapCache("jti", false);
-        }
     }
 
     @Override
@@ -92,24 +104,8 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
             String username = claims.getSubject();
 
-            // TODO real implementation (EXPERIMENT - DOESN'T WORK)
-            if (requireJtiClaim) {
-                String jti = claims.getId();
-
-                if (StringUtils.isEmpty(jti)) {
-                    throw new QInvalidNonceException("No JWT ID included in the request.");
-                }
-
-                String jtiUser = jtiCache.get(jti, String.class);
-
-                if (jtiUser != null && jtiUser.equals(username)) {
-                    throw new QInvalidNonceException("JWT ID was already used.");
-                } else {
-                    jtiCache.put(jti, username);
-                }
-            }
-
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                // Try to retrieve the user from database of cache.
                 UserDetailsDTO userDetails = (UserDetailsDTO) userDetailsService.loadUserByUsername(username);
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -118,6 +114,10 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
                     userDetails.getAuthorities());
                 authentication.setDetails(authenticationDetailsSource.buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                if (requireNonce) {
+                    handleNonce(request, authentication);
+                }
             }
         } catch (Exception e) {
             log.log(Level.WARNING, "JWT token verification failed for address " + request.getRemoteAddr() +
@@ -130,13 +130,64 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    public boolean isRequireJtiClaim() {
-        return requireJtiClaim;
+    public boolean isRequireNonce() {
+        return requireNonce;
     }
 
-    // TODO uncomment when there is a JTI implementation
-    // public void setRequireJtiClaim(boolean requireJtiClaim) {
-    //     this.requireJtiClaim = requireJtiClaim;
-    // }
+    public void setRequireNonce(boolean requireNonce) {
+        this.requireNonce = requireNonce;
+    }
+
+    /**
+     * Handles nonce functionality.
+     *
+     * The current implementation requires a mandatory request header (or parameter)
+     * that should be <strong>unique for every request per user</strong>.
+     * It uses the configured cache implementation to blacklist nonce values by user
+     * and creates a different cache for each user.
+     *
+     * The nonce value is expected to be in this format: N = n || h(n || p), where:
+     * N = nonce
+     * n = client generated random UUID
+     * h = hash function (e.g. SHA-256)
+     * p = hashed user password retrieved from cache or database
+     * || = the concatenation symbol
+     *
+     * @param request HTTP request to acquire the nonce value (from header or parameter)
+     * @param authentication Authentication object with user details
+     */
+    protected void handleNonce(HttpServletRequest request, Authentication authentication) {
+        // Retrieve the cache of an existing user or create one if it doesn't exist.
+        Cache nonceCache = cacheManager.getCache(NONCE_CACHE_PREFIX + authentication.getPrincipal());
+
+        String nonce = request.getHeader(NONCE_HEADER);
+
+        if (StringUtils.isEmpty(nonce)) {
+            throw new QInvalidNonceException("No nonce parameter included in the request.");
+        }
+
+        String cacheValue = nonceCache.get(nonce, String.class);
+
+        // If a nonce already exists for user, then reject the request by throwing an exception.
+        if (cacheValue != null) {
+            throw new QInvalidNonceException("Request rejected for address " + request.getRemoteAddr() +
+                ". Nonce was already used for user " + authentication.getPrincipal());
+        }
+
+        // Parse nonce string and extract random value and hash.
+        String uuid = nonce.substring(0, UUID_LENGTH);
+        String requestHash = nonce.substring(UUID_LENGTH);
+
+        String calculatedHash = DigestUtils.sha256Hex(uuid + authentication.getCredentials());
+
+        // Check if the request hash matches the calculated hash.
+        if (!requestHash.equals(calculatedHash)) {
+            throw new QInvalidNonceException("Request rejected for address " + request.getRemoteAddr() +
+                ". Nonce was invalid for user " + authentication.getPrincipal());
+        }
+
+        // The value is currently not useful, so put the date in it.
+        nonceCache.put(nonce, new Date().toString());
+    }
 
 }

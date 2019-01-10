@@ -57,7 +57,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     public JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter() {
-        return new JwtTokenAuthenticationFilter();
+        JwtTokenAuthenticationFilter jwtFilter = new JwtTokenAuthenticationFilter();
+        jwtFilter.setRequireNonce(false); // Set to true this security measure is desired.
+        return jwtFilter;
     }
 
     /**
