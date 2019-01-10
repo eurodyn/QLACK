@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: demo_2
+      author: European Dynamics SA
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 9ad5709e-cea4-4dca-94d1-edee24b6ccae
+              - column:
+                  name: name
+                  value: CREATE
+              - column:
+                  name: dynamic_code
+                  value: 0
+              - column:
+                  name: dynamic
+                  valueBoolean: false
+              - column:
+                  name: dbversion
+                  value: 0
+            tableName: aaa_operation
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: c11fd0f9-2a52-422d-8542-e6df0eaa4362
+              - column:
+                  name: name
+                  value: DELETE
+              - column:
+                  name: dynamic_code
+                  value: 0
+              - column:
+                  name: dynamic
+                  valueBoolean: false
+              - column:
+                  name: dbversion
+                  value: 0
+            tableName: aaa_operation

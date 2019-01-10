@@ -1,0 +1,77 @@
+databaseChangeLog:
+  - changeSet:
+      id: demo_1
+      author: European Dynamics SA
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 19a2366e-178d-489a-9c7c-b30ea446be12
+              - column:
+                  name: username
+                  value: admin
+              - column:
+                  name: pswd
+                  value: $2a$10$Rz5eaBgYPZXLRcturffwcOfntaoQqIX21X.D6Z1ZHmKPf8EetE9Z6
+              - column:
+                  name: status
+                  value: 1
+              - column:
+                  name: superadmin
+                  valueBoolean: true
+              - column:
+                  name: external
+                  valueBoolean: false
+              - column:
+                  name: dbversion
+                  value: 0
+            tableName: aaa_user
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 7b1106f7-80bd-4cf7-a12d-27cfd8f1848e
+              - column:
+                  name: username
+                  value: user1
+              - column:
+                  name: pswd
+                  value: $2a$10$VUp.9toB5ypWoD3TfyAfCOvuNMCUMPAxv6SPDMy2hloaMvhK5xYUS
+              - column:
+                  name: status
+                  value: 1
+              - column:
+                  name: superadmin
+                  valueBoolean: false
+              - column:
+                  name: external
+                  valueBoolean: false
+              - column:
+                  name: dbversion
+                  value: 0
+            tableName: aaa_user
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: aba4bc90-e101-42fc-a789-62f8cf598ae0
+              - column:
+                  name: username
+                  value: user2
+              - column:
+                  name: pswd
+                  value: $2a$10$8Ufkj1tx4jWLXxXRXDXz.ezhWLxDJGjfyhgARuSt.kSfUdM65PnHy
+              - column:
+                  name: status
+                  value: 1
+              - column:
+                  name: superadmin
+                  valueBoolean: false
+              - column:
+                 name: external
+                 valueBoolean: false
+              - column:
+                 name: dbversion
+                 value: 0
+            tableName: aaa_user

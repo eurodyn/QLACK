@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: demo_4
+      author: European Dynamics SA
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 312d7e00-a27e-4907-b000-09be1108f5db
+              - column:
+                  name: user_id
+                  value: 7b1106f7-80bd-4cf7-a12d-27cfd8f1848e
+              - column:
+                  name: operation
+                  value: 9ad5709e-cea4-4dca-94d1-edee24b6ccae
+              - column:
+                  name: dbversion
+                  value: 0
+            tableName: aaa_user_has_operation
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 365d7e00-a27e-4897-b000-09be1108f5db
+              - column:
+                  name: user_id
+                  value: 7b1106f7-80bd-4cf7-a12d-27cfd8f1848e
+              - column:
+                  name: operation
+                  value: c11fd0f9-2a52-422d-8542-e6df0eaa4362
+              - column:
+                  name: resource_id
+                  value: c22fd0f9-2a52-422d-8542-e6df0eaa4362
+              - column:
+                  name: dbversion
+                  value: 0
+            tableName: aaa_user_has_operation

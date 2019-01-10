@@ -28,5 +28,6 @@
         <module>qlack-fuse-crypto</module>
         <module>qlack-fuse-security</module>
         <module>qlack-fuse-security-war</module>
+        <module>qlack-fuse-demo</module>
     </modules>
 </project>

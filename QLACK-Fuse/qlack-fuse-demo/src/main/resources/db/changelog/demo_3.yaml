@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: demo_3
+      author: European Dynamics SA
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: c22fd0f9-2a52-422d-8542-e6df0eaa4362
+              - column:
+                  name: name
+                  value: DELETE
+              - column:
+                  name: description
+                  value: Delete a user
+              - column:
+                  name: object_id
+                  value: aba4bc90-e101-42fc-a789-62f8cf598ae0
+              - column:
+                  name: dbversion
+                  value: 0
+            tableName: aaa_resource
