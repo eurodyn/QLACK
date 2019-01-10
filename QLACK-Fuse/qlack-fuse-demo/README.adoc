@@ -35,7 +35,7 @@ spring.datasource.password=[mysql_pwd]
 
 ## API Documentation
 
-Since the demo app is using the `qlack-util-swagger*, app's API can be accessed at http://localhost:8090/app/api-docs?url=/app/swagger.json#/
+Since the demo app is using the `qlack-util-swagger`, app's API can be accessed at http://localhost:8090/app/api-docs?url=/app/swagger.json#/
 
 ## Pre-defined data
 
