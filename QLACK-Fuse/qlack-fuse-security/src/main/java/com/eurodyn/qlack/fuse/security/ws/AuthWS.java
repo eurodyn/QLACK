@@ -1,8 +1,10 @@
 package com.eurodyn.qlack.fuse.security.ws;
 
+import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.aaa.dto.UserDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserDetailsDTO;
 import com.eurodyn.qlack.fuse.aaa.service.UserService;
+import com.eurodyn.qlack.fuse.security.cache.AAAUserCaching;
 import com.eurodyn.qlack.fuse.security.service.AuthenticationService;
 import com.eurodyn.qlack.util.jwt.JWTUtil;
 import com.eurodyn.qlack.util.jwt.dto.JWTClaimsRequestDTO;
@@ -44,10 +46,13 @@ public class AuthWS {
 
     private final UserService userService;
 
+    private final AAAUserCaching userCaching;
+
     @Autowired
-    public AuthWS(AuthenticationService authenticationService, UserService userService) {
+    public AuthWS(AuthenticationService authenticationService, UserService userService, AAAUserCaching userCaching) {
         this.authenticationService = authenticationService;
         this.userService = userService;
+        this.userCaching = userCaching;
     }
 
     @POST
@@ -65,7 +70,6 @@ public class AuthWS {
 
         String jwt = JWTUtil.generateToken(new JWTGenerateRequestDTO(jwtSecret, authenticatedUser.getUsername(), jwtExpiration));
 
-
         return Response.ok(authenticatedUser)
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .build();
@@ -79,10 +83,15 @@ public class AuthWS {
 
         UserDTO user = userService.getUserByName(username);
 
-        // TODO remove user from cache
+        if (user == null) {
+            throw new QDoesNotExistException("User doesn't exist.");
+        }
+
+        // Remove user from cache.
+        userCaching.getUserCache().removeUserFromCache(user.getUsername());
 
         // Logout from session.
-        if (user != null && user.getSessionId() != null) {
+        if (user.getSessionId() != null) {
             userService.logout(user.getId(), user.getSessionId());
         }
 

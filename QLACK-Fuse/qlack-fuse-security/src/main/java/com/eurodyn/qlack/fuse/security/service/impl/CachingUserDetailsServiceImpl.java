@@ -1,6 +1,6 @@
 package com.eurodyn.qlack.fuse.security.service.impl;
 
-import com.eurodyn.qlack.fuse.security.cache.DefaultAAAUserCaching;
+import com.eurodyn.qlack.fuse.security.cache.AAAUserCaching;
 import com.eurodyn.qlack.fuse.security.service.CachingUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,21 +16,20 @@ import org.springframework.stereotype.Service;
 @Qualifier("cachingUserDetailsService")
 public class CachingUserDetailsServiceImpl implements CachingUserDetailsService {
 
-    private final DefaultAAAUserCaching caching;
+    private final AAAUserCaching userCaching;
 
     private final UserDetailsService delegate;
 
-    private UserCache userCache;
-
     @Autowired
-    public CachingUserDetailsServiceImpl(DefaultAAAUserCaching caching, UserDetailsService delegate) {
-        this.caching = caching;
+    public CachingUserDetailsServiceImpl(AAAUserCaching userCaching, UserDetailsService delegate) {
+        this.userCaching = userCaching;
         this.delegate = delegate;
-        userCache = caching.getUserCache();
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) {
+        UserCache userCache = userCaching.getUserCache();
+
         UserDetails user = userCache.getUserFromCache(username);
 
         if (user == null) {
@@ -45,8 +44,13 @@ public class CachingUserDetailsServiceImpl implements CachingUserDetailsService 
     }
 
     @Override
+    public void removeUser(String username) {
+        userCaching.getUserCache().removeUserFromCache(username);
+    }
+
+    @Override
     public UserCache getUserCache() {
-        return userCache;
+        return userCaching.getUserCache();
     }
 
 }

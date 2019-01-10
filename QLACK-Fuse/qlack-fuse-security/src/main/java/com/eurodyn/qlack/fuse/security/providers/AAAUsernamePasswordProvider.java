@@ -2,7 +2,7 @@ package com.eurodyn.qlack.fuse.security.providers;
 
 import com.eurodyn.qlack.fuse.aaa.dto.UserDetailsDTO;
 import com.eurodyn.qlack.fuse.aaa.util.Md5PasswordEncoder;
-import com.eurodyn.qlack.fuse.security.cache.DefaultAAAUserCaching;
+import com.eurodyn.qlack.fuse.security.cache.AAAUserCaching;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class AAAUsernamePasswordProvider extends DaoAuthenticationProvider {
 
     @Autowired
-    private DefaultAAAUserCaching caching;
+    private AAAUserCaching caching;
 
     @Override
     protected void doAfterPropertiesSet() throws Exception {

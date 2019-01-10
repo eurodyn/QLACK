@@ -9,10 +9,13 @@ package com.eurodyn.qlack.common.exceptions;
  * the underlying error, so make sure you properly log your original exception (this is taken
  * care automatically if you use the qlack-util-data ExceptionWrapper annotation in your
  * REST controllers).
+ *
+ * @author EUROPEAN DYNAMICS SA
  */
 public class QExceptionWrapper extends QException {
 
-  public QExceptionWrapper(String message) {
-    super(message);
-  }
+    public QExceptionWrapper(String message) {
+        super(message);
+    }
+
 }

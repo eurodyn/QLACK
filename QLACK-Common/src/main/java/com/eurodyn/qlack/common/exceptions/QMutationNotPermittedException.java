@@ -2,18 +2,21 @@ package com.eurodyn.qlack.common.exceptions;
 
 /**
  * A generic exception representing an error while trying to mutate data.
+ *
+ * @author EUROPEAN DYNAMICS SA
  */
 public class QMutationNotPermittedException extends QException {
 
-  public QMutationNotPermittedException() {
-    super();
-  }
+    public QMutationNotPermittedException() {
+        super();
+    }
 
-  public QMutationNotPermittedException(String message) {
-    super(message);
-  }
+    public QMutationNotPermittedException(String message) {
+        super(message);
+    }
 
-  public QMutationNotPermittedException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public QMutationNotPermittedException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }

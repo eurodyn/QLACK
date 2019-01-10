@@ -46,10 +46,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
             .expressionHandler(webExpressionHandler())
             .antMatchers(cxfPath + "/auth/login").permitAll()
-            .antMatchers(cxfPath + "/auth/logout").authenticated()
             .antMatchers(cxfPath + "/test/unauthorized").permitAll()
             .antMatchers(cxfPath + "/test/authorized").authenticated() //.access("hasPermission(principal,'auth')")
-            .anyRequest().permitAll();
+            .anyRequest().authenticated();
     }
 
     /**

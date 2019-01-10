@@ -1,24 +1,32 @@
 package com.eurodyn.qlack.fuse.security.cache;
 
+import java.util.Objects;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.security.core.userdetails.UserCache;
 import org.springframework.security.core.userdetails.cache.SpringCacheBasedUserCache;
 import org.springframework.stereotype.Component;
 
 /**
- * Sets the a ConcurrentMapCache as the default caching mechanism for AAA users.
+ * Creates a default user cache based on
+ * the system's configured caching mechanism.
  *
  * @author EUROPEAN DYNAMICS SA
  */
 @Component
-public class DefaultAAAUserCaching {
+public class AAAUserCaching {
+
+    private CacheManager cacheManager;
 
     private String cacheName = "users";
 
     private UserCache userCache;
 
-    public DefaultAAAUserCaching() throws Exception {
-        userCache = new SpringCacheBasedUserCache(new ConcurrentMapCache(cacheName, false));
+    @Autowired
+    public AAAUserCaching(CacheManager cacheManager) throws Exception {
+        this.cacheManager = cacheManager;
+        this.userCache = new SpringCacheBasedUserCache(Objects.requireNonNull(cacheManager.getCache(cacheName)));
     }
 
     public UserCache getUserCache() {

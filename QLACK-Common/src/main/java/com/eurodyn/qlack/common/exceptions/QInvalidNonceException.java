@@ -1,6 +1,8 @@
 package com.eurodyn.qlack.common.exceptions;
 
 /**
+ * A security exception representing an invalid nonce value.
+ *
  * @author EUROPEAN DYNAMICS SA
  */
 public class QInvalidNonceException extends QException {
