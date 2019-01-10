@@ -23,7 +23,9 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -37,6 +39,9 @@ import org.springframework.stereotype.Component;
 @Component
 @Log
 public class ResourceAccessInterceptor {
+
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @Pointcut("execution(@com.eurodyn.qlack.common.annotation.ResourceAccess * *(..))")
     public void annotation() {
@@ -155,7 +160,7 @@ public class ResourceAccessInterceptor {
     @Before("annotation() && @annotation(resourceAccess)")
     public void authorize(JoinPoint joinPoint, ResourceAccess resourceAccess) throws AuthorizationException, IllegalAccessException {
         boolean allowAccess;
-        UserDetailsDTO user = (UserDetailsDTO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetailsDTO user = (UserDetailsDTO) userDetailsService.loadUserByUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
 
         // superadmin users are authorized
         if (user.isSuperadmin()) {
