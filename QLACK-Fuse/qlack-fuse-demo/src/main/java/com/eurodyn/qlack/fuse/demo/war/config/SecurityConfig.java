@@ -49,6 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers( "/login").permitAll()
             .antMatchers("/operations").permitAll()
             .antMatchers(cxfPath + "/auth/login").permitAll()
+            .antMatchers(cxfPath + "/demo/users").authenticated()
             .anyRequest().permitAll();
     }
 

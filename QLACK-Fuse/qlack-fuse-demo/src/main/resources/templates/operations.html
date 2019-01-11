@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <style>
     input[type=text], select {
         width: 100%;
@@ -70,7 +70,7 @@
 <br>
 <div>
     <label >Choose a user to delete</label>
-    <select id="users"></select>
+    <select id="usersDropdown"></select>
     <input type="submit" value="Delete" onclick="deleteUser()">
 </div>
 <br>
@@ -83,19 +83,43 @@
 </div>
 
 <script>
-    var user = JSON.parse(sessionStorage.getItem("user"));
     function addWelcomeMessage() {
+        var user = JSON.parse(sessionStorage.getItem("user"));
         document.getElementById("welcome").innerText = "Welcome, " + user.username;
-        var users = document.getElementById("users");
-        var option = document.createElement("option");
-        option.value = "7b1106f7-80bd-4cf7-a12d-27cfd8f1848e";
-        option.text ="user1"
-        users.add(option);
-        var option2 = document.createElement("option");
-        option2.value = "aba4bc90-e101-42fc-a789-62f8cf598ae0";
-        option2.text ="user2"
-        users.add(option2);
+        getUsers();
     }
+
+    function getUsers() {
+        var http = new XMLHttpRequest();
+        var jwt = sessionStorage.getItem("jwt");
+        var url = "/app/demo/users";
+        if(jwt) {
+            http.onreadystatechange = null;
+            http.open('GET', url, true);
+            http.setRequestHeader('Content-type', 'application/json');
+            http.setRequestHeader('Authorization', jwt);
+            http.onreadystatechange = function() {//Call a function when the state changes.
+                if(http.readyState == 4 && http.status == 200) {
+                    var dropdown = document.getElementById("usersDropdown");
+                    dropdown.options.length = 0;
+                    var resp = http.responseText;
+                    var users = JSON.parse(resp);
+                    var i;
+                    for (i = 0; i < Object.keys(users).length; i++) {
+                        var option = document.createElement("option");
+                        option.value = Object.keys(users)[i];
+                        option.text = Object.values(users)[i];
+                        dropdown.add(option);
+                    }
+                }
+            }
+            http.send();
+        } else {
+            document.getElementById("message").innerText = "You are unauthorized and will be redirected to login page in 5 seconds.";
+            setTimeout(function(){ clearSessionAndRedirect(); }, 5000);
+        }
+    }
+
     function createUser() {
         var url = '/app/demo/create';
         var method = 'POST';
@@ -119,7 +143,7 @@
     }
 
     function deleteUser() {
-        var url = '/app/demo/delete/' + document.getElementById("users").value;
+        var url = '/app/demo/delete/' + document.getElementById("usersDropdown").value;
         var method = 'DELETE';
         var successMessage = "Successfully deleted user";
         var failureMessage = "Could not delete user";
@@ -145,6 +169,7 @@
             http.open(method, url, true);
             http.setRequestHeader('Content-type', 'application/json');
             http.setRequestHeader('Authorization', jwt);
+            http.onreadystatechange = null;
             http.onreadystatechange = function() {//Call a function when the state changes.
 
                 if(http.readyState == 4 && (http.status == 200 || http.status == 204)) {
@@ -152,6 +177,7 @@
                         clearSessionAndRedirect();
                     } else {
                         document.getElementById("message").innerText = successMessage;
+                        getUsers();
                     }
                 } else {
                     var resp = http.responseText;
@@ -169,7 +195,6 @@
         }
         document.getElementById("username").value = "";
         document.getElementById("password").value = "";
-        document.getElementById("id").value = "";
     }
 
 </script>

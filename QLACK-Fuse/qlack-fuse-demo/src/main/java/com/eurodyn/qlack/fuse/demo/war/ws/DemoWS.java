@@ -5,8 +5,11 @@ import com.eurodyn.qlack.common.annotation.ResourceOperation;
 import com.eurodyn.qlack.fuse.aaa.dto.UserDTO;
 import com.eurodyn.qlack.fuse.aaa.service.UserService;
 import io.swagger.annotations.Api;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -51,6 +54,15 @@ public class DemoWS {
     @ResourceAccess(operations = { @ResourceOperation(operation = "DELETE", resourceIdParameter = "id") })
     public void delete(@PathParam("id") String id) throws ServiceException {
         userService.deleteUser(id);
+    }
+
+    @GET
+    @Path("/users")
+    public Map<String,String> users() {
+        Map<String, String> users = userService.getAllUsers()
+            .stream()
+            .collect(Collectors.toMap(UserDTO::getId, UserDTO::getUsername));
+        return users;
     }
 
 }
