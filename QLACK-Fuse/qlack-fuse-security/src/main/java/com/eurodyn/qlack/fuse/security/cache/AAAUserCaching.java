@@ -1,10 +1,11 @@
 package com.eurodyn.qlack.fuse.security.cache;
 
 import java.util.Objects;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.security.core.userdetails.UserCache;
+import org.springframework.security.core.userdetails.cache.NullUserCache;
 import org.springframework.security.core.userdetails.cache.SpringCacheBasedUserCache;
 import org.springframework.stereotype.Component;
 
@@ -15,18 +16,23 @@ import org.springframework.stereotype.Component;
  * @author EUROPEAN DYNAMICS SA
  */
 @Component
-public class AAAUserCaching {
+public class AAAUserCaching implements InitializingBean {
 
+    @Autowired(required = false)
     private CacheManager cacheManager;
 
     private String cacheName = "users";
 
-    private UserCache userCache;
+    /**
+     * Initialize with an empty implementation (cache does nothing).
+     */
+    private UserCache userCache = new NullUserCache();
 
-    @Autowired
-    public AAAUserCaching(CacheManager cacheManager) throws Exception {
-        this.cacheManager = cacheManager;
-        this.userCache = new SpringCacheBasedUserCache(Objects.requireNonNull(cacheManager.getCache(cacheName)));
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if (cacheManager != null) {
+            this.userCache = new SpringCacheBasedUserCache(Objects.requireNonNull(cacheManager.getCache(cacheName)));
+        }
     }
 
     public UserCache getUserCache() {

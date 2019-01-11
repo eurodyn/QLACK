@@ -49,7 +49,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private CachingUserDetailsService userDetailsService;
 
-    @Autowired
+    @Autowired(required = false)
     private NonceCachingService nonceCachingService;
 
     @Autowired
@@ -64,6 +64,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
      *
      * Another possible solution would to be create an implementation
      * of the JTI value included in the JWT spec.
+     *
      * @see <a href="https://tools.ietf.org/html/rfc7519#section-4.1.7">JWT ID (JTI)</a>
      */
     private boolean requireNonce = false;
@@ -76,6 +77,10 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     public void afterPropertiesSet() {
         Assert.notNull(authenticationProvider, "An AuthenticationProvider is required");
+
+        if (requireNonce) {
+            Assert.notNull(nonceCachingService, "Nonce caching must be enabled for requireNonce = true.");
+        }
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.eurodyn.qlack.fuse.security.cache.AAAUserCaching;
 import com.eurodyn.qlack.fuse.security.service.CachingUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.security.core.userdetails.UserCache;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
