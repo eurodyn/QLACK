@@ -348,6 +348,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+            .map(userMapper::mapToDTO)
+            .collect(Collectors.toList());
+    }
+
     private void mapAttribute(UserAttribute attribute, UserAttributeDTO attributeDTO) {
         String userId = attributeDTO.getUserId();
         User user = userRepository.fetchById(userId);

@@ -1,5 +1,6 @@
 package com.eurodyn.qlack.fuse.aaa.dto;
 
+import com.eurodyn.qlack.common.annotation.ResourceId;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserDTO extends BaseDTO {
 
+    @ResourceId("id")
     private String id;
 
     private String username;

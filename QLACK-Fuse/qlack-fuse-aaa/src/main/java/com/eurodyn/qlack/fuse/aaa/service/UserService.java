@@ -66,4 +66,6 @@ public interface UserService extends UserDetailsService {
 
     boolean isAttributeValueUnique(String attributeValue, String attributeName, String userID);
 
+    List<UserDTO> getAllUsers();
+
 }
