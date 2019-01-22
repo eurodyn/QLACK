@@ -34,7 +34,7 @@ export class QFormsService {
     let query = '';
     for (const filter in fb.value) {
       // Skip empty fields if requested to not include them.
-      if (!fb.value[filter] && !includeEmpty) {
+      if ((fb.value[filter] == null || fb.value[filter] === '') && !includeEmpty) {
         continue;
       }
 

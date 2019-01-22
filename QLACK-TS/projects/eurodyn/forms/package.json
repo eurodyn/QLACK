@@ -1,6 +1,6 @@
 {
   "name": "@eurodyn/forms",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "Utility package to work with Angular forms.",
   "homepage": "https://github.com/eurodyn/qlack2",
   "bug": "https://github.com/eurodyn/qlack2/issues",
