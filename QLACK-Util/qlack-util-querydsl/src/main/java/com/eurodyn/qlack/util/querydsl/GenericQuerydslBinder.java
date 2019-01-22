@@ -8,6 +8,7 @@ import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.querydsl.binding.SingleValueBinding;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,9 +31,20 @@ public interface GenericQuerydslBinder<T extends EntityPath<?>> extends
           Collections.sort(dates);
           if (dates.size() == 2) {
             return Optional.of(path.between(dates.get(0), dates.get(1)));
+          } else {
+            return Optional.of(path.eq(dates.get(0)));
           }
-          throw new IllegalArgumentException(
-              "2 date params (from & to) expected for: " + path + ", found: " + values);
+        });
+
+    bindings.bind(Instant.class)
+        .all((final DateTimePath<Instant> path, final Collection<? extends Instant> values) -> {
+          final List<? extends Instant> dates = new ArrayList<>(values);
+          Collections.sort(dates);
+          if (dates.size() == 2) {
+            return Optional.of(path.between(dates.get(0), dates.get(1)));
+          } else {
+            return Optional.of(path.eq(dates.get(0)));
+          }
         });
   }
 }
