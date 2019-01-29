@@ -16,15 +16,36 @@
   </modules>
 
   <properties>
-    <spring.boot.version>2.1.1.RELEASE</spring.boot.version>
-    <lombok.version>1.18.2</lombok.version>
+    <java.version>1.8</java.version>
+    <maven.compiler.version>3.6.2</maven.compiler.version>
+    <spring.boot.version>2.1.2.RELEASE</spring.boot.version>
+    <mapstruct.version>1.2.0.Final</mapstruct.version>
+    <commons.collections.version>3.2.2</commons.collections.version>
+    <javax.inject.version>1</javax.inject.version>
+    <beanshell.version>2.0b4</beanshell.version>
+    <apache.email.version>1.5</apache.email.version>
+    <apache.poi.version>3.9</apache.poi.version>
+    <jackson.datatype.version>2.9.8</jackson.datatype.version>
+    <apache.tika.version>1.12</apache.tika.version>
+    <google.zxing.version>3.3.3</google.zxing.version>
+    <sensesecure.version>0.5</sensesecure.version>
+    <bohnman.jackson.version>1.3.14</bohnman.jackson.version>
+    <lombok.version>1.18.4</lombok.version>
     <querydsl.version>4.2.1</querydsl.version>
+    <jrebel.version>1.1.8</jrebel.version>
     <apt-maven-plugin.version>1.1.3</apt-maven-plugin.version>
     <bouncycastle.version>1.60</bouncycastle.version>
+    <cxf.version>3.2.7</cxf.version>
+    <maven-compiler-plugin.version>${spring.boot.version}</maven-compiler-plugin.version>
+    <mysql.version>8.0.14</mysql.version>
+    <rest-assured.version>3.2.0</rest-assured.version>
+    <junit.version>4.12</junit.version>
+    <hibernate.version>5.3.7.Final</hibernate.version>
+    <hikaricp.version>3.2.0</hikaricp.version>
+    <liquibase.version>3.6.2</liquibase.version>
+    <h2.version>1.4.197</h2.version>
   </properties>
 
-  <!--TODO consider moving away from defining versions with dependencyManagement, as dependencyManagement versions are
-      not visible everywhere. Instead use properties. -->
   <dependencyManagement>
     <dependencies>
       <!-- Spring Boot -->
@@ -50,71 +71,71 @@
       <dependency>
         <groupId>org.mapstruct</groupId>
         <artifactId>mapstruct-processor</artifactId>
-        <version>1.2.0.Final</version>
+        <version>${mapstruct.version}</version>
       </dependency>
       <dependency>
         <groupId>org.mapstruct</groupId>
         <artifactId>mapstruct</artifactId>
-        <version>1.2.0.Final</version>
+        <version>${mapstruct.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-collections</groupId>
         <artifactId>commons-collections</artifactId>
-        <version>3.2.2</version>
+        <version>${commons.collections.version}</version>
       </dependency>
       <dependency>
         <groupId>javax.inject</groupId>
         <artifactId>javax.inject</artifactId>
-        <version>1</version>
+        <version>${javax.inject.version}</version>
       </dependency>
       <dependency>
         <groupId>org.beanshell</groupId>
         <artifactId>bsh-core</artifactId>
-        <version>2.0b4</version>
+        <version>${beanshell.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-email</artifactId>
-        <version>1.5</version>
+        <version>${apache.email.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi</artifactId>
-        <version>3.9</version>
+        <version>${apache.poi.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-ooxml</artifactId>
-        <version>3.9</version>
+        <version>${apache.poi.version}</version>
       </dependency>
-		<dependency>
-			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch</artifactId>
-		</dependency>
+      <dependency>
+        <groupId>org.elasticsearch</groupId>
+        <artifactId>elasticsearch</artifactId>
+      </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.datatype</groupId>
         <artifactId>jackson-datatype-jsr310</artifactId>
-        <version>2.9.4</version>
+        <version>${jackson.datatype.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tika</groupId>
         <artifactId>tika-core</artifactId>
-        <version>1.12</version>
+        <version>${apache.tika.version}</version>
       </dependency>
       <dependency>
         <groupId>com.google.zxing</groupId>
         <artifactId>core</artifactId>
-        <version>3.3.1</version>
+        <version>${google.zxing.version}</version>
       </dependency>
       <dependency>
         <groupId>io.sensesecure</groupId>
         <artifactId>clamav4j</artifactId>
-        <version>0.5</version>
+        <version>${sensesecure.version}</version>
       </dependency>
       <dependency>
         <groupId>com.github.bohnman</groupId>
         <artifactId>squiggly-filter-jackson</artifactId>
-        <version>1.3.11</version>
+        <version>${bohnman.jackson.version}</version>
       </dependency>
       <dependency>
         <groupId>org.projectlombok</groupId>
@@ -132,29 +153,34 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.6.2</version>
+          <version>${maven.compiler.version}</version>
           <configuration>
+            <compilerArgs>
+              <!-- The -parameters argument is crucial for the correct function
+               of the authentication interceptor, due to heavy use of the Reflection API -->
+              <arg>-parameters</arg>
+            </compilerArgs>
             <showDeprecation>true</showDeprecation>
-            <source>1.8</source>
-            <target>1.8</target>
+            <source>${java.version}</source>
+            <target>${java.version}</target>
             <encoding>UTF-8</encoding>
             <useIncrementalCompilation>false</useIncrementalCompilation>
             <annotationProcessorPaths>
               <annotationProcessorPath>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct-processor</artifactId>
-                <version>1.2.0.Final</version>
+                <version>${mapstruct.version}</version>
               </annotationProcessorPath>
               <annotationProcessorPath>
                 <groupId>com.querydsl</groupId>
                 <artifactId>querydsl-jpa-codegen</artifactId>
-                <version>4.2.1</version>
+                <version>${querydsl.version}</version>
               </annotationProcessorPath>
               <annotationProcessorPath>
                 <groupId>com.querydsl</groupId>
                 <artifactId>querydsl-apt</artifactId>
                 <classifier>jpa</classifier>
-                <version>4.2.1</version>
+                <version>${querydsl.version}</version>
               </annotationProcessorPath>
               <annotationProcessorPath>
                 <groupId>org.projectlombok</groupId>
@@ -169,7 +195,7 @@
         <plugin>
           <groupId>org.zeroturnaround</groupId>
           <artifactId>jrebel-maven-plugin</artifactId>
-          <version>1.1.8</version>
+          <version>${jrebel.version}</version>
           <configuration>
             <alwaysGenerate>true</alwaysGenerate>
           </configuration>
