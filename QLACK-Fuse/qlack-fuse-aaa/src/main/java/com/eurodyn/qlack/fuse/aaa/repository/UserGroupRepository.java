@@ -1,22 +1,22 @@
 package com.eurodyn.qlack.fuse.aaa.repository;
 
-import com.eurodyn.qlack.fuse.aaa.model.Group;
+import com.eurodyn.qlack.fuse.aaa.model.UserGroup;
 import org.springframework.stereotype.Repository;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Repository
-public interface GroupRepository extends AAARepository<Group, String> {
+public interface UserGroupRepository extends AAARepository<UserGroup, String> {
 
-  Group findByName(String name);
+  UserGroup findByName(String name);
 
-  Group findByObjectId(String objectId);
+  UserGroup findByObjectId(String objectId);
 
   default Set<String> getAllIds(){
 
     return findAll().stream()
-        .map(Group::getId)
+        .map(UserGroup::getId)
         .collect(Collectors.toSet());
   }
 

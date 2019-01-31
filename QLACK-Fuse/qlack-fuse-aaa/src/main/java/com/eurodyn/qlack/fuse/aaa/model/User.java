@@ -54,9 +54,9 @@ public class User extends AAAModel {
   @OnDelete(action = OnDeleteAction.CASCADE)
   private List<Session> sessions;
 
-  //bi-directional many-to-many association to Group
+  //bi-directional many-to-many association to UserGroup
   @ManyToMany(mappedBy = "users")
-  private List<Group> groups;
+  private List<UserGroup> userGroups;
 
   //bi-directional many-to-one association to UserAttribute
   @OneToMany(mappedBy = "user")

@@ -10,23 +10,23 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * The persistent class for the aaa_group_has_operation database table.
+ * The persistent class for the aaa_user_group_has_operation database table.
  */
 @Entity
-@Table(name = "aaa_group_has_operation")
+@Table(name = "aaa_user_group_has_operation")
 @Getter
 @Setter
-public class GroupHasOperation extends AAAModel {
+public class UserGroupHasOperation extends AAAModel {
 
   private static final long serialVersionUID = 1L;
 
   @Version
   private long dbversion;
 
-  //bi-directional many-to-one association to Group
+  //bi-directional many-to-one association to UserGroup
   @ManyToOne
-  @JoinColumn(name = "group_id")
-  private Group group;
+  @JoinColumn(name = "user_group_id")
+  private UserGroup userGroup;
 
   //bi-directional many-to-one association to Operation
   @ManyToOne
@@ -40,7 +40,7 @@ public class GroupHasOperation extends AAAModel {
 
   private boolean deny;
 
-  public GroupHasOperation() {
+  public UserGroupHasOperation() {
     setId(UUID.randomUUID().toString());
   }
 

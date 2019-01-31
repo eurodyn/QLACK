@@ -1,6 +1,6 @@
 package com.eurodyn.qlack.fuse.aaa.service;
 
-import com.eurodyn.qlack.fuse.aaa.dto.GroupDTO;
+import com.eurodyn.qlack.fuse.aaa.dto.UserGroupDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.JSONConfig;
 import com.eurodyn.qlack.fuse.aaa.dto.OpTemplateDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.OperationDTO;
@@ -68,25 +68,25 @@ public class JSONConfigService {
       return;
     }
 
-    // Create groups.
+    // Create userGroups.
     for (JSONConfig.Group g : config.getGroups()) {
-      // If the group exists, update it, otherwise create it.
-      LOGGER.log(Level.FINEST, "Processing group {0}", g.getName());
-      GroupDTO groupDTO = groupService.getGroupByName(g.getName(), true);
-      boolean isNew = groupDTO == null;
+      // If the userGroup exists, update it, otherwise create it.
+      LOGGER.log(Level.FINEST, "Processing userGroup {0}", g.getName());
+      UserGroupDTO userGroupDTO = groupService.getGroupByName(g.getName(), true);
+      boolean isNew = userGroupDTO == null;
       if (isNew) {
-        groupDTO = new GroupDTO();
+        userGroupDTO = new UserGroupDTO();
       }
-      groupDTO.setDescription(g.getDescription());
-      groupDTO.setName(g.getName());
+      userGroupDTO.setDescription(g.getDescription());
+      userGroupDTO.setName(g.getName());
       if (StringUtils.isNotBlank(g.getParentGroupName())) {
-        GroupDTO parentGroup = groupService.getGroupByName(g.getParentGroupName(), true);
-        groupDTO.setParentId(parentGroup.getId());
+        UserGroupDTO parentGroup = groupService.getGroupByName(g.getParentGroupName(), true);
+        userGroupDTO.setParentId(parentGroup.getId());
       }
       if (isNew) {
-        groupService.createGroup(groupDTO);
+        groupService.createGroup(userGroupDTO);
       } else {
-        groupService.updateGroup(groupDTO);
+        groupService.updateGroup(userGroupDTO);
       }
     }
 
@@ -126,16 +126,16 @@ public class JSONConfigService {
       }
     }
 
-    // Create Group has Operations.
+    // Create UserGroup has Operations.
     for (JSONConfig.GroupHasOperation gho : config.getGroupHasOperations()) {
       // If the operation exists, update it, otherwise create it.
-      LOGGER.log(Level.FINEST, "Processing group has operation {0}-{1}",
+      LOGGER.log(Level.FINEST, "Processing userGroup has operation {0}-{1}",
           new String[]{gho.getGroupName(), gho.getOperationName()});
-      GroupDTO groupDTO = groupService.getGroupByName(gho.getGroupName(), true);
+      UserGroupDTO userGroupDTO = groupService.getGroupByName(gho.getGroupName(), true);
       if (!operationService.getAllowedGroupsForOperation(
-          gho.getOperationName(), false).contains(groupDTO.getId())) {
+          gho.getOperationName(), false).contains(userGroupDTO.getId())) {
         operationService.addOperationToGroup(
-            groupDTO.getId(), gho.getOperationName(), gho.isDeny());
+            userGroupDTO.getId(), gho.getOperationName(), gho.isDeny());
       }
     }
 

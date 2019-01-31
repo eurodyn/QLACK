@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: aaa_1
-      author: European Dynamics SA (christina.kaskoura@eurodyn.com)
+      author: European Dynamics SA
       changes:
         - createTable:
             tableName: aaa_user
@@ -39,6 +39,9 @@ databaseChangeLog:
                   defaultValue: false
                   constraints:
                     nullable: false
+              - column:
+                  name: external
+                  type: boolean
               - column:
                   name: dbversion
                   type: bigint
@@ -179,7 +182,7 @@ databaseChangeLog:
             columnNames: session_id, name
             constraintName: session_name
         - createTable:
-            tableName: aaa_group
+            tableName: aaa_user_group
             columns:
               - column:
                   name: id
@@ -198,7 +201,7 @@ databaseChangeLog:
                   type: varchar(1024)
               - column:
                   name: object_id
-                  type: varchar(36)
+                  type: varchar(255)
                   constraints:
                     unique: true
               - column:
@@ -212,10 +215,10 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - addForeignKeyConstraint:
-            constraintName: fk_aaa_group_aaa_group
-            baseTableName: aaa_group
+            constraintName: fk_aaa_user_group_aaa_user_group
+            baseTableName: aaa_user_group
             baseColumnNames: parent
-            referencedTableName: aaa_group
+            referencedTableName: aaa_user_group
             referencedColumnNames: id
             onDelete: cascade
             onUpdate: cascade
@@ -228,14 +231,14 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: group_id
+                  name: user_group_id
                   type: varchar(36)
                   constraints:
                     nullable: false
         - addPrimaryKey:
             constraintName: pk_aaa_user_has_group
             tableName: aaa_user_has_group
-            columnNames: user_id, group_id
+            columnNames: user_id, user_group_id
         - addForeignKeyConstraint:
             constraintName: fk_aaa_uhg_aaa_user
             baseTableName: aaa_user_has_group
@@ -245,10 +248,10 @@ databaseChangeLog:
             onDelete: cascade
             onUpdate: cascade
         - addForeignKeyConstraint:
-            constraintName: fk_aaa_uhg_aaa_group
+            constraintName: fk_aaa_uhg_aaa_user_group
             baseTableName: aaa_user_has_group
-            baseColumnNames: group_id
-            referencedTableName: aaa_group
+            baseColumnNames: user_group_id
+            referencedTableName: aaa_user_group
             referencedColumnNames: id
             onDelete: cascade
             onUpdate: cascade
@@ -303,7 +306,7 @@ databaseChangeLog:
                   type: varchar(1024)
               - column:
                   name: object_id
-                  type: varchar(36)
+                  type: varchar(255)
                   constraints:
                     unique: true
               - column:
@@ -375,7 +378,7 @@ databaseChangeLog:
             onDelete: cascade
             onUpdate: cascade
         - createTable:
-            tableName: aaa_group_has_operation
+            tableName: aaa_user_group_has_operation
             columns:
               - column:
                   name: id
@@ -384,7 +387,7 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: group_id
+                  name: user_group_id
                   type: varchar(36)
                   constraints:
                     nullable: false
@@ -410,20 +413,20 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - addUniqueConstraint:
-            tableName: aaa_group_has_operation
-            columnNames: group_id, operation, resource_id
+            tableName: aaa_user_group_has_operation
+            columnNames: user_group_id, operation, resource_id
             constraintName: group_operation_resource
         - addForeignKeyConstraint:
-            constraintName: fk_aaa_gho_aaa_group
-            baseTableName: aaa_group_has_operation
-            baseColumnNames: group_id
-            referencedTableName: aaa_group
+            constraintName: fk_aaa_gho_aaa_user_group
+            baseTableName: aaa_user_group_has_operation
+            baseColumnNames: user_group_id
+            referencedTableName: aaa_user_group
             referencedColumnNames: id
             onDelete: cascade
             onUpdate: cascade
         - addForeignKeyConstraint:
             constraintName: fk_aaa_gho_aaa_operation
-            baseTableName: aaa_group_has_operation
+            baseTableName: aaa_user_group_has_operation
             baseColumnNames: operation
             referencedTableName: aaa_operation
             referencedColumnNames: id
@@ -431,7 +434,7 @@ databaseChangeLog:
             onUpdate: cascade
         - addForeignKeyConstraint:
             constraintName: fk_aaa_gho_aaa_resource
-            baseTableName: aaa_group_has_operation
+            baseTableName: aaa_user_group_has_operation
             baseColumnNames: resource_id
             referencedTableName: aaa_resource
             referencedColumnNames: id
@@ -553,3 +556,48 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     nullable: false
+        - createTable:
+            tableName: aaa_verification
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: created_on
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expires_on
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: data
+                  type: varchar(1024)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: user_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            indexName: idx_verif_expires
+            tableName: aaa_verification
+            columns:
+              - column:
+                  name: expires_on
+                  type: bigint
+            unique: false
+        - addForeignKeyConstraint:
+            constraintName: fk_aaa_verification_aaa_user
+            baseTableName: aaa_verification
+            baseColumnNames: user_id
+            referencedTableName: aaa_user
+            referencedColumnNames: id
+            onDelete: cascade
+            onUpdate: cascade

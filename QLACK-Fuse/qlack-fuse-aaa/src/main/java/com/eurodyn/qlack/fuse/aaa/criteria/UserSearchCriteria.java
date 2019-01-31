@@ -95,7 +95,7 @@ public class UserSearchCriteria {
     }
 
     /**
-     * Specify a collection of IDs in which the IDs of the retrieved users groups should be
+     * Specify a collection of IDs in which the IDs of the retrieved users userGroups should be
      * contained.
      */
     public UserSearchCriteriaBuilder withGroupIdIn(Collection<String> ids) {
@@ -104,7 +104,7 @@ public class UserSearchCriteria {
     }
 
     /**
-     * Specify a collection of IDs in which the IDs of the retrieved users groups should not be
+     * Specify a collection of IDs in which the IDs of the retrieved users userGroups should not be
      * contained.
      */
     public UserSearchCriteriaBuilder withGroupIdNotIn(Collection<String> ids) {

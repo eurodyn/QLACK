@@ -25,7 +25,7 @@ public class UserHasOperation extends AAAModel {
   @Version
   private long dbversion;
 
-  //bi-directional many-to-one association to Group
+  //bi-directional many-to-one association to UserGroup
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;

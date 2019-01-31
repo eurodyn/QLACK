@@ -9,14 +9,14 @@ import com.eurodyn.qlack.fuse.aaa.dto.UserDTO;
 import com.eurodyn.qlack.fuse.aaa.mappers.SessionMapper;
 import com.eurodyn.qlack.fuse.aaa.mappers.UserAttributeMapper;
 import com.eurodyn.qlack.fuse.aaa.mappers.UserMapper;
-import com.eurodyn.qlack.fuse.aaa.model.Group;
+import com.eurodyn.qlack.fuse.aaa.model.UserGroup;
 import com.eurodyn.qlack.fuse.aaa.model.QSession;
 import com.eurodyn.qlack.fuse.aaa.model.QUser;
 import com.eurodyn.qlack.fuse.aaa.model.QUserAttribute;
 import com.eurodyn.qlack.fuse.aaa.model.Session;
 import com.eurodyn.qlack.fuse.aaa.model.User;
 import com.eurodyn.qlack.fuse.aaa.model.UserAttribute;
-import com.eurodyn.qlack.fuse.aaa.repository.GroupRepository;
+import com.eurodyn.qlack.fuse.aaa.repository.UserGroupRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.SessionRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.UserAttributeRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
@@ -58,7 +58,7 @@ public class UserService {
   private final UserRepository userRepository;
   private final UserAttributeRepository userAttributeRepository;
   private final SessionRepository sessionRepository;
-  private final GroupRepository groupRepository;
+  private final UserGroupRepository userGroupRepository;
   // Mappers
   private final UserMapper userMapper;
   private final SessionMapper sessionMapper;
@@ -69,15 +69,15 @@ public class UserService {
   private QSession qSession = QSession.session;
 
   public UserService(AccountingService accountingService, LdapUserUtil ldapUserUtil,
-      UserRepository userRepository, UserAttributeRepository userAttributeRepository,
-      SessionRepository sessionRepository, GroupRepository groupRepository, UserMapper userMapper,
-      SessionMapper sessionMapper, UserAttributeMapper userAttributeMapper) {
+                     UserRepository userRepository, UserAttributeRepository userAttributeRepository,
+                     SessionRepository sessionRepository, UserGroupRepository userGroupRepository, UserMapper userMapper,
+                     SessionMapper sessionMapper, UserAttributeMapper userAttributeMapper) {
     this.accountingService = accountingService;
     this.ldapUserUtil = ldapUserUtil;
     this.userRepository = userRepository;
     this.userAttributeRepository = userAttributeRepository;
     this.sessionRepository = sessionRepository;
-    this.groupRepository = groupRepository;
+    this.userGroupRepository = userGroupRepository;
     this.userMapper = userMapper;
     this.sessionMapper = sessionMapper;
     this.userAttributeMapper = userAttributeMapper;
@@ -101,6 +101,7 @@ public class UserService {
   public void updateUser(UserDTO dto, boolean updatePassword) {
     User user = userRepository.fetchById(dto.getId());
     if (updatePassword) {
+
       user.setSalt(RandomStringUtils.randomAlphanumeric(saltLength));
       String password = user.getSalt() + dto.getPassword();
       user.setPassword(DigestUtils.md5Hex(password));
@@ -282,11 +283,11 @@ public class UserService {
   public boolean belongsToGroupByName(String userID, String groupName,
       boolean includeChildren) {
     User user = userRepository.fetchById(userID);
-    Group group = groupRepository.findByName(groupName);
-    boolean retVal = group.getUsers().contains(user);
+    UserGroup userGroup = userGroupRepository.findByName(groupName);
+    boolean retVal = userGroup.getUsers().contains(user);
 
     if (!retVal && includeChildren) {
-      for (Group child : group.getChildren()) {
+      for (UserGroup child : userGroup.getChildren()) {
         if (belongsToGroupByName(userID, child.getName(),
             includeChildren)) {
           return true;
@@ -394,10 +395,10 @@ public class UserService {
   private Predicate buildPredicate(UserSearchCriteria criteria){
     Predicate predicate = new BooleanBuilder();
     if(criteria.getIncludeGroupIds() != null){
-      predicate = ((BooleanBuilder) predicate).and(qUser.groups.any().id.in(criteria.getIncludeGroupIds()));
+      predicate = ((BooleanBuilder) predicate).and(qUser.userGroups.any().id.in(criteria.getIncludeGroupIds()));
     }
     if(criteria.getExcludeGroupIds() != null){
-      predicate = ((BooleanBuilder) predicate).and(qUser.groups.any().id.notIn(criteria.getExcludeGroupIds()));
+      predicate = ((BooleanBuilder) predicate).and(qUser.userGroups.any().id.notIn(criteria.getExcludeGroupIds()));
     }
     if(criteria.getIncludeIds() != null){
       predicate = ((BooleanBuilder) predicate).and(qUser.id.in(criteria.getIncludeIds()));

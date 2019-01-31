@@ -1,7 +1,7 @@
 package com.eurodyn.qlack.fuse.aaa.service;
 
 
-import com.eurodyn.qlack.fuse.aaa.model.Group;
+import com.eurodyn.qlack.fuse.aaa.model.UserGroup;
 import com.eurodyn.qlack.fuse.aaa.model.User;
 import com.eurodyn.qlack.fuse.aaa.model.UserAttribute;
 import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
@@ -220,17 +220,17 @@ public class LdapUserUtil {
       return null;
     }
 
-    Group group = em.find(Group.class, groupId);
-    if (group == null) {
+    UserGroup userGroup = em.find(UserGroup.class, groupId);
+    if (userGroup == null) {
       return null;
     }
 
-    List<User> users = group.getUsers();
+    List<User> users = userGroup.getUsers();
     users.add(user);
 
-    List<Group> groups = new ArrayList<>();
-    groups.add(group);
-    user.setGroups(groups);
+    List<UserGroup> userGroups = new ArrayList<>();
+    userGroups.add(userGroup);
+    user.setUserGroups(userGroups);
 
     return groupId;
   }
@@ -263,24 +263,24 @@ public class LdapUserUtil {
   }
 
   private String updateGroupFromLdap(User user, Map<String, List<String>> ldap) {
-    Group oldGroup = user.getGroups().get(0);
-    String oldGroupId = oldGroup.getId();
+    UserGroup oldUserGroup = user.getUserGroups().get(0);
+    String oldGroupId = oldUserGroup.getId();
 
     String newGroupId = getFirst(ldap, ldapMappingGid);
     if (newGroupId == null) {
       return null;
     }
 
-    Group newGroup = em.find(Group.class, newGroupId);
-    if (newGroup == null) {
+    UserGroup newUserGroup = em.find(UserGroup.class, newGroupId);
+    if (newUserGroup == null) {
       return null;
     }
 
     if (!newGroupId.equals(oldGroupId)) {
-      oldGroup.getUsers().remove(user);
-      newGroup.getUsers().add(user);
-      user.getGroups().remove(oldGroup);
-      user.getGroups().add(newGroup);
+      oldUserGroup.getUsers().remove(user);
+      newUserGroup.getUsers().add(user);
+      user.getUserGroups().remove(oldUserGroup);
+      user.getUserGroups().add(newUserGroup);
     }
 
     return newGroupId;

@@ -5,9 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class GroupHasOperationDTO extends BaseDTO {
+public class UserGroupHasOperationDTO extends BaseDTO {
 
-  private GroupDTO groupDTO;
+  private UserGroupDTO userGroupDTO;
   private OperationDTO operationDTO;
   private ResourceDTO resourceDTO;
   private boolean deny;

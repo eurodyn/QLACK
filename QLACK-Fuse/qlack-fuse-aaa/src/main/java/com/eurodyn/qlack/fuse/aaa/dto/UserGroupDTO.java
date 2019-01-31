@@ -11,15 +11,15 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class GroupDTO extends BaseDTO {
+public class UserGroupDTO extends BaseDTO {
 
   private String name;
   private String objectId;
   private String description;
   private String parentId;
-  private Set<GroupDTO> children;
+  private Set<UserGroupDTO> children;
 
-  public GroupDTO(String id) {
+  public UserGroupDTO(String id) {
     setId(id);
   }
 

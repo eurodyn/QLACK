@@ -18,13 +18,13 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 /**
- * The persistent class for the aaa_group database table.
+ * The persistent class for the aaa_user_group database table.
  */
 @Entity
-@Table(name = "aaa_group")
+@Table(name = "aaa_user_group")
 @Getter
 @Setter
-public class Group extends  AAAModel {
+public class UserGroup extends  AAAModel {
 
   private static final long serialVersionUID = 1L;
 
@@ -40,47 +40,47 @@ public class Group extends  AAAModel {
 
   @ManyToOne
   @JoinColumn(name = "parent")
-  private Group parent;
+  private UserGroup parent;
 
   @OneToMany(mappedBy = "parent")
-  private List<Group> children;
+  private List<UserGroup> children;
 
-  //bi-directional many-to-one association to GroupHasOperation
-  @OneToMany(mappedBy = "group")
+  //bi-directional many-to-one association to UserGroupHasOperation
+  @OneToMany(mappedBy = "userGroup")
   @OnDelete(action = OnDeleteAction.CASCADE)
-  private List<GroupHasOperation> groupHasOperations;
+  private List<UserGroupHasOperation> userGroupHasOperations;
 
-  //bi-directional many-to-many association to Group
+  //bi-directional many-to-many association to UserGroup
   @ManyToMany
   @JoinTable(
       name = "aaa_user_has_group",
       joinColumns = {
-          @JoinColumn(name = "group_id")
+          @JoinColumn(name = "user_group_id")
       },
       inverseJoinColumns = {
           @JoinColumn(name = "user_id")
       })
   private List<User> users;
 
-  public Group() {
+  public UserGroup() {
     setId(UUID.randomUUID().toString());
   }
 
-  public GroupHasOperation addGroupHasOperation(GroupHasOperation groupHasOperation) {
-    if (getGroupHasOperations() == null) {
-      setGroupHasOperations(new ArrayList<GroupHasOperation>());
+  public UserGroupHasOperation addGroupHasOperation(UserGroupHasOperation userGroupHasOperation) {
+    if (this.getUserGroupHasOperations() == null) {
+      setUserGroupHasOperations(new ArrayList<UserGroupHasOperation>());
     }
-    getGroupHasOperations().add(groupHasOperation);
-    groupHasOperation.setGroup(this);
+    this.getUserGroupHasOperations().add(userGroupHasOperation);
+    userGroupHasOperation.setUserGroup(this);
 
-    return groupHasOperation;
+    return userGroupHasOperation;
   }
 
-  public GroupHasOperation removeGroupHasOperation(GroupHasOperation groupHasOperation) {
-    getGroupHasOperations().remove(groupHasOperation);
-    groupHasOperation.setGroup(null);
+  public UserGroupHasOperation removeGroupHasOperation(UserGroupHasOperation userGroupHasOperation) {
+    this.getUserGroupHasOperations().remove(userGroupHasOperation);
+    userGroupHasOperation.setUserGroup(null);
 
-    return groupHasOperation;
+    return userGroupHasOperation;
   }
 
 }

@@ -1,12 +1,10 @@
 package com.eurodyn.qlack.fuse.aaa.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -38,9 +36,9 @@ public class Resource extends AAAModel {
   @OneToMany(mappedBy = "resource")
   private List<UserHasOperation> userHasOperations;
 
-  //bi-directional many-to-one association to GroupHasOperation
+  //bi-directional many-to-one association to UserGroupHasOperation
   @OneToMany(mappedBy = "resource")
-  private List<GroupHasOperation> groupHasOperations;
+  private List<UserGroupHasOperation> userGroupHasOperations;
 
   //bi-directional many-to-one association to OpTemplateHasOperation
   @OneToMany(mappedBy = "resource")
@@ -67,21 +65,21 @@ public class Resource extends AAAModel {
     return userHasOperation;
   }
 
-  public GroupHasOperation addGroupHasOperation(GroupHasOperation groupHasOperation) {
-    if (getGroupHasOperations() == null) {
-      setGroupHasOperations(new ArrayList<GroupHasOperation>());
+  public UserGroupHasOperation addGroupHasOperation(UserGroupHasOperation userGroupHasOperation) {
+    if (this.getUserGroupHasOperations() == null) {
+      setUserGroupHasOperations(new ArrayList<UserGroupHasOperation>());
     }
-    getGroupHasOperations().add(groupHasOperation);
-    groupHasOperation.setResource(this);
+    this.getUserGroupHasOperations().add(userGroupHasOperation);
+    userGroupHasOperation.setResource(this);
 
-    return groupHasOperation;
+    return userGroupHasOperation;
   }
 
-  public GroupHasOperation removeGroupHasOperation(GroupHasOperation groupHasOperation) {
-    getGroupHasOperations().remove(groupHasOperation);
-    groupHasOperation.setResource(null);
+  public UserGroupHasOperation removeGroupHasOperation(UserGroupHasOperation userGroupHasOperation) {
+    this.getUserGroupHasOperations().remove(userGroupHasOperation);
+    userGroupHasOperation.setResource(null);
 
-    return groupHasOperation;
+    return userGroupHasOperation;
   }
 
   public OpTemplateHasOperation addOpTemplateHasOperation(

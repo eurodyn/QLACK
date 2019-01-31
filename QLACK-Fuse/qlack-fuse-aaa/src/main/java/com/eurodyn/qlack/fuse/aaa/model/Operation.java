@@ -36,9 +36,9 @@ public class Operation extends AAAModel {
   @Column(name = "dynamic_code")
   private String dynamicCode;
 
-  //bi-directional many-to-one association to GroupHasOperation
+  //bi-directional many-to-one association to UserGroupHasOperation
   @OneToMany(mappedBy = "operation")
-  private List<GroupHasOperation> groupHasOperations;
+  private List<UserGroupHasOperation> userGroupHasOperations;
 
   //bi-directional many-to-one association to OpTemplateHasOperation
   @OneToMany(mappedBy = "operation")
@@ -52,21 +52,21 @@ public class Operation extends AAAModel {
     setId(UUID.randomUUID().toString());
   }
 
-  public GroupHasOperation addGroupHasOperation(GroupHasOperation groupHasOperation) {
-    if (getGroupHasOperations() == null) {
-      setGroupHasOperations(new ArrayList<GroupHasOperation>());
+  public UserGroupHasOperation addGroupHasOperation(UserGroupHasOperation userGroupHasOperation) {
+    if (this.getUserGroupHasOperations() == null) {
+      setUserGroupHasOperations(new ArrayList<UserGroupHasOperation>());
     }
-    getGroupHasOperations().add(groupHasOperation);
-    groupHasOperation.setOperation(this);
+    this.getUserGroupHasOperations().add(userGroupHasOperation);
+    userGroupHasOperation.setOperation(this);
 
-    return groupHasOperation;
+    return userGroupHasOperation;
   }
 
-  public GroupHasOperation removeGroupHasOperation(GroupHasOperation groupHasOperation) {
-    getGroupHasOperations().remove(groupHasOperation);
-    groupHasOperation.setOperation(null);
+  public UserGroupHasOperation removeGroupHasOperation(UserGroupHasOperation userGroupHasOperation) {
+    this.getUserGroupHasOperations().remove(userGroupHasOperation);
+    userGroupHasOperation.setOperation(null);
 
-    return groupHasOperation;
+    return userGroupHasOperation;
   }
 
   public OpTemplateHasOperation addOpTemplateHasOperation(
