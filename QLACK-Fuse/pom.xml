@@ -26,4 +26,12 @@
     <module>qlack-fuse-audit</module>
     <module>qlack-fuse-crypto</module>
   </modules>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+    </dependency>
+  </dependencies>
+
 </project>

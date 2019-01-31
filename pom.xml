@@ -39,7 +39,6 @@
     <maven-compiler-plugin.version>${spring.boot.version}</maven-compiler-plugin.version>
     <mysql.version>8.0.14</mysql.version>
     <rest-assured.version>3.2.0</rest-assured.version>
-    <junit.version>4.12</junit.version>
     <hibernate.version>5.3.7.Final</hibernate.version>
     <hikaricp.version>3.2.0</hikaricp.version>
     <liquibase.version>3.6.2</liquibase.version>
