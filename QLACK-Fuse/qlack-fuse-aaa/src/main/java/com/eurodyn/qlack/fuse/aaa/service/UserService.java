@@ -98,7 +98,7 @@ public class UserService {
     return user.getId();
   }
 
-  public void updateUser(UserDTO dto, boolean updatePassword) {
+  public void updateUser(UserDTO dto, boolean updatePassword, boolean createIfMissing) {
     User user = userRepository.fetchById(dto.getId());
     if (updatePassword) {
 
@@ -110,7 +110,7 @@ public class UserService {
 
     if (dto.getUserAttributes() != null) {
       for (UserAttributeDTO attribute : dto.getUserAttributes()) {
-        updateAttribute(attribute, true);
+        updateAttribute(attribute, createIfMissing);
       }
     }
   }

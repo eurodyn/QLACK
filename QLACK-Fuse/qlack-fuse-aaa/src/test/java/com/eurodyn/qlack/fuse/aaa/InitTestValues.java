@@ -105,4 +105,36 @@ public class InitTestValues {
 
         return userDTO;
     }
+
+    public List<User> createUsers(){
+        List<User> users = new ArrayList<>();
+        users.add(this.createUser());
+
+        User user = new User();
+        user.setId("0b422f60-a66b-4526-937d-26802cd9c8a1");
+        user.setUsername("AAA Additional User");
+        user.setPassword("thisisanextremelysecurepassword");
+        user.setStatus((byte)1);
+        user.setSuperadmin(true);
+        user.setExternal(false);
+        users.add(user);
+
+        return users;
+    }
+
+    public List<UserDTO> createUsersDTO(){
+        List<UserDTO> usersDTO = new ArrayList<>();
+        usersDTO.add(this.createUserDTO());
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId("0b422f60-a66b-4526-937d-26802cd9c8a1");
+        userDTO.setUsername("AAA Additional User");
+        userDTO.setPassword("thisisanextremelysecurepassword");
+        userDTO.setStatus((byte)1);
+        userDTO.setSuperadmin(true);
+        userDTO.setExternal(false);
+        usersDTO.add(userDTO);
+
+        return usersDTO;
+    }
 }

@@ -136,4 +136,11 @@ public class UserMapperTest {
         User user  = userMapperImpl.mapToEntity(userDTO);
         assertEquals(userDTO.getUserAttributes().size(), user.getUserAttributes().size());
     }
+
+    @Test
+    public void mapToExistingEntity(){
+        UserDTO userDTO = initTestValues.createUserDTO();
+        User user = initTestValues.createUser();
+        userMapperImpl.mapToExistingEntity(userDTO, user);
+    }
 }
