@@ -42,7 +42,7 @@ public class User extends AAAModel {
   /**
    * An indicator that this user's password is not held in the database of AAA.
    */
-  private Boolean external = false;
+  private boolean external = false;
 
   //bi-directional many-to-one association to UserHasOperation
   @OneToMany(mappedBy = "user")

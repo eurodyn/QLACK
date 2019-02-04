@@ -1,14 +1,15 @@
 package com.eurodyn.qlack.fuse.aaa;
 
+import com.eurodyn.qlack.fuse.aaa.dto.SessionDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserAttributeDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserDTO;
+import com.eurodyn.qlack.fuse.aaa.model.Session;
 import com.eurodyn.qlack.fuse.aaa.model.User;
 import com.eurodyn.qlack.fuse.aaa.model.UserAttribute;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class InitTestValues {
 
@@ -89,6 +90,7 @@ public class InitTestValues {
         user.setSuperadmin(true);
         user.setExternal(false);
         user.setUserAttributes(this.createUserAttributes(user));
+        user.setSessions(this.createSessions(user));
 
         return user;
     }
@@ -136,5 +138,65 @@ public class InitTestValues {
         usersDTO.add(userDTO);
 
         return usersDTO;
+    }
+
+    public Session createSession(User user){
+        Session session = new Session();
+        session.setId("aa47e3e3-b732-4016-a921-18412fdf25ce");
+        if (user != null){
+            session.setUser(user);
+        } else{
+            session.setUser(this.createUser());
+        }
+        session.setApplicationSessionId("749547a7-ff2f-4ca5-829a-6ce33d2c3ef7");
+
+        return session;
+    }
+
+    public SessionDTO createSessionDTO(String userId){
+        SessionDTO sessionDTO = new SessionDTO();
+        sessionDTO.setId("aa47e3e3-b732-4016-a921-18412fdf25ce");
+        if(userId == null){
+            sessionDTO.setUserId(this.createUserDTO().getId());
+        } else{
+            sessionDTO.setUserId(userId);
+        }
+        sessionDTO.setApplicationSessionId("749547a7-ff2f-4ca5-829a-6ce33d2c3ef7");
+
+        return sessionDTO;
+    }
+
+    public List<Session> createSessions(User user){
+        List<Session> sessions = new ArrayList<>();
+        sessions.add(this.createSession(user));
+
+        Session session = new Session();
+        session.setId("46484114-8273-41f3-b0f6-7645596ab418");
+        if (user != null){
+            session.setUser(user);
+        } else{
+            session.setUser(this.createUser());
+        }
+        session.setApplicationSessionId("1e8ecaa6-1990-4ebd-a9f0-f267a01b02d6");
+        sessions.add(session);
+
+        return sessions;
+    }
+
+    public List<SessionDTO> createSessionsDTO(String userId){
+        List<SessionDTO> sessionsDTO = new ArrayList<>();
+        sessionsDTO.add(this.createSessionDTO(userId));
+
+        SessionDTO sessionDTO = new SessionDTO();
+        sessionDTO.setId("46484114-8273-41f3-b0f6-7645596ab418");
+        if (userId != null){
+            sessionDTO.setUserId(userId);
+        } else{
+            sessionDTO.setUserId(this.createUserDTO().getId());
+        }
+        sessionDTO.setApplicationSessionId("1e8ecaa6-1990-4ebd-a9f0-f267a01b02d6");
+        sessionsDTO.add(sessionDTO);
+
+        return sessionsDTO;
     }
 }

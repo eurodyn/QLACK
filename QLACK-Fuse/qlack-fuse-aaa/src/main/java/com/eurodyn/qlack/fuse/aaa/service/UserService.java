@@ -36,7 +36,6 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -135,7 +134,6 @@ public class UserService {
   }
 
   public Map<String, UserDTO> getUsersByIdAsHash(Collection<String> userIDs) {
-    Map<String, UserDTO> retVal = new HashMap<>();
     Predicate predicate = qUser.id.in(userIDs);
 
     return userRepository.findAll(predicate).stream()
@@ -168,7 +166,7 @@ public class UserService {
 
   public boolean isExternal(String userID) {
     User user = userRepository.fetchById(userID);
-    return user.getExternal() != null && user.getExternal();
+    return user.isExternal();
   }
 
   public String canAuthenticate(String username, String password) {
@@ -182,7 +180,7 @@ public class UserService {
      * authenticated with LDAP, a new user will also be created/duplicated in AAA as an external
      * user.
      */
-    if (user != null && BooleanUtils.isFalse(user.getExternal())) {
+    if (user != null && BooleanUtils.isFalse(user.isExternal())) {
       /** Generate password hash to compare with password stored in the DB. */
       String checkPassword = DigestUtils.md5Hex(user.getSalt() + password);
       if (checkPassword.equals(user.getPassword())) {
@@ -215,7 +213,7 @@ public class UserService {
     // Create a new session for the user.
     SessionDTO session = new SessionDTO();
     session.setUserId(user.getId());
-    session.setApplicationSessionID(applicationSessionID);
+    session.setApplicationSessionId(applicationSessionID);
     String sessionId = accountingService.createSession(session);
 
     // Create a DTO representation of the user and populate the session Id of the session that was

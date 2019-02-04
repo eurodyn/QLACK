@@ -72,7 +72,7 @@ public class UserMapperTest {
     public void mapToDTOExternalTest(){
         User user = initTestValues.createUser();
         UserDTO userDTO  = userMapperImpl.mapToDTO(user);
-        assertEquals(user.getExternal(), userDTO.isExternal());
+        assertEquals(user.isExternal(), userDTO.isExternal());
     }
 
     @Test
@@ -124,7 +124,7 @@ public class UserMapperTest {
     public void mapToEntityExternalTest(){
         UserDTO userDTO = initTestValues.createUserDTO();
         User user  = userMapperImpl.mapToEntity(userDTO);
-        assertEquals(userDTO.isExternal(), user.getExternal());
+        assertEquals(userDTO.isExternal(), user.isExternal());
     }
 
     @Test
