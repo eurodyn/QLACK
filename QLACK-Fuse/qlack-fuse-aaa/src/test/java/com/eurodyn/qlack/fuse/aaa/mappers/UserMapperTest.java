@@ -13,6 +13,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -27,57 +29,62 @@ public class UserMapperTest {
 
     private InitTestValues initTestValues;
 
+    private User user;
+
+    private UserDTO userDTO;
+
+    private List<User> users;
+
+    private List<UserDTO> usersDTO;
+
     @Before
     public void init(){
         initTestValues = new InitTestValues();
+        user = initTestValues.createUser();
+        userDTO = initTestValues.createUserDTO();
+        users = initTestValues.createUsers();
+        usersDTO = initTestValues.createUsersDTO();
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
-    public void mapToDTOIdTest(){
-        User user = initTestValues.createUser();
+    public void testMapToDTOId(){
         UserDTO userDTO  = userMapperImpl.mapToDTO(user);
         assertEquals(user.getId(), userDTO.getId());
     }
 
     @Test
-    public void mapToDTOUsernameTest(){
-        User user = initTestValues.createUser();
+    public void testMapToDTOUsername(){
         UserDTO userDTO  = userMapperImpl.mapToDTO(user);
         assertEquals(user.getUsername(), userDTO.getUsername());
     }
 
     @Test
-    public void mapToDTOPasswordTest(){
-        User user = initTestValues.createUser();
+    public void testMapToDTOPassword(){
         UserDTO userDTO  = userMapperImpl.mapToDTO(user);
         assertEquals(user.getPassword(), userDTO.getPassword());
     }
 
     @Test
-    public void mapToDTOStatusTest(){
-        User user = initTestValues.createUser();
+    public void testMapToDTOStatus(){
         UserDTO userDTO  = userMapperImpl.mapToDTO(user);
         assertEquals(user.getStatus(), userDTO.getStatus());
     }
 
     @Test
-    public void mapToDTOSuperAdminTest(){
-        User user = initTestValues.createUser();
+    public void testMapToDTOSuperAdmin(){
         UserDTO userDTO  = userMapperImpl.mapToDTO(user);
         assertEquals(user.isSuperadmin(), userDTO.isSuperadmin());
     }
 
     @Test
-    public void mapToDTOExternalTest(){
-        User user = initTestValues.createUser();
+    public void testMapToDTOExternal(){
         UserDTO userDTO  = userMapperImpl.mapToDTO(user);
         assertEquals(user.isExternal(), userDTO.isExternal());
     }
 
     @Test
-    public void mapToDTOUserAttributesTest(){
-        User user = initTestValues.createUser();
+    public void testMapToDTOUserAttributes(){
         for (UserAttribute a: user.getUserAttributes()){
             when(userAttributeMapper.mapToDTO(a)).thenReturn(new UserAttributeDTO(a.getName(), a.getData()));
         }
@@ -86,50 +93,43 @@ public class UserMapperTest {
     }
 
     @Test
-    public void mapToEntityIdTest(){
-        UserDTO userDTO = initTestValues.createUserDTO();
+    public void testMapToEntityId(){
         User user  = userMapperImpl.mapToEntity(userDTO);
         assertEquals(userDTO.getId(), user.getId());
     }
 
     @Test
-    public void mapToEntityUsernameTest(){
-        UserDTO userDTO = initTestValues.createUserDTO();
+    public void testMapToEntityUsername(){
         User user  = userMapperImpl.mapToEntity(userDTO);
         assertEquals(userDTO.getUsername(), user.getUsername());
     }
 
     @Test
-    public void mapToEntityPasswordTest(){
-        UserDTO userDTO = initTestValues.createUserDTO();
+    public void testMapToEntityPassword(){
         User user  = userMapperImpl.mapToEntity(userDTO);
         assertEquals(userDTO.getPassword(), user.getPassword());
     }
 
     @Test
-    public void mapToEntityStatusTest(){
-        UserDTO userDTO = initTestValues.createUserDTO();
+    public void testMapToEntityStatus(){
         User user  = userMapperImpl.mapToEntity(userDTO);
         assertEquals(userDTO.getStatus(), user.getStatus());
     }
 
     @Test
-    public void mapToEntitySuperAdminTest(){
-        UserDTO userDTO = initTestValues.createUserDTO();
+    public void testMapToEntitySuperAdmin(){
         User user  = userMapperImpl.mapToEntity(userDTO);
         assertEquals(userDTO.isSuperadmin(), user.isSuperadmin());
     }
 
     @Test
-    public void mapToEntityExternalTest(){
-        UserDTO userDTO = initTestValues.createUserDTO();
+    public void testMapToEntityExternal(){
         User user  = userMapperImpl.mapToEntity(userDTO);
         assertEquals(userDTO.isExternal(), user.isExternal());
     }
 
     @Test
-    public void mapToEntityUserAttributesTest(){
-        UserDTO userDTO = initTestValues.createUserDTO();
+    public void testMapToEntityUserAttributes(){
         for (UserAttributeDTO a: userDTO.getUserAttributes()){
             when(userAttributeMapper.mapToEntity(a)).thenReturn(new UserAttribute());
         }
@@ -138,9 +138,22 @@ public class UserMapperTest {
     }
 
     @Test
-    public void mapToExistingEntity(){
+    public void testMapToDTOListSize(){
+        List<UserDTO> usersDTO  = userMapperImpl.mapToDTO(users);
+        assertEquals(users.size(), usersDTO.size());
+    }
+
+    @Test
+    public void testMapToEntityListSize(){
+        List<User> users  = userMapperImpl.mapToEntity(usersDTO);
+        assertEquals(usersDTO.size(), users.size());
+    }
+
+    @Test
+    public void testMapToExistingEntity(){
         UserDTO userDTO = initTestValues.createUserDTO();
-        User user = initTestValues.createUser();
+        userDTO.setUsername("updated username");
         userMapperImpl.mapToExistingEntity(userDTO, user);
+        assertEquals(userDTO.getUsername(), user.getUsername());
     }
 }

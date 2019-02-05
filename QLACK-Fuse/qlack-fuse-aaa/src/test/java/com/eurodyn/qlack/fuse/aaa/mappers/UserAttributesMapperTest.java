@@ -22,93 +22,95 @@ public class UserAttributesMapperTest {
 
     private InitTestValues initTestValues;
 
+    private UserAttribute userAttribute;
+
+    private UserAttributeDTO userAttributeDTO;
+
+    private List<UserAttribute> userAttributes;
+
+    private List<UserAttributeDTO> userAttributesDTO;
+
     @Before
     public void init(){
         initTestValues = new InitTestValues();
+        userAttribute = initTestValues.createUserAttribute(null);
+        userAttributeDTO = initTestValues.createUserAttributeDTO(null);
+        userAttributes = initTestValues.createUserAttributes(null);
+        userAttributesDTO = initTestValues.createUserAttributesDTO(null);
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
-    public void mapToDTOIdTest(){
-        UserAttribute userAttribute = initTestValues.createUserAttribute(null);
+    public void testMapToDTOId(){
         UserAttributeDTO userAttributeDTO  = userAttributeMapperImpl.mapToDTO(userAttribute);
         assertEquals(userAttribute.getId(), userAttributeDTO.getId());
     }
 
     @Test
-    public void mapToDTONameTest(){
-        UserAttribute userAttribute = initTestValues.createUserAttribute(null);
+    public void testMapToDTOName(){
         UserAttributeDTO userAttributeDTO  = userAttributeMapperImpl.mapToDTO(userAttribute);
         assertEquals(userAttribute.getName(), userAttributeDTO.getName());
     }
 
     @Test
-    public void mapToDTODataTest(){
-        UserAttribute userAttribute = initTestValues.createUserAttribute(null);
+    public void testMapToDTOData(){
         UserAttributeDTO userAttributeDTO  = userAttributeMapperImpl.mapToDTO(userAttribute);
         assertEquals(userAttribute.getData(), userAttributeDTO.getData());
     }
 
     @Test
-    public void mapToDTOContentTypeTest(){
-        UserAttribute userAttribute = initTestValues.createUserAttribute(null);
+    public void testMapToDTOContentType(){
         UserAttributeDTO userAttributeDTO  = userAttributeMapperImpl.mapToDTO(userAttribute);
         assertEquals(userAttribute.getContentType(), userAttributeDTO.getContentType());
     }
 
     @Test
-    public void mapToDTOUserTest(){
-        UserAttribute userAttribute = initTestValues.createUserAttribute(null);
+    public void testMapToDTOUser(){
         UserAttributeDTO userAttributeDTO  = userAttributeMapperImpl.mapToDTO(userAttribute);
         assertEquals(userAttribute.getUser().getId(), userAttributeDTO.getUserId());
     }
 
     @Test
-    public void mapToEntityIdTest(){
-        UserAttributeDTO userAttributeDTO = initTestValues.createUserAttributeDTO(null);
+    public void testMapToEntityId(){
         UserAttribute userAttribute = userAttributeMapperImpl.mapToEntity(userAttributeDTO);
         assertEquals(userAttributeDTO.getId(), userAttribute.getId());
     }
 
     @Test
-    public void mapToEntityNameTest(){
-        UserAttributeDTO userAttributeDTO = initTestValues.createUserAttributeDTO(null);
+    public void testMapToEntityName(){
         UserAttribute userAttribute = userAttributeMapperImpl.mapToEntity(userAttributeDTO);
         assertEquals(userAttributeDTO.getName(), userAttribute.getName());
     }
 
     @Test
-    public void mapToEntityDataTest(){
-        UserAttributeDTO userAttributeDTO = initTestValues.createUserAttributeDTO(null);
+    public void testMapToEntityData(){
         UserAttribute userAttribute = userAttributeMapperImpl.mapToEntity(userAttributeDTO);
         assertEquals(userAttributeDTO.getData(), userAttribute.getData());
     }
 
     @Test
-    public void mapToEntityContentTypeTest(){
-        UserAttributeDTO userAttributeDTO = initTestValues.createUserAttributeDTO(null);
+    public void testMapToEntityContentType(){
         UserAttribute userAttribute = userAttributeMapperImpl.mapToEntity(userAttributeDTO);
         assertEquals(userAttributeDTO.getContentType(), userAttribute.getContentType());
     }
 
     @Test
-    public void mapToDTOListSizeTest(){
-        List<UserAttribute> userAttributes = initTestValues.createUserAttributes(null);
+    public void testMapToDTOListSize(){
         List<UserAttributeDTO> userAttributeDTO  = userAttributeMapperImpl.mapToDTO(userAttributes);
         assertEquals(userAttributes.size(), userAttributeDTO.size());
     }
 
     @Test
-    public void mapToEntityListSizeTest(){
-        List<UserAttributeDTO> userAttributesDTO = initTestValues.createUserAttributesDTO(null);
+    public void testMapToEntityListSize(){
         List<UserAttribute> userAttributes  = userAttributeMapperImpl.mapToEntity(userAttributesDTO);
         assertEquals(userAttributesDTO.size(), userAttributes.size());
     }
 
     @Test
-    public void mapToExistingEntity(){
+    public void testMapToExistingEntity(){
         UserAttributeDTO userAttributeDTO = initTestValues.createUserAttributeDTO(null);
-        UserAttribute userAttribute = initTestValues.createUserAttribute(null);
+        userAttributeDTO.setName("updated name");
         userAttributeMapperImpl.mapToExistingEntity(userAttributeDTO, userAttribute);
+        assertEquals(userAttributeDTO.getName(), userAttribute.getName());
     }
 }
