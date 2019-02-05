@@ -2,16 +2,16 @@ package com.eurodyn.qlack.fuse.audit.service;
 
 
 import com.eurodyn.qlack.fuse.audit.dto.AuditLevelDTO;
+import com.eurodyn.qlack.fuse.audit.exceptions.AlreadyExistsException;
 import com.eurodyn.qlack.fuse.audit.mappers.AuditLevelMapper;
 import com.eurodyn.qlack.fuse.audit.model.AuditLevel;
 import com.eurodyn.qlack.fuse.audit.repository.AuditLevelRepository;
-import javax.transaction.Transactional;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.transaction.Transactional;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 @Transactional
 @Validated
@@ -38,11 +38,11 @@ public class AuditLevelService {
     return alLevel.getId();
   }
 
-  public String addLevelIfNotExists(AuditLevelDTO level) {
+  public String addLevelIfNotExists(AuditLevelDTO level) throws AlreadyExistsException {
     if (listAuditLevels().stream().filter(o -> o.getName().equals(level.getName())).count() == 0) {
       return addLevel(level);
     } else {
-      return null;
+      throw new AlreadyExistsException("Level: " + level.getName() + " already exists and will not be added.");
     }
   }
 

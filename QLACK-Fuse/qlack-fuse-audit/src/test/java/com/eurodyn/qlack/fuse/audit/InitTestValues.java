@@ -27,7 +27,7 @@ public class InitTestValues {
     private String opt3 = "Third optional attribute";
     private String correlationId = "12345";
     private String referenceId = "11111";
-    private Long auditCreatedOn =  1625145120000L;
+    private Long auditCreatedOn = 1625145120000L;
 
     private String auditLevelId = "8a882f69-147b-4d4c-a39e-76221b408644";
     private String auditLevelDescription = "Level Description";
@@ -88,22 +88,22 @@ public class InitTestValues {
         return audits;
     }
 
-    public List<AuditDTO> createAuditDTOs() {
-        List<AuditDTO> auditDTOS = new ArrayList<>();
-        auditDTOS.add(createAuditDTO());
+    public List<AuditDTO> createAuditsDTO() {
+        List<AuditDTO> auditsDTO = new ArrayList<>();
+        auditsDTO.add(createAuditDTO());
 
         AuditDTO auditDTO2 = createAuditDTO();
         auditDTO2.setId("ed9884fd-2015-4d55-a8b0-80d56606e830");
         auditDTO2.setEvent("Back End Event");
-        auditDTOS.add(auditDTO2);
+        auditsDTO.add(auditDTO2);
 
         AuditDTO auditDTO3 = createAuditDTO();
         auditDTO3 = createAuditDTO();
         auditDTO3.setId("ed9884fd-2015-4d55-a8b0-80d56606e811");
         auditDTO3.setEvent("Back End Event");
-        auditDTOS.add(auditDTO3);
+        auditsDTO.add(auditDTO3);
 
-        return auditDTOS;
+        return auditsDTO;
     }
 
     public AuditLevelDTO createAuditLevelDTO() {
@@ -116,7 +116,7 @@ public class InitTestValues {
         return auditLevelDTO;
     }
 
-    public AuditLevel createAuditLevel(){
+    public AuditLevel createAuditLevel() {
         AuditLevel auditLevel = new AuditLevel();
         auditLevel.setId(auditLevelId);
         auditLevel.setName(auditLevelName);
@@ -126,17 +126,17 @@ public class InitTestValues {
         return auditLevel;
     }
 
-    public List<AuditLevelDTO> createAuditLevelDTOs() {
-        List<AuditLevelDTO> auditLevelDTOs = new ArrayList<>();
-        auditLevelDTOs.add(createAuditLevelDTO());
+    public List<AuditLevelDTO> createAuditLevelsDTO() {
+        List<AuditLevelDTO> auditLevelsDTO = new ArrayList<>();
+        auditLevelsDTO.add(createAuditLevelDTO());
         AuditLevelDTO auditLevelDTO = new AuditLevelDTO();
         auditLevelDTO.setId("c247dcfb-4a80-4bec-9e64-d867b7e92080");
         auditLevelDTO.setName(auditLevelName);
         auditLevelDTO.setDescription(auditLevelDescription);
         auditLevelDTO.setPrinSessionId(auditPrinSessionId);
         auditLevelDTO.setCreatedOn(auditCreatedOn);
-        auditLevelDTOs.add(auditLevelDTO);
-        return auditLevelDTOs;
+        auditLevelsDTO.add(auditLevelDTO);
+        return auditLevelsDTO;
     }
 
     public List<AuditLevel> createAuditLevels() {
@@ -166,14 +166,14 @@ public class InitTestValues {
         return auditTrace;
     }
 
-    public List<AuditTraceDTO> createAuditTraceDTOs() {
-        List<AuditTraceDTO> auditTraceDTOs = new ArrayList<>();
-        auditTraceDTOs.add(createAuditTraceDTO());
+    public List<AuditTraceDTO> createAuditTracesDTO() {
+        List<AuditTraceDTO> auditTracesDTO = new ArrayList<>();
+        auditTracesDTO.add(createAuditTraceDTO());
         AuditTraceDTO auditTraceDTO = createAuditTraceDTO();
         auditTraceDTO.setId("e0b5c8e6-a7f3-431f-bd5a-be472bf30f76");
         auditTraceDTO.setTraceData(auditTraceData);
-        auditTraceDTOs.add(auditTraceDTO);
-        return auditTraceDTOs;
+        auditTracesDTO.add(auditTraceDTO);
+        return auditTracesDTO;
     }
 
     public List<AuditTrace> createAuditTraces() {

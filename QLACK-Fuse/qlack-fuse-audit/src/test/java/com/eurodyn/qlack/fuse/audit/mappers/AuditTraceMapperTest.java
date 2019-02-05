@@ -27,7 +27,7 @@ public class AuditTraceMapperTest {
     private AuditTrace auditTrace;
     private AuditTraceDTO auditTraceDTO;
     private List<AuditTrace> auditTraces;
-    private List<AuditTraceDTO> auditTraceDTOs;
+    private List<AuditTraceDTO> auditTracesDTO;
 
     @Before
     public void init() {
@@ -36,49 +36,49 @@ public class AuditTraceMapperTest {
         auditTrace = initTestValues.createAuditTrace();
         auditTraceDTO = initTestValues.createAuditTraceDTO();
         auditTraces = initTestValues.createAuditTraces();
-        auditTraceDTOs = initTestValues.createAuditTraceDTOs();
+        auditTracesDTO = initTestValues.createAuditTracesDTO();
 
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
-    public void mapToDTOIdTest() {
+    public void testMapToDTOId() {
         auditTraceDTO = auditTraceMapperImpl.mapToDTO(auditTrace);
         assertEquals(auditTraceDTO.getId(), auditTrace.getId());
     }
 
     @Test
-    public void mapToEntityIdTest() {
-        auditTrace = auditTraceMapperImpl.mapToEntity(auditTraceDTO);
-        assertEquals(auditTrace.getId(), auditTraceDTO.getId());
-    }
-
-    @Test
-    public void mapToDTOTraceDataTest() {
+    public void testMapToDTOTraceData() {
         auditTraceDTO = auditTraceMapperImpl.mapToDTO(auditTrace);
         assertEquals(auditTraceDTO.getTraceData(), auditTrace.getTraceData());
     }
 
     @Test
-    public void mapToEntityTraceDataTest() {
+    public void testMapToEntityId() {
+        auditTrace = auditTraceMapperImpl.mapToEntity(auditTraceDTO);
+        assertEquals(auditTrace.getId(), auditTraceDTO.getId());
+    }
+
+    @Test
+    public void testMapToDTOList() {
+        auditTracesDTO = auditTraceMapperImpl.mapToDTO(auditTraces);
+        assertEquals(auditTraces.size(), auditTracesDTO.size());
+    }
+
+    @Test
+    public void testMapToEntityTraceData() {
         auditTrace = auditTraceMapperImpl.mapToEntity(auditTraceDTO);
         assertEquals(auditTrace.getTraceData(), auditTraceDTO.getTraceData());
     }
 
     @Test
-    public void mapToDTOListTest() {
-        auditTraceDTOs = auditTraceMapperImpl.mapToDTO(auditTraces);
-        assertEquals(auditTraces.size(), auditTraceDTOs.size());
+    public void testMapToEntityList() {
+        auditTraces = auditTraceMapperImpl.mapToEntity(auditTracesDTO);
+        assertEquals(auditTracesDTO.size(), auditTracesDTO.size());
     }
 
     @Test
-    public void mapToEntityListTest() {
-        auditTraces = auditTraceMapperImpl.mapToEntity(auditTraceDTOs);
-        assertEquals(auditTraceDTOs.size(), auditTraceDTOs.size());
-    }
-
-    @Test
-    public void mapToExistingEntity() {
+    public void testMapToExistingEntity() {
         auditTraceDTO.setTraceData("New mock data");
         auditTraceMapperImpl.mapToExistingEntity(auditTraceDTO, auditTrace);
         assertEquals(auditTraceDTO.getTraceData(), auditTrace.getTraceData());

@@ -12,6 +12,7 @@ import com.eurodyn.qlack.fuse.audit.exceptions.AlreadyExistsException;
 import com.eurodyn.qlack.fuse.audit.mappers.AuditLevelMapper;
 import com.eurodyn.qlack.fuse.audit.model.AuditLevel;
 import com.eurodyn.qlack.fuse.audit.repository.AuditLevelRepository;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,42 +40,46 @@ public class AuditLevelServiceTest {
     private InitTestValues initTestValues;
     private AuditLevelDTO auditLevelDTO;
     private AuditLevel auditLevel;
+    private List<AuditLevel> auditLevels;
+    private List<AuditLevelDTO> auditLevelsDTO;
 
     @Before
-    public void init(){
+    public void init() {
         auditLevelService = new AuditLevelService(auditLevelRepository, auditLevelMapper);
         initTestValues = new InitTestValues();
         auditLevelDTO = initTestValues.createAuditLevelDTO();
         auditLevel = initTestValues.createAuditLevel();
+        auditLevels = initTestValues.createAuditLevels();
+        auditLevelsDTO = initTestValues.createAuditLevelsDTO();
 
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
-    public void addLevelTest() {
+    public void testAddLevel() {
         when(auditLevelMapper.mapToEntity(auditLevelDTO)).thenReturn(auditLevel);
         String auditLevelId = auditLevelService.addLevel(auditLevelDTO);
 
         assertEquals(auditLevel.getId(), auditLevelId);
         verify(auditLevelRepository, times(1)).save(auditLevel);
-
     }
 
-    public void addNotExistingLevelTest(){
-        when(auditLevelService.listAuditLevels()).thenReturn(null);
+    @Test
+    public void testAddNotExistingLevel() {
+        when(auditLevelService.listAuditLevels()).thenReturn(new ArrayList<>());
+        when(auditLevelMapper.mapToEntity(auditLevelDTO)).thenReturn(auditLevel);
         auditLevelService.addLevelIfNotExists(auditLevelDTO);
-        verify(auditLevelService, times(1)).addLevel(auditLevelDTO);
+        verify(auditLevelRepository, times(1)).save(auditLevel);
     }
 
     @Test(expected = AlreadyExistsException.class)
-    public void addExistingLevelTest(){
-        List<AuditLevelDTO> auditLevelDTOs = initTestValues.createAuditLevelDTOs();
-        when(auditLevelService.listAuditLevels()).thenReturn(auditLevelDTOs);
+    public void testAddExistingLevel() {
+        when(auditLevelService.listAuditLevels()).thenReturn(auditLevelsDTO);
         auditLevelService.addLevelIfNotExists(auditLevelDTO);
     }
 
     @Test
-    public void deleteLevelByIdTest() {
+    public void testDeleteLevelById() {
         AuditLevel auditLevel2 = initTestValues.createAuditLevel();
         when(auditLevelRepository.fetchById(auditLevel.getId())).thenReturn(auditLevel2);
         auditLevelService.deleteLevelById(auditLevel.getId());
@@ -83,7 +88,7 @@ public class AuditLevelServiceTest {
     }
 
     @Test
-    public void deleteLevelByNameTest() {
+    public void testDeleteLevelByName() {
         AuditLevel auditLevel2 = initTestValues.createAuditLevel();
         when(auditLevelRepository.findByName(auditLevel.getName())).thenReturn(auditLevel2);
         auditLevelService.deleteLevelByName(auditLevel.getName());
@@ -92,30 +97,28 @@ public class AuditLevelServiceTest {
     }
 
     @Test
-    public void  updateLevelTest() {
+    public void testUpdateLevel() {
         when(auditLevelMapper.mapToEntity(auditLevelDTO)).thenReturn(auditLevel);
+        auditLevelDTO.setDescription("Updated description");
         auditLevelService.updateLevel(auditLevelDTO);
-
         verify(auditLevelMapper, times(1)).mapToEntity(auditLevelDTO);
     }
 
     @Test
-    public void getAuditLevelByNameTest() {
+    public void testGetAuditLevelByName() {
         when(auditLevelRepository.findByName(auditLevel.getName())).thenReturn(auditLevel);
         when(auditLevelMapper.mapToDTO(auditLevel)).thenReturn(auditLevelDTO);
         AuditLevelDTO foundAudit = auditLevelService.getAuditLevelByName(auditLevel.getName());
 
-        assertEquals(auditLevelDTO.getId(), foundAudit.getId());
+        assertEquals(auditLevelDTO, foundAudit);
     }
 
     @Test
-    public void listAuditLevelsTest() {
-        List<AuditLevel> auditLevels = initTestValues.createAuditLevels();
-        List<AuditLevelDTO> auditLevelDTOS = initTestValues.createAuditLevelDTOs();
+    public void testListAuditLevels() {
         when(auditLevelRepository.findAll()).thenReturn(auditLevels);
-        when(auditLevelMapper.mapToDTO(auditLevels)).thenReturn(auditLevelDTOS);
+        when(auditLevelMapper.mapToDTO(auditLevels)).thenReturn(auditLevelsDTO);
         List<AuditLevelDTO> allAuditLevels = auditLevelService.listAuditLevels();
 
-        assertEquals(allAuditLevels, auditLevelDTOS);
+        assertEquals(allAuditLevels, auditLevelsDTO);
     }
 }

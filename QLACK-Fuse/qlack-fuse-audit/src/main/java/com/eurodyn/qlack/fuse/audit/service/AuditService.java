@@ -54,6 +54,20 @@ public class AuditService {
 
   public void audit(String level, String event, String groupName,
       String description, String sessionID, Object traceData) {
+    audit(level, event, groupName, description, sessionID, createTraceDataStr(traceData));
+  }
+
+  public String audit(String level, String event, String groupName, String description,
+      String sessionID, Object traceData, String referenceId) {
+    AuditDTO dto = new AuditDTO(level, event, groupName, description, sessionID);
+    dto.setReferenceId(referenceId);
+    if (auditProperties.isTraceData()) {
+      dto.setTrace(new AuditTraceDTO(createTraceDataStr(traceData)));
+    }
+    return audit(dto);
+  }
+
+  private String createTraceDataStr(Object traceData) {
     String traceDataStr = "";
     if (traceData != null) {
       try {
@@ -62,41 +76,12 @@ public class AuditService {
         traceDataStr = e.getLocalizedMessage();
       }
     }
-    audit(level, event, groupName, description,
-        sessionID, traceDataStr);
-  }
-
-  public String audit(String level, String event, String groupName, String description,
-      String sessionID, Object traceData, String referenceId) {
-    AuditDTO dto = new AuditDTO();
-    dto.setLevel(level);
-    dto.setEvent(event);
-    dto.setGroupName(groupName);
-    dto.setShortDescription(description);
-    dto.setPrinSessionId(sessionID);
-    dto.setReferenceId(referenceId);
-    if (auditProperties.isTraceData()) {
-      String traceDataStr = "";
-      if (traceData != null) {
-        try {
-          traceDataStr = mapper.writeValueAsString(traceData);
-        } catch (Exception e) {
-          traceDataStr = e.getLocalizedMessage();
-        }
-      }
-      dto.setTrace(new AuditTraceDTO(traceDataStr));
-    }
-    return audit(dto);
+    return traceDataStr;
   }
 
   public void audit(String level, String event, String groupName,
       String description, String sessionID, String traceData) {
-    AuditDTO dto = new AuditDTO();
-    dto.setLevel(level);
-    dto.setEvent(event);
-    dto.setGroupName(groupName);
-    dto.setShortDescription(description);
-    dto.setPrinSessionId(sessionID);
+    AuditDTO dto = new AuditDTO(level, event, groupName, description, sessionID);
     if (auditProperties.isTraceData()) {
       dto.setTrace(new AuditTraceDTO(traceData));
     }
@@ -105,6 +90,11 @@ public class AuditService {
 
   public String audit(AuditDTO audit) {
     LOGGER.log(Level.FINER, "Adding audit ''{0}''.", audit);
+
+    return audit(audit, false, "");
+  }
+
+  public String audit(AuditDTO audit, boolean addCorrelationId, String correlationId) {
     if (audit.getCreatedOn() == null) {
       audit.setCreatedOn(Calendar.getInstance().getTimeInMillis());
     }
@@ -116,6 +106,10 @@ public class AuditService {
     if(alAudit.getCreatedOn() == null){
       alAudit.setCreatedOn(Calendar.getInstance().getTimeInMillis());
     }
+
+    if (addCorrelationId) {
+      alAudit.setCorrelationId(correlationId);
+    }
     auditRepository.save(alAudit);
     return alAudit.getId();
   }
@@ -124,23 +118,7 @@ public class AuditService {
     LOGGER.log(Level.FINER, "Adding audits ''{0}''.", auditList);
 
     List<String> uuids = new ArrayList<>();
-
-    for (AuditDTO audit : auditList) {
-      if (audit.getCreatedOn() == null) {
-        audit.setCreatedOn(Calendar.getInstance().getTimeInMillis());
-      }
-      Audit alAudit = auditMapper.mapToEntity(audit);
-      alAudit.setLevelId(auditLevelRepository.findByName(audit.getLevel()));
-      alAudit.setCorrelationId(correlationId);
-      if (null != alAudit.getTrace()) {
-        auditTraceRepository.save(alAudit.getTrace());
-      }
-      if(alAudit.getCreatedOn() == null){
-        alAudit.setCreatedOn(Calendar.getInstance().getTimeInMillis());
-      }
-      auditRepository.save(alAudit);
-      uuids.add(alAudit.getId());
-    }
+    auditList.stream().forEach(audit -> uuids.add(audit(audit, true, correlationId)));
 
     return uuids;
   }
