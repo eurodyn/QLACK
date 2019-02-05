@@ -6,8 +6,5 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
 	<include file="db/changelog/auditing_1.yaml" />
-	<include file="db/changelog/auditing_2.yaml" />
-  <include file="db/changelog/auditing_3.yaml" />
-	<include file="db/changelog/auditing_4.yaml" />
 
 </databaseChangeLog>
