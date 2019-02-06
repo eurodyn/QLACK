@@ -1,7 +1,7 @@
 package com.eurodyn.qlack.common.exceptions;
 
 /**
- * A generic exception superclass to facilitate marking of authorisation-related exceptions.
+ * A generic exception superclass to facilitate marking of authorisation-related exception.
  */
 public class QAuthorisationException extends QSecurityException {
 

@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * An annotation going together with {@link ExceptionWrapperAspect} to indicate methods that need
- * to have their exceptions wrapped.
+ * to have their exception wrapped.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

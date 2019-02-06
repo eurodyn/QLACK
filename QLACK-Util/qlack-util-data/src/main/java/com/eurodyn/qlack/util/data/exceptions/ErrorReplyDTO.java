@@ -1,7 +1,7 @@
 package com.eurodyn.qlack.util.data.exceptions;
 
 /**
- * A generic error reply to be returned in wrapped exceptions where the original exception is
+ * A generic error reply to be returned in wrapped exception where the original exception is
  * hidden. The message of this class is the logMessage of {@link ExceptionWrapper}.
  */
 public class ErrorReplyDTO {

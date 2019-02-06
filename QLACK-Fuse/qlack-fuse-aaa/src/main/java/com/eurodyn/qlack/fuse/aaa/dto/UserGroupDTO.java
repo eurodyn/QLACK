@@ -4,6 +4,7 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
  * @author European Dynamics SA
@@ -11,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserGroupDTO extends BaseDTO {
+public class UserGroupDTO extends BaseDTO implements GrantedAuthority {
 
   private String name;
   private String objectId;
@@ -23,4 +24,8 @@ public class UserGroupDTO extends BaseDTO {
     setId(id);
   }
 
+  @Override
+  public String getAuthority() {
+    return name;
+  }
 }

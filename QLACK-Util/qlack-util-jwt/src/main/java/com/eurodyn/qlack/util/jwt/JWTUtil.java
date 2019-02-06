@@ -6,20 +6,20 @@ import com.eurodyn.qlack.util.jwt.dto.JWTGenerateRequestDTO;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import java.security.Key;
+import java.util.Date;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.codec.binary.Base64;
-
-import java.security.Key;
-import java.util.Date;
+import org.springframework.http.HttpHeaders;
 
 /**
- * A utility class to generate and valiate JSON Web Tokens.
+ * A utility class to generate and validate JSON Web Tokens.
  */
 public class JWTUtil {
-  private static final String HEADER_STRING = "Authorization";
-  private static final String TOKEN_PREFIX = "Bearer";
+
+  public static final String TOKEN_PREFIX = "Bearer ";
 
   private JWTUtil() {
   }
@@ -29,31 +29,31 @@ public class JWTUtil {
    *
    * @param request The parameters to be used to create the JWT.
    */
-  public static final String generateToken(final JWTGenerateRequestDTO request) {
+  public static String generateToken(JWTGenerateRequestDTO request) {
+
     // The JWT signature algorithm to be used to sign the token.
-    final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+    SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
     // Set current time.
-    final long nowMillis = System.currentTimeMillis();
-    final Date now = new Date(nowMillis);
+    long nowMillis = System.currentTimeMillis();
+    Date now = new Date(nowMillis);
 
     // We will sign our JWT with our ApiKey secret
-    final byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(
-        Base64.encodeBase64String(request.getSecret().getBytes()));
-    final Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+    byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(Base64.encodeBase64String(request.getSecret().getBytes()));
+    Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
     // Set the JWT claims.
-    final JwtBuilder builder = Jwts.builder()
-        .setId(request.getId())
-        .setIssuedAt(now)
-        .setSubject(request.getSubject())
-        .setIssuer(request.getIssuer())
-        .signWith(signatureAlgorithm, signingKey);
+    JwtBuilder builder = Jwts.builder()
+            .setId(request.getId())
+            .setIssuedAt(now)
+            .setSubject(request.getSubject())
+            .setIssuer(request.getIssuer())
+            .signWith(signatureAlgorithm, signingKey);
 
     // If it has been specified, add the expiration for the token.
     if (request.getTtl() >= 0) {
-      final long expMillis = nowMillis + request.getTtl();
-      final Date exp = new Date(expMillis);
+      long expMillis = nowMillis + request.getTtl();
+      Date exp = new Date(expMillis);
       builder.setExpiration(exp);
     }
 
@@ -62,8 +62,8 @@ public class JWTUtil {
       builder.addClaims(request.getClaims());
     }
 
-    // Builds the JWT and serializes it to a compact, URL-safe string.
-    return builder.compact();
+    // Builds the JWT and serializes it to a compact, URL-safe string with the prefix.
+    return TOKEN_PREFIX + builder.compact();
   }
 
   /**
@@ -76,10 +76,10 @@ public class JWTUtil {
 
     try {
       response.setClaims(
-          Jwts.parser().setSigningKey(
-              Base64.encodeBase64String(request.getSecret().getBytes()))
-              .setAllowedClockSkewSeconds(request.getAllowedTimeSkew())
-              .parseClaimsJws(request.getJwt()).getBody());
+              Jwts.parser()
+                      .setSigningKey(Base64.encodeBase64String(request.getSecret().getBytes()))
+                      .setAllowedClockSkewSeconds(request.getAllowedTimeSkew())
+                      .parseClaimsJws(request.getJwt()).getBody());
       response.setValid(true);
     } catch (Exception e) {
       response.setValid(false);
@@ -87,6 +87,17 @@ public class JWTUtil {
     }
 
     return response;
+  }
+
+  public static Object getSubject(JWTClaimsRequestDTO request) {
+    String jwt = request.getJwt().replace(TOKEN_PREFIX, "");
+
+    return Jwts.parser()
+            .setSigningKey(Base64.encodeBase64String(request.getSecret().getBytes()))
+            .setAllowedClockSkewSeconds(request.getAllowedTimeSkew())
+            .parseClaimsJws(jwt)
+            .getBody()
+            .getSubject();
   }
 
   /**
@@ -97,7 +108,8 @@ public class JWTUtil {
    * @return The calue of the requested claim.
    */
   public static Object getClaimValue(JWTClaimsRequestDTO jwtClaimsRequest, String claim) {
-    final JWTClaimsResponseDTO claims = getClaims(jwtClaimsRequest);
+    JWTClaimsResponseDTO claims = getClaims(jwtClaimsRequest);
+
     if (claims != null && claims.getClaims() != null && claims.getClaims().containsKey(claim)) {
       return claims.getClaims().get(claim);
     } else {
@@ -114,16 +126,15 @@ public class JWTUtil {
    * @return Returns the String representation of the JWT.
    */
   public static String tokenToString(String jwt, String secret) {
-    return Jwts.parser().setSigningKey(Base64.encodeBase64String(secret.getBytes())).parse(jwt)
-        .toString();
+    return Jwts.parser()
+            .setSigningKey(Base64.encodeBase64String(secret.getBytes()))
+            .parse(jwt)
+            .toString();
   }
 
   public static String getRawToken(HttpServletRequest request) {
-    final String token = request.getHeader(HEADER_STRING);
-    if (token != null) {
-      return token.replace(TOKEN_PREFIX, "");
-    } else {
-      return null;
-    }
+    String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+    return token != null ? token.replace(TOKEN_PREFIX, "") : null;
   }
 }

@@ -87,7 +87,7 @@ public class UserServiceTest {
         userService = new UserService(accountingService, ldapUserUtil,
                 userRepository, userAttributeRepository,
                 sessionRepository, null, userMapper,
-                sessionMapper, userAttributeMapper);
+                sessionMapper, userAttributeMapper, null);
         qUser = new QUser("user");
         qSession = new QSession(("session"));
         user = initTestValues.createUser();

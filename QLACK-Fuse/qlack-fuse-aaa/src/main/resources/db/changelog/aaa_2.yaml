@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: aaa_2
+      author: European Dynamics SA
+      changes:
+        - modifyDataType:
+            columnName: pswd
+            newDataType: varchar(60)
+            tableName: aaa_user
+        - dropNotNullConstraint:
+            columnDataType: varchar(60)
+            columnName: salt
+            tableName: aaa_user

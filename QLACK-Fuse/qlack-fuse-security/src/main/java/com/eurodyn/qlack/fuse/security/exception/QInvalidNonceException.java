@@ -12,11 +12,13 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package com.eurodyn.qlack.fuse.aaa.exception;
+package com.eurodyn.qlack.fuse.security.exception;
 
-public class DynamicOperationException extends AAAException {
+import com.eurodyn.qlack.common.exceptions.QException;
 
-  public DynamicOperationException(String msg) {
+public class QInvalidNonceException extends QException {
+
+  public QInvalidNonceException(String msg) {
     super(msg);
   }
 

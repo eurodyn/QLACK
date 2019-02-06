@@ -14,17 +14,16 @@
  */
 package com.eurodyn.qlack.fuse.aaa.exception;
 
-
 import com.eurodyn.qlack.common.exceptions.QException;
 
-public class AAAAException extends QException {
+public class AAAException extends QException {
 
   private static final long serialVersionUID = -153032703610522736L;
 
-  public AAAAException() {
+  public AAAException() {
   }
 
-  public AAAAException(String message) {
+  public AAAException(String message) {
     super(message);
   }
 

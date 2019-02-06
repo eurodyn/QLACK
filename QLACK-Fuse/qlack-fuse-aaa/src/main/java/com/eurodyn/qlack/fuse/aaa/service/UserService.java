@@ -8,6 +8,7 @@ import com.eurodyn.qlack.fuse.aaa.dto.UserAttributeDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserDTO;
 import com.eurodyn.qlack.fuse.aaa.mappers.SessionMapper;
 import com.eurodyn.qlack.fuse.aaa.mappers.UserAttributeMapper;
+import com.eurodyn.qlack.fuse.aaa.mappers.UserDetailsMapper;
 import com.eurodyn.qlack.fuse.aaa.mappers.UserMapper;
 import com.eurodyn.qlack.fuse.aaa.model.UserGroup;
 import com.eurodyn.qlack.fuse.aaa.model.QSession;
@@ -23,13 +24,18 @@ import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import lombok.extern.java.Log;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -42,10 +48,12 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+@Log
+@Primary
 @Service
 @Validated
 @Transactional
-public class UserService {
+public class UserService implements UserDetailsService {
 
   private static final Logger LOGGER = Logger.getLogger(UserService.class.getName());
   private static final int saltLength = 16;
@@ -62,6 +70,7 @@ public class UserService {
   private final UserMapper userMapper;
   private final SessionMapper sessionMapper;
   private final UserAttributeMapper userAttributeMapper;
+  private final UserDetailsMapper userDetailsMapper;
 
   //QueryDSL helpers
   private QUser qUser = QUser.user;
@@ -70,7 +79,7 @@ public class UserService {
   public UserService(AccountingService accountingService, LdapUserUtil ldapUserUtil,
                      UserRepository userRepository, UserAttributeRepository userAttributeRepository,
                      SessionRepository sessionRepository, UserGroupRepository userGroupRepository, UserMapper userMapper,
-                     SessionMapper sessionMapper, UserAttributeMapper userAttributeMapper) {
+                     SessionMapper sessionMapper, UserAttributeMapper userAttributeMapper, UserDetailsMapper userDetailsMapper) {
     this.accountingService = accountingService;
     this.ldapUserUtil = ldapUserUtil;
     this.userRepository = userRepository;
@@ -80,6 +89,7 @@ public class UserService {
     this.userMapper = userMapper;
     this.sessionMapper = sessionMapper;
     this.userAttributeMapper = userAttributeMapper;
+    this.userDetailsMapper = userDetailsMapper;
   }
 
   public String createUser(UserDTO dto) {
@@ -451,5 +461,11 @@ public class UserService {
 
   public Page<UserDTO> findAll(Predicate predicate, Pageable pageable) {
     return userMapper.map(userRepository.findAll(predicate, pageable));
+  }
+
+  @Override
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    User user = userRepository.findByUsername(username);
+    return userDetailsMapper.mapToDTO(user);
   }
 }

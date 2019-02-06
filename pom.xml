@@ -43,6 +43,7 @@
     <hikaricp.version>3.2.0</hikaricp.version>
     <liquibase.version>3.6.2</liquibase.version>
     <h2.version>1.4.197</h2.version>
+    <jwt.version>0.9.1</jwt.version>
   </properties>
 
   <dependencyManagement>

@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 /**
  * The implementation logic for the {@link ExceptionWrapper} annotation. This aspect wraps any exception being thrown
  * with a custom, user-provided exception. It can be used to isolate different layers of your application from one
- * another, or protect your REST endpoints from leaking exceptions to your front-end.
+ * another, or protect your REST endpoints from leaking exception to your front-end.
  */
 @Aspect
 @Component

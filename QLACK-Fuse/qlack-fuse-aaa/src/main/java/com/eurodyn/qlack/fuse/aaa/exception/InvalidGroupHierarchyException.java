@@ -14,8 +14,7 @@
  */
 package com.eurodyn.qlack.fuse.aaa.exception;
 
-
-public class InvalidGroupHierarchyException extends AAAAException {
+public class InvalidGroupHierarchyException extends AAAException {
 
   public InvalidGroupHierarchyException(String msg) {
     super(msg);

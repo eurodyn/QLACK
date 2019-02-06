@@ -59,7 +59,7 @@ private static final Logger LOGGER = Logger.getLogger(TemplateService.class.getN
       fTemplate.process(templateData, retVal);
       retVal.flush();
     } catch (TemplateException | IOException ex) {
-      // Catch exceptions and throw RuntimeException instead in order to
+      // Catch exception and throw RuntimeException instead in order to
       // also roll back the transaction.
       LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
       throw new TemplateProcessingException(
