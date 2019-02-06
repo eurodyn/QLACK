@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.fuse.security.util;
+package com.eurodyn.qlack.fuse.aaa.util;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.security.crypto.codec.Hex;

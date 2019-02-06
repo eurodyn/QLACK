@@ -23,6 +23,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,6 +57,8 @@ public class UserServiceTest {
 
     private SessionRepository sessionRepository = mock(SessionRepository.class);
 
+    private PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
+
     @Spy
     private SessionMapper sessionMapper;
 
@@ -87,7 +90,7 @@ public class UserServiceTest {
         userService = new UserService(accountingService, ldapUserUtil,
                 userRepository, userAttributeRepository,
                 sessionRepository, null, userMapper,
-                sessionMapper, userAttributeMapper, null);
+                sessionMapper, userAttributeMapper, null, passwordEncoder);
         qUser = new QUser("user");
         qSession = new QSession(("session"));
         user = initTestValues.createUser();

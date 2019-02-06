@@ -37,13 +37,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Log
 public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
-    @Value("${security.jwt.secret:aqlacksecret}")
+    @Value("${qlack.fuse.security.jwt.secret:qlackjwtsecret}")
     private String jwtSecret;
 
     /**
      * Default expiration set at 24 hours.
      */
-    @Value("${security.jwt.expiration:#{24*60*60}}")
+    @Value("${qlack.fuse.security.jwt.expiration:#{24*60*60}}")
     private int jwtExpiration;
 
     @Autowired

@@ -2,7 +2,7 @@ package com.eurodyn.qlack.fuse.security.providers;
 
 import com.eurodyn.qlack.fuse.aaa.dto.UserDetailsDTO;
 import com.eurodyn.qlack.fuse.security.cache.AAAUserCaching;
-import com.eurodyn.qlack.fuse.security.util.Md5PasswordEncoder;
+import com.eurodyn.qlack.fuse.aaa.util.Md5PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

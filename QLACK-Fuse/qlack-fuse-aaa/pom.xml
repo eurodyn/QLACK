@@ -18,6 +18,11 @@
       <artifactId>qlack-common</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.eurodyn.qlack.util</groupId>
+      <artifactId>qlack-util-data</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- Spring dependencies -->
     <dependency>

@@ -21,14 +21,15 @@ import com.eurodyn.qlack.fuse.aaa.repository.UserGroupRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.SessionRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.UserAttributeRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
+import com.eurodyn.qlack.fuse.aaa.util.Md5PasswordEncoder;
+import com.eurodyn.qlack.util.data.SpringBeansUtils;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.extern.java.Log;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,15 +37,18 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -56,7 +60,6 @@ import java.util.stream.Collectors;
 public class UserService implements UserDetailsService {
 
   private static final Logger LOGGER = Logger.getLogger(UserService.class.getName());
-  private static final int saltLength = 16;
 
   // Service REFs
   private AccountingService accountingService;
@@ -76,10 +79,15 @@ public class UserService implements UserDetailsService {
   private QUser qUser = QUser.user;
   private QSession qSession = QSession.session;
 
+  private final PasswordEncoder passwordEncoder;
+
+  private static final int SALT_LENGTH = 16;
+
   public UserService(AccountingService accountingService, LdapUserUtil ldapUserUtil,
                      UserRepository userRepository, UserAttributeRepository userAttributeRepository,
                      SessionRepository sessionRepository, UserGroupRepository userGroupRepository, UserMapper userMapper,
-                     SessionMapper sessionMapper, UserAttributeMapper userAttributeMapper, UserDetailsMapper userDetailsMapper) {
+                     SessionMapper sessionMapper, UserAttributeMapper userAttributeMapper,
+                     UserDetailsMapper userDetailsMapper, @Lazy PasswordEncoder passwordEncoder) {
     this.accountingService = accountingService;
     this.ldapUserUtil = ldapUserUtil;
     this.userRepository = userRepository;
@@ -90,14 +98,12 @@ public class UserService implements UserDetailsService {
     this.sessionMapper = sessionMapper;
     this.userAttributeMapper = userAttributeMapper;
     this.userDetailsMapper = userDetailsMapper;
+    this.passwordEncoder = passwordEncoder;
   }
 
   public String createUser(UserDTO dto) {
     User user = userMapper.mapToEntity(dto);
-    // Generate salt and hash password
-    user.setSalt(RandomStringUtils.randomAlphanumeric(saltLength));
-    String password = user.getSalt() + dto.getPassword();
-    user.setPassword(DigestUtils.md5Hex(password));
+    setUserPassword(dto, user);
     userRepository.save(user);
     for(UserAttribute attribute: user.getUserAttributes()){
       attribute.setUser(user);
@@ -110,10 +116,7 @@ public class UserService implements UserDetailsService {
   public void updateUser(UserDTO dto, boolean updatePassword, boolean createIfMissing) {
     User user = userRepository.fetchById(dto.getId());
     if (updatePassword) {
-
-      user.setSalt(RandomStringUtils.randomAlphanumeric(saltLength));
-      String password = user.getSalt() + dto.getPassword();
-      user.setPassword(DigestUtils.md5Hex(password));
+      setUserPassword(dto, user);
     }
     userMapper.mapToExistingEntity(dto, user);
 
@@ -266,26 +269,6 @@ public class UserService implements UserDetailsService {
         .findAll(predicate, Sort.by("createdOn").ascending()));
 
     return retVal.isEmpty() ? null : retVal;
-  }
-
-  public String updatePassword(String username, String newPassword) {
-    User user = userRepository.findByUsername(username);
-    user.setSalt(RandomStringUtils.randomAlphanumeric(saltLength));
-    if (StringUtils.isBlank(newPassword)) {
-      newPassword = RandomStringUtils.randomAlphanumeric(8);
-    }
-    user.setPassword(DigestUtils.md5Hex(user.getSalt() + newPassword));
-    return newPassword;
-  }
-
-  public boolean updatePassword(String username, String oldPassword, String newPassword) {
-    boolean passwordUpdated = false;
-    if (StringUtils.isNotBlank(canAuthenticate(username, oldPassword))) {
-      updatePassword(username, newPassword);
-      passwordUpdated = true;
-    }
-
-    return passwordUpdated;
   }
 
   public boolean belongsToGroupByName(String userID, String groupName,
@@ -467,5 +450,31 @@ public class UserService implements UserDetailsService {
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     User user = userRepository.findByUsername(username);
     return userDetailsMapper.mapToDTO(user);
+  }
+
+  private void setUserPassword(UserDTO dto, User user) {
+    if (dto == null || user == null) {
+      return;
+    }
+
+    // Retrieve target class from proxied bean interface.
+    Object targetPasswordEncoder = null;
+    try {
+      targetPasswordEncoder = SpringBeansUtils.getTargetObject(passwordEncoder, PasswordEncoder.class);
+    } catch (Exception e) {
+      log.log(Level.WARNING, e.getMessage(), e);
+    }
+
+    if (targetPasswordEncoder instanceof Md5PasswordEncoder) {
+      Md5PasswordEncoder encoder = (Md5PasswordEncoder) passwordEncoder;
+      byte[] salt = encoder.generateSalt(SALT_LENGTH);
+
+      // Generate salt and hash password
+      user.setSalt(new String(salt));
+      String password = encoder.encode(Arrays.toString(salt) + dto.getPassword());
+      user.setPassword(DigestUtils.md5Hex(password));
+    } else {
+      user.setPassword(passwordEncoder.encode(dto.getPassword()));
+    }
   }
 }
