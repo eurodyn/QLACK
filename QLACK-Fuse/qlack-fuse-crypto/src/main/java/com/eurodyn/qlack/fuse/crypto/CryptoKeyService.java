@@ -80,6 +80,7 @@ public class CryptoKeyService {
           SecureRandom.getInstance(createKeyPairRequest.getSecretAlgorithm(),
               createKeyPairRequest.getSecretProvider()));
     }
+
     return keyPairGenerator.generateKeyPair();
   }
 }

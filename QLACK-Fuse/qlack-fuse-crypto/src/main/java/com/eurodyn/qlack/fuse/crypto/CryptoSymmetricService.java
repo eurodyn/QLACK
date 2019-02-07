@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Symmetric encryption/decryption utility methods.
@@ -17,8 +15,6 @@ import java.util.logging.Logger;
 @Service
 @Validated
 public class CryptoSymmetricService {
-  // JUL reference.
-  private static final Logger LOGGER = Logger.getLogger(CryptoSymmetricService.class.getName());
 
   /**
    * A convenience method to encrypt a message without providing an additional salt. Note that in this case the actual
@@ -33,7 +29,7 @@ public class CryptoSymmetricService {
   }
 
   /**
-   * Encrypts a message using 256-bit AES using PKCS #5's PBKDF2.
+   * Encrypts a message using 256-bit AES and PKCS #5's PBKDF2.
    *
    * @param message The message to encrypt.
    * @param password The password/secret to use. Always kept secret.
@@ -41,7 +37,6 @@ public class CryptoSymmetricService {
    * @return Returns a hexed representation of the encrypted message.
    */
   public String encrypt(final String message, final String password, String salt) {
-    LOGGER.log(Level.FINEST, "Encrypting: {0}", message);
     if (StringUtils.isBlank(message)) {
       return message;
     }
@@ -65,7 +60,7 @@ public class CryptoSymmetricService {
   }
 
   /**
-   * Decrypts a message encrypted with the `encrypt` method.
+   * Decrypts a message encrypted with the `encrypt` method (using 256-bit AES and PKCS #5's PBKDF2)
    *
    * @param ciphertext The encrypted message.
    * @param password The password to decrypt with.
@@ -73,7 +68,6 @@ public class CryptoSymmetricService {
    * @return Returns the decrypted version of the originally encrypted message.
    */
   public String decrypt(final String ciphertext, final String password, String salt) {
-    LOGGER.log(Level.FINEST, "Decrypting: {0}", ciphertext);
     if (StringUtils.isBlank(ciphertext)) {
       return ciphertext;
     }

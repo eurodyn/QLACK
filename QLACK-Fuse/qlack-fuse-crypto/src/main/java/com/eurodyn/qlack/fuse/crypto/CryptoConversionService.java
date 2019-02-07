@@ -96,9 +96,18 @@ public class CryptoConversionService {
   }
 
   public String certificateToPEM(X509CertificateHolder certificateHolder) throws IOException {
+//    StringWriter sw = new StringWriter();
+//    try (JcaPEMWriter pw = new JcaPEMWriter(sw)) {
+//      PemObjectGenerator gen = new JcaMiscPEMGenerator(certificateHolder);
+//      pw.writeObject(gen);
+//    }
+//
+//    return sw.toString();
+
     try (StringWriter pemStrWriter = new StringWriter()) {
       try (PemWriter writer = new PemWriter(pemStrWriter)) {
-        writer.writeObject(new PemObject(CERTIFICATE, certificateHolder.toASN1Structure().getEncoded()));
+//        writer.writeObject(new PemObject(CERTIFICATE, certificateHolder.toASN1Structure().getEncoded()));
+        writer.writeObject(new PemObject(CERTIFICATE, certificateHolder.getEncoded()));
         writer.flush();
         return pemStrWriter.toString();
       }

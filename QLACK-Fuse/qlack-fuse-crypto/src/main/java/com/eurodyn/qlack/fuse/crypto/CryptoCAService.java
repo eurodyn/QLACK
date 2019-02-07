@@ -5,7 +5,6 @@ import com.eurodyn.qlack.fuse.crypto.dto.CreateCADTO;
 import com.eurodyn.qlack.fuse.crypto.dto.SignDTO;
 import com.eurodyn.qlack.fuse.crypto.dto.SignDTO.SignDTOBuilder;
 import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.springframework.stereotype.Service;
@@ -47,33 +46,31 @@ public class CryptoCAService {
     // Create a keypair for this CA.
     KeyPair keyPair = cryptoKeyService.createKeyPair(createCADTO.getCreateKeyPairRequestDTO());
 
-    // Get hold of the public key.
-    byte[] publicKey = keyPair.getPublic().getEncoded();
-    SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey);
-
     // Prepare signing.
     final SignDTOBuilder signDTOBuilder = SignDTO.builder()
         .validForm(createCADTO.getValidFrom())
-        .validto(createCADTO.getValidTo())
+        .validTo(createCADTO.getValidTo())
         .locale(createCADTO.getLocale())
         .publicKey(keyPair.getPublic())
+        .privateKey(keyPair.getPrivate())
         .signatureAlgorithm(createCADTO.getSignatureAlgorithm())
         .signatureProvider(createCADTO.getSignatureProvider())
-        .subjectCN(createCADTO.getSubjectCN());
+        .subjectCN(createCADTO.getSubjectCN())
+        .ca(true);
 
     // Choose which private key to use. If no parent key is found then this is a self-signed certificate and the
     // private key created for the keypair will be used.
     if (StringUtils.isNotEmpty(createCADTO.getIssuerCN()) && StringUtils
         .isNotEmpty(createCADTO.getIssuerPrivateKey())) {
       signDTOBuilder
-          .privateKey(cryptoConversionService.pemToPrivateKey(
+          .issuerPrivateKey(cryptoConversionService.pemToPrivateKey(
               createCADTO.getIssuerPrivateKey(),
               createCADTO.getIssuerPrivateKeyProvider(),
               createCADTO.getIssuerPrivateKeyAlgorithm()))
           .issuerCN(createCADTO.getIssuerCN());
     } else {
       signDTOBuilder
-          .privateKey(keyPair.getPrivate())
+          .issuerPrivateKey(keyPair.getPrivate())
           .issuerCN(createCADTO.getSubjectCN());
     }
 
