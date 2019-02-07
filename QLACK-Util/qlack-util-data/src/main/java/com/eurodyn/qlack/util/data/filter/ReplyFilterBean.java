@@ -39,7 +39,7 @@ public class ReplyFilterBean {
     objectMapper.setFilterProvider(
         new SimpleFilterProvider().addFilter(SquigglyPropertyFilter.FILTER_ID, propertyFilter));
 
-    // Registering Instant serializer/deserializer (see TODO above).
+    // Registering Instant serializer/deserializer, this is better to be configured by the target project (see TODO above).
     SimpleModule module = new SimpleModule();
     module.addDeserializer(Instant.class, new QInstantFromISOUTCDeserializer());
     module.addSerializer(Instant.class, new QInstantToISOUTCSerializer());

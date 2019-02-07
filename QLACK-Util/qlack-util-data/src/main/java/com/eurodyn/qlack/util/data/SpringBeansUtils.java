@@ -9,7 +9,7 @@ import org.springframework.aop.support.AopUtils;
 public class SpringBeansUtils {
 
     /**
-     * Static method that returns the class implementation of Spring a proxied bean interface.
+     * Static method that returns the class implementation of a Spring proxied bean interface.
      *
      * @param proxy Proxied object
      * @param targetClass Unused argument, useful only for type-casting
