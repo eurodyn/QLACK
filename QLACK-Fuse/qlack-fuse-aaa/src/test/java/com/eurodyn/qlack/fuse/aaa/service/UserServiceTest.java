@@ -1,5 +1,13 @@
 package com.eurodyn.qlack.fuse.aaa.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.eurodyn.qlack.fuse.aaa.InitTestValues;
 import com.eurodyn.qlack.fuse.aaa.dto.SessionDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserAttributeDTO;
@@ -15,16 +23,6 @@ import com.eurodyn.qlack.fuse.aaa.model.UserAttribute;
 import com.eurodyn.qlack.fuse.aaa.repository.SessionRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.UserAttributeRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,14 +32,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
@@ -97,7 +95,6 @@ public class UserServiceTest {
         userDTO = initTestValues.createUserDTO();
         users = initTestValues.createUsers();
         usersDTO = initTestValues.createUsersDTO();
-        MockitoAnnotations.initMocks(this);
     }
 
     @Test

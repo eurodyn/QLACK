@@ -1,22 +1,20 @@
 package com.eurodyn.qlack.fuse.aaa.mappers;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
 import com.eurodyn.qlack.fuse.aaa.InitTestValues;
 import com.eurodyn.qlack.fuse.aaa.dto.UserAttributeDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserDTO;
 import com.eurodyn.qlack.fuse.aaa.model.User;
 import com.eurodyn.qlack.fuse.aaa.model.UserAttribute;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserMapperTest {
@@ -44,7 +42,6 @@ public class UserMapperTest {
         userDTO = initTestValues.createUserDTO();
         users = initTestValues.createUsers();
         usersDTO = initTestValues.createUsersDTO();
-        MockitoAnnotations.initMocks(this);
     }
 
     @Test
