@@ -1,12 +1,23 @@
 package com.eurodyn.qlack.fuse.aaa;
 
+import com.eurodyn.qlack.fuse.aaa.dto.OpTemplateDTO;
+import com.eurodyn.qlack.fuse.aaa.dto.OperationDTO;
+import com.eurodyn.qlack.fuse.aaa.dto.ResourceDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.SessionDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserAttributeDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserDTO;
+import com.eurodyn.qlack.fuse.aaa.dto.UserGroupDTO;
+import com.eurodyn.qlack.fuse.aaa.model.OpTemplate;
+import com.eurodyn.qlack.fuse.aaa.model.OpTemplateHasOperation;
+import com.eurodyn.qlack.fuse.aaa.model.Operation;
+import com.eurodyn.qlack.fuse.aaa.model.Resource;
 import com.eurodyn.qlack.fuse.aaa.model.Session;
 import com.eurodyn.qlack.fuse.aaa.model.User;
 import com.eurodyn.qlack.fuse.aaa.model.UserAttribute;
-
+import com.eurodyn.qlack.fuse.aaa.model.UserGroup;
+import com.eurodyn.qlack.fuse.aaa.model.UserGroupHasOperation;
+import com.eurodyn.qlack.fuse.aaa.model.UserHasOperation;
+import com.eurodyn.qlack.fuse.aaa.model.VerificationToken;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -199,4 +210,218 @@ public class InitTestValues {
 
         return sessionsDTO;
     }
+
+    public Resource createResource() {
+        Resource resource = new Resource();
+        resource.setDescription("DELETE USER");
+        resource.setName("DELETE");
+        resource.setDbversion(0);
+        resource.setObjectId("0b422f60-a66b-4526-937d-26802cd9c8a1");
+        resource.setId("d1c86593-6b99-463d-93c6-2429119473de");
+        return resource;
+    }
+
+    public ResourceDTO createResourceDTO() {
+        ResourceDTO resourceDTO = new ResourceDTO();
+        resourceDTO.setDescription("DELETE USER");
+        resourceDTO.setName("DELETE");
+        resourceDTO.setId("d1c86593-6b99-463d-93c6-2429119473de");
+        resourceDTO.setObjectID("0b422f60-a66b-4526-937d-26802cd9c8a1");
+        return resourceDTO;
+    }
+
+    public List<Resource> createResources() {
+        List<Resource> resources = new ArrayList<>();
+        resources.add(createResource());
+        Resource resource = createResource();
+        resource.setName("EDIT");
+        resource.setDescription("EDIT USER");
+        resource.setId("71430011-7bea-4fcf-b11e-ea7acd65dc34");
+        resources.add(resource);
+        return resources;
+    }
+
+    public VerificationToken createVerificationToken() {
+        VerificationToken verificationToken = new VerificationToken();
+        verificationToken.setId("fb0f80a9-ac4e-4a68-8fa6-d309ad6dd9fc");
+        verificationToken.setUser(createUser());
+        verificationToken.setExpiresOn(1577836800000L);
+        verificationToken.setData("Test verification data");
+        return verificationToken;
+    }
+
+    public UserGroup createUserGroup() {
+        UserGroup userGroup = new UserGroup();
+        userGroup.setId("7ea962bc-1ea8-46b4-8b6d-588e3a8aae60");
+
+        UserGroup userGroupParent = new UserGroup();
+        userGroupParent.setId("aabba4fd-ce44-46ad-b2ed-cb9346e3e521");
+
+        UserGroup userGroupFirstChild = new UserGroup();
+        userGroupFirstChild.setId("35bd2469-fb3e-4137-af80-52692a765805");
+
+        UserGroup userGroupSecondChild = new UserGroup();
+        userGroupSecondChild.setId("4a4f65ce-2ee2-42c0-ad92-2d98f25dd331");
+
+        List<UserGroup> children = new ArrayList<>();
+        children.add(userGroupFirstChild);
+        children.add(userGroupSecondChild);
+
+        userGroup.setChildren(children);
+
+        userGroup.setParent(userGroupParent);
+        return userGroup;
+    }
+
+    public UserGroupDTO createUserGroupDTO() {
+        UserGroupDTO userGroupDTO = new UserGroupDTO();
+        userGroupDTO.setId("7ea962bc-1ea8-46b4-8b6d-588e3a8aae60");
+
+        UserGroupDTO userGroupParent = new UserGroupDTO();
+        userGroupParent.setId("aabba4fd-ce44-46ad-b2ed-cb9346e3e521");
+
+        userGroupDTO.setParentId(userGroupParent.getId());
+
+        UserGroupDTO userGroupFirstChildDTO = new UserGroupDTO();
+        userGroupFirstChildDTO.setId("35bd2469-fb3e-4137-af80-52692a765805");
+
+        UserGroupDTO userGroupSecondChildDTO = new UserGroupDTO();
+        userGroupSecondChildDTO.setId("4a4f65ce-2ee2-42c0-ad92-2d98f25dd331");
+
+        List<UserGroupDTO> children = new ArrayList<>();
+        children.add(userGroupFirstChildDTO);
+        children.add(userGroupSecondChildDTO);
+
+        userGroupDTO.setChildren(new HashSet(children));
+
+        return userGroupDTO;
+    }
+
+    public List<UserGroup> createUserGroups() {
+        List<UserGroup> userGroups = new ArrayList<>();
+        userGroups.add(createUserGroup());
+
+        UserGroup userGroup2 = createUserGroup();
+        userGroup2.setId("909626ef-df62-4ce0-a1ec-102f98a63a2a");
+
+        UserGroup userGroup3 = createUserGroup();
+        userGroup2.setId("180cb78d-7447-49b3-8693-e959bcddea7a");
+
+        userGroups.add(userGroup2);
+        userGroups.add(userGroup3);
+
+        return userGroups;
+    }
+
+    public OpTemplate createOpTemplate() {
+        OpTemplate template = new OpTemplate();
+        template.setId("abc29181-cee0-44f8-9f5a-5e91f05f7230");
+        template.setName("Test template");
+        return template;
+    }
+
+    public OpTemplateDTO createOpTemplateDTO() {
+        OpTemplateDTO templateDTO = new OpTemplateDTO();
+        templateDTO.setId("abc29181-cee0-44f8-9f5a-5e91f05f7230");
+        templateDTO.setName("Test template");
+        return templateDTO;
+    }
+
+    public Operation createOperation() {
+        Operation operation = new Operation();
+        operation.setId("2bb94daa-50d1-462a-9700-5be893855989");
+        operation.setName("Test operation");
+        return operation;
+    }
+
+    public OperationDTO createOperationDTO() {
+        OperationDTO operationDTO = new OperationDTO();
+        operationDTO.setId("2bb94daa-50d1-462a-9700-5be893855989");
+        operationDTO.setName("Test operation");
+        return operationDTO;
+    }
+
+    public List<Operation> createOperations() {
+        List<Operation> operations = new ArrayList<>();
+        operations.add(createOperation());
+
+        Operation operation2 = createOperation();
+        operation2.setId(" e038a322-009d-41f6-bee3-d21d28e70f76");
+
+        Operation operation3 = createOperation();
+        operation3.setId(" 7d7f41bc-6545-429b-a5d6-0115478fe6a8");
+
+        operations.add(operation2);
+        operations.add(operation3);
+        return operations;
+    }
+
+    public List<OperationDTO> createOperationsDTO() {
+        List<OperationDTO> operationsDTO = new ArrayList<>();
+        operationsDTO.add(createOperationDTO());
+
+        OperationDTO operationDTO2 = createOperationDTO();
+        operationDTO2.setId(" e038a322-009d-41f6-bee3-d21d28e70f76");
+
+        OperationDTO operationDTO3 = createOperationDTO();
+        operationDTO3.setId(" 7d7f41bc-6545-429b-a5d6-0115478fe6a8");
+
+        operationsDTO.add(operationDTO2);
+        operationsDTO.add(operationDTO3);
+        return operationsDTO;
+    }
+
+    public OpTemplateHasOperation createOpTemplateHasOperation() {
+        OpTemplateHasOperation opTemplateHasOperation = new OpTemplateHasOperation();
+        opTemplateHasOperation.setId("c54197e9-d3c6-49be-bce2-563dc8966462");
+        return opTemplateHasOperation;
+    }
+
+    public List<OpTemplateHasOperation> createOpTemplateHasOperations() {
+        List<Operation> operations = createOperations();
+        List<OpTemplateHasOperation> opTemplateHasOperations = new ArrayList<>();
+        opTemplateHasOperations.add(createOpTemplateHasOperation());
+        opTemplateHasOperations.get(0).setOperation(operations.get(1));
+
+        OpTemplateHasOperation opTemplateHasOperation2 = createOpTemplateHasOperation();
+        opTemplateHasOperation2.setId("09952fb7-092c-4355-9995-3370c81fb369");
+        opTemplateHasOperation2.setOperation(operations.get(1));
+
+        OpTemplateHasOperation opTemplateHasOperation3 = createOpTemplateHasOperation();
+        opTemplateHasOperation3.setId("51cdff03-6710-402d-9987-c5600669e251");
+        opTemplateHasOperation3.setOperation(operations.get(2));
+
+        opTemplateHasOperations.add(opTemplateHasOperation2);
+        opTemplateHasOperations.add(opTemplateHasOperation3);
+
+        return opTemplateHasOperations;
+
+    }
+
+    public UserHasOperation createUserHasOperation() {
+        UserHasOperation userHasOperation = new UserHasOperation();
+        userHasOperation.setId("7d7f41bc-6545-429b-a5d6-0115478fe6a8");
+        userHasOperation.setOperation(createOperation());
+        return userHasOperation;
+    }
+
+    public List<UserHasOperation> createUserHasOperations() {
+        List<UserHasOperation> userHasOperations = new ArrayList<>();
+        userHasOperations.add(createUserHasOperation());
+
+        UserHasOperation userHasOperation2 = createUserHasOperation();
+        userHasOperation2.setId("fef0b119-c239-49b8-8ed1-2a63ea11c040");
+        userHasOperations.add(userHasOperation2);
+
+        userHasOperations.stream().forEach(userHasOperation -> userHasOperation.setOperation(createOperation()));
+
+        return userHasOperations;
+    }
+
+    public UserGroupHasOperation createUserGroupHasOperation() {
+        UserGroupHasOperation userGroupHasOperation = new UserGroupHasOperation();
+        userGroupHasOperation.setId("d89c12a9-fa91-4e0c-a1bc-92d175ee76ea");
+        return userGroupHasOperation;
+    }
+
 }

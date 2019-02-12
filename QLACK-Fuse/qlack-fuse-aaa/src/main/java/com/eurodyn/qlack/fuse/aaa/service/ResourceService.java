@@ -17,7 +17,6 @@ import org.springframework.validation.annotation.Validated;
 @Transactional
 public class ResourceService {
 
-
   // Repositories
   private final ResourceRepository resourceRepository;
   private final ResourceMapper resourceMapper;

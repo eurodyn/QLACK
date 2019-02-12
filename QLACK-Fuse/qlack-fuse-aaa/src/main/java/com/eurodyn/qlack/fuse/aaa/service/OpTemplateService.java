@@ -73,13 +73,7 @@ public class OpTemplateService {
     if (tho != null) {
       tho.setDeny(isDeny);
     } else {
-      OpTemplate template = opTemplateRepository.fetchById(templateID);
-      Operation operation = operationRepository.findByName(operationName);
-      tho = new OpTemplateHasOperation();
-      tho.setDeny(isDeny);
-      template.addOpTemplateHasOperation(tho);
-      operation.addOpTemplateHasOperation(tho);
-      opTemplateHasOperationRepository.save(tho);
+        opTemplateHasOperationRepository.save(commonAddOperation(templateID, operationName, isDeny));
     }
   }
 
@@ -91,16 +85,21 @@ public class OpTemplateService {
     if (tho != null) {
       tho.setDeny(isDeny);
     } else {
-      OpTemplate template = opTemplateRepository.fetchById(templateID);
-      Operation operation = operationRepository.findByName(operationName);
-      Resource resource = resourceRepository.fetchById(resourceID);
-      tho = new OpTemplateHasOperation();
-      tho.setDeny(isDeny);
-      template.addOpTemplateHasOperation(tho);
-      operation.addOpTemplateHasOperation(tho);
-      resource.addOpTemplateHasOperation(tho);
-      opTemplateHasOperationRepository.save(tho);
+        tho = commonAddOperation(templateID, operationName, isDeny);
+        Resource resource = resourceRepository.fetchById(resourceID);
+        resource.addOpTemplateHasOperation(tho);
+        opTemplateHasOperationRepository.save(tho);
     }
+  }
+
+    private OpTemplateHasOperation commonAddOperation(String templateID, String operationName, boolean isDeny) {
+        OpTemplate template = opTemplateRepository.fetchById(templateID);
+        Operation operation = operationRepository.findByName(operationName);
+        OpTemplateHasOperation tho = new OpTemplateHasOperation();
+        tho.setDeny(isDeny);
+        template.addOpTemplateHasOperation(tho);
+        operation.addOpTemplateHasOperation(tho);
+        return tho;
   }
 
   public void removeOperation(String templateID, String operationName) {
