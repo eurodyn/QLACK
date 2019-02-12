@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -43,8 +42,6 @@ public class AuditMapperTest {
         auditDTO = initTestValues.createAuditDTO();
         audits = initTestValues.createAudits();
         auditsDTO = initTestValues.createAuditsDTO();
-
-        MockitoAnnotations.initMocks(this);
     }
 
     @Test

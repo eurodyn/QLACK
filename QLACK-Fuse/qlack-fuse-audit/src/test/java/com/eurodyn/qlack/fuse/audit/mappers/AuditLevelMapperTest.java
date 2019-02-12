@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 /**
@@ -36,8 +35,6 @@ public class AuditLevelMapperTest {
         auditLevelDTO = initTestValues.createAuditLevelDTO();
         auditLevels = initTestValues.createAuditLevels();
         auditLevelsDTO = initTestValues.createAuditLevelsDTO();
-
-        MockitoAnnotations.initMocks(this);
     }
 
     @Test

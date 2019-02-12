@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 /**
@@ -37,8 +36,6 @@ public class AuditTraceMapperTest {
         auditTraceDTO = initTestValues.createAuditTraceDTO();
         auditTraces = initTestValues.createAuditTraces();
         auditTracesDTO = initTestValues.createAuditTracesDTO();
-
-        MockitoAnnotations.initMocks(this);
     }
 
     @Test
