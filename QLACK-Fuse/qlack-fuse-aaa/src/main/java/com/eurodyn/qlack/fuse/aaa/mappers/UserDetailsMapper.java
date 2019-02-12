@@ -14,7 +14,7 @@ import org.mapstruct.ReportingPolicy;
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         uses = {UserGroupHasOperationMapper.class})
 @DecoratedWith(UserDetailsMapperDecorator.class)
-public interface UserDetailsMapper extends AAAMapper<User, UserDetailsDTO> {
+public interface UserDetailsMapper {
 
     UserDetailsDTO mapToDTO(User user);
 

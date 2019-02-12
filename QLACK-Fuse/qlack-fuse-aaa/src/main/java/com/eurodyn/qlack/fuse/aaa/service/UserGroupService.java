@@ -82,48 +82,48 @@ public class UserGroupService {
   }
 
   public UserGroupDTO getGroupByID(String groupID, boolean lazyRelatives) {
-    return userGroupMapper.mapToDTO(userGroupRepository.fetchById(groupID));
+    return userGroupMapper.mapToDTO(userGroupRepository.fetchById(groupID), lazyRelatives);
   }
 
   public List<UserGroupDTO> getGroupsByID(Collection<String> groupIds, boolean lazyRelatives) {
     Predicate predicate = qUserGroup.id.in(groupIds);
 
     return userGroupMapper.mapToDTO(
-        userGroupRepository.findAll(predicate, Sort.by("name").ascending()));
+        userGroupRepository.findAll(predicate, Sort.by("name").ascending()), lazyRelatives);
 
   }
 
   public UserGroupDTO getGroupByName(String groupName, boolean lazyRelatives) {
     return userGroupMapper.mapToDTO(
-        userGroupRepository.findByName(groupName));
+        userGroupRepository.findByName(groupName), false);
   }
 
   public List<UserGroupDTO> getGroupByNames(List<String> groupNames, boolean lazyRelatives) {
     Predicate predicate = qUserGroup.name.in(groupNames);
 
-    return userGroupMapper.mapToDTO(userGroupRepository.findAll(predicate));
+    return userGroupMapper.mapToDTO(userGroupRepository.findAll(predicate), lazyRelatives);
   }
 
   public UserGroupDTO getGroupByObjectId(String objectId, boolean lazyRelatives) {
     return userGroupMapper.mapToDTO(
-        userGroupRepository.findByObjectId(objectId));
+        userGroupRepository.findByObjectId(objectId), lazyRelatives);
   }
 
   public List<UserGroupDTO> listGroups() {
     return userGroupMapper.mapToDTO(
-        userGroupRepository.findAll(Sort.by("name").ascending()));
+        userGroupRepository.findAll(Sort.by("name").ascending()), false);
   }
 
   public List<UserGroupDTO> listGroupsAsTree() {
     Predicate predicate = qUserGroup.parent.isNull();
 
     return userGroupMapper.mapToDTO(userGroupRepository.findAll(
-        predicate, Sort.by("name").ascending()));
+        predicate, Sort.by("name").ascending()), false);
   }
 
   public UserGroupDTO getGroupParent(String groupID) {
     UserGroup userGroup = userGroupRepository.fetchById(groupID);
-    return userGroupMapper.mapToDTO(userGroup.getParent());
+    return userGroupMapper.mapToDTO(userGroup.getParent(), false);
   }
 
   public List<UserGroupDTO> getGroupChildren(String groupID) {
@@ -134,7 +134,7 @@ public class UserGroupService {
       predicate = qUserGroup.parent.id.eq(groupID);
     }
     return userGroupMapper.mapToDTO(userGroupRepository.findAll(
-        predicate, Sort.by("name").ascending()));
+        predicate, Sort.by("name").ascending()), false);
 
   }
 
