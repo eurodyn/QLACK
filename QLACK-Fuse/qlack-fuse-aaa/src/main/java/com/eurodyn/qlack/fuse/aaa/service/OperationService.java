@@ -2,33 +2,29 @@ package com.eurodyn.qlack.fuse.aaa.service;
 
 import bsh.EvalError;
 import bsh.Interpreter;
-import com.eurodyn.qlack.fuse.aaa.dto.UserGroupHasOperationDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.OperationDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.ResourceDTO;
+import com.eurodyn.qlack.fuse.aaa.dto.UserGroupHasOperationDTO;
 import com.eurodyn.qlack.fuse.aaa.exception.DynamicOperationException;
-import com.eurodyn.qlack.fuse.aaa.mappers.UserGroupHasOperationMapper;
 import com.eurodyn.qlack.fuse.aaa.mappers.OperationMapper;
 import com.eurodyn.qlack.fuse.aaa.mappers.ResourceMapper;
-import com.eurodyn.qlack.fuse.aaa.model.UserGroup;
-import com.eurodyn.qlack.fuse.aaa.model.UserGroupHasOperation;
+import com.eurodyn.qlack.fuse.aaa.mappers.UserGroupHasOperationMapper;
 import com.eurodyn.qlack.fuse.aaa.model.OpTemplate;
 import com.eurodyn.qlack.fuse.aaa.model.OpTemplateHasOperation;
 import com.eurodyn.qlack.fuse.aaa.model.Operation;
 import com.eurodyn.qlack.fuse.aaa.model.Resource;
 import com.eurodyn.qlack.fuse.aaa.model.User;
+import com.eurodyn.qlack.fuse.aaa.model.UserGroup;
+import com.eurodyn.qlack.fuse.aaa.model.UserGroupHasOperation;
 import com.eurodyn.qlack.fuse.aaa.model.UserHasOperation;
-import com.eurodyn.qlack.fuse.aaa.repository.UserGroupHasOperationRepository;
-import com.eurodyn.qlack.fuse.aaa.repository.UserGroupRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.OpTemplateRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.OperationRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.ResourceRepository;
+import com.eurodyn.qlack.fuse.aaa.repository.UserGroupHasOperationRepository;
+import com.eurodyn.qlack.fuse.aaa.repository.UserGroupRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.UserHasOperationRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
 import java.util.ArrayList;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +32,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * @author European Dynamics SA
@@ -120,34 +119,31 @@ public class OperationService {
     if (uho != null) {
       uho.setDeny(isDeny);
     } else {
-      User user = userRepository.fetchById(userID);
-      Operation operation = operationRepository.findByName(operationName);
-      uho = new UserHasOperation();
-      uho.setDeny(isDeny);
-      user.addUserHasOperation(uho);
-      operation.addUserHasOperation(uho);
-      userHasOperationRepository.save(uho);
+        userHasOperationRepository.save(commonAddOperationToUser(userID, operationName, isDeny));
     }
   }
 
-  public void addOperationToUser(String userID, String operationName, String resourceID,
-      boolean isDeny) {
+    public void addOperationToUser(String userID, String operationName, String resourceID, boolean isDeny) {
     UserHasOperation uho = userHasOperationRepository
         .findByUserIdAndResourceIdAndOperationName(userID, resourceID, operationName);
     if (uho != null) {
       uho.setDeny(isDeny);
     } else {
-      User user = userRepository.fetchById(userID);
-      Operation operation = operationRepository.findByName(operationName);
-      Resource resource = resourceRepository.fetchById(resourceID);
-      uho = new UserHasOperation();
-      uho.setDeny(isDeny);
-      user.addUserHasOperation(uho);
-      operation.addUserHasOperation(uho);
-      resource.addUserHasOperation(uho);
-      userHasOperationRepository.save(uho);
-
+        uho = commonAddOperationToUser(userID, operationName, isDeny);
+        Resource resource = resourceRepository.fetchById(resourceID);
+        resource.addUserHasOperation(uho);
+        userHasOperationRepository.save(uho);
     }
+    }
+
+    private UserHasOperation commonAddOperationToUser(String userID, String operationName, boolean isDeny) {
+        User user = userRepository.fetchById(userID);
+        Operation operation = operationRepository.findByName(operationName);
+        UserHasOperation uho = new UserHasOperation();
+        uho.setDeny(isDeny);
+        user.addUserHasOperation(uho);
+        operation.addUserHasOperation(uho);
+        return uho;
   }
 
   public void addOperationsToUserFromTemplateID(String userID, String templateID) {
@@ -165,8 +161,7 @@ public class OperationService {
       if (tho.getResource() == null) {
         addOperationToUser(userID, tho.getOperation().getName(), tho.isDeny());
       } else {
-        addOperationToUser(userID, tho.getOperation().getName(), tho.getResource().getId(),
-            tho.isDeny());
+          addOperationToUser(userID, tho.getOperation().getName(), tho.getResource().getId(), tho.isDeny());
       }
     }
   }
@@ -177,33 +172,32 @@ public class OperationService {
     if (gho != null) {
       gho.setDeny(isDeny);
     } else {
-      UserGroup userGroup = userGroupRepository.fetchById(groupID);
-      Operation operation = operationRepository.findByName(operationName);
-      gho = new UserGroupHasOperation();
-      gho.setDeny(isDeny);
-      userGroup.addGroupHasOperation(gho);
-      operation.addGroupHasOperation(gho);
-      userGroupHasOperationRepository.save(gho);
-
+        userGroupHasOperationRepository.save(commonAddOperationToGroup(groupID, operationName, isDeny));
     }
   }
 
   public void addOperationToGroup(String groupID, String operationName, String resourceID,
       boolean isDeny) {
-    UserGroupHasOperation gho = userGroupHasOperationRepository.findByUserGroupIdAndOperationName(groupID, operationName);
+      UserGroupHasOperation gho = userGroupHasOperationRepository
+          .findByUserGroupIdAndResourceIdAndOperationName(groupID, operationName, resourceID);
     if (gho != null) {
       gho.setDeny(isDeny);
     } else {
-      UserGroup userGroup = userGroupRepository.fetchById(groupID);
-      Operation operation = operationRepository.findByName(operationName);
-      Resource resource = resourceRepository.fetchById(resourceID);
-      gho = new UserGroupHasOperation();
-      gho.setDeny(isDeny);
-      userGroup.addGroupHasOperation(gho);
-      operation.addGroupHasOperation(gho);
-      resource.addGroupHasOperation(gho);
-      userGroupHasOperationRepository.save(gho);
+        gho = commonAddOperationToGroup(groupID, operationName, isDeny);
+        Resource resource = resourceRepository.fetchById(resourceID);
+        resource.addGroupHasOperation(gho);
+        userGroupHasOperationRepository.save(gho);
     }
+  }
+
+    public UserGroupHasOperation commonAddOperationToGroup(String groupID, String operationName, boolean isDeny) {
+        UserGroup userGroup = userGroupRepository.fetchById(groupID);
+        Operation operation = operationRepository.findByName(operationName);
+        UserGroupHasOperation gho = new UserGroupHasOperation();
+        gho.setDeny(isDeny);
+        userGroup.addGroupHasOperation(gho);
+        operation.addGroupHasOperation(gho);
+        return gho;
   }
 
   public void addOperationsToGroupFromTemplateID(String groupID, String templateID) {
@@ -272,9 +266,7 @@ public class OperationService {
     }
 
     Operation operation = operationRepository.findByName(operationName);
-    String resourceId =
-        (resourceObjectID == null) ? null
-            : resourceRepository.findByObjectId(resourceObjectID).getId();
+      String resourceId = (resourceObjectID == null) ? null : resourceRepository.findByObjectId(resourceObjectID).getId();
 
     Boolean retVal = null;
     UserHasOperation uho = (resourceId == null)
@@ -284,8 +276,7 @@ public class OperationService {
     if (uho != null) {
       // First check whether this is a dynamic operation.
       if (operation.isDynamic()) {
-        retVal = evaluateDynamicOperation(operation, userId, null,
-            resourceObjectID);
+          retVal = evaluateDynamicOperation(operation, userId, null, resourceObjectID);
       } else {
         retVal = !uho.isDeny();
       }
@@ -294,8 +285,7 @@ public class OperationService {
     else {
       List<UserGroup> userUserGroups = user.getUserGroups();
       for (UserGroup userGroup : userUserGroups) {
-        Boolean groupPermission;
-        groupPermission = isPermittedForGroup(userGroup.getId(), operationName, resourceObjectID);
+          Boolean groupPermission = isPermittedForGroup(userGroup.getId(), operationName, resourceObjectID);
         if (groupPermission != null) {
           // Assign the permission we got for the userGroup to the return value only if
           // a. We haven't found another permission for this user so far
@@ -314,27 +304,6 @@ public class OperationService {
 
   public Boolean isPermittedForGroup(String groupID, String operationName) {
     return isPermittedForGroup(groupID, operationName, null);
-  }
-
-  public Boolean isPermittedForGroupByResource(String groupID, String operationName,
-      String resourceName) {
-    LOGGER.log(Level.FINEST,
-        "Checking permissions for userGroup {0}, operation {1} and resource with object ID {2}.",
-        new String[]{groupID, operationName, resourceName});
-
-    UserGroup userGroup = userGroupRepository.fetchById(groupID);
-    Operation operation = operationRepository.findByName(operationName);
-    Boolean retVal = null;
-    UserGroupHasOperation gho = userGroupHasOperationRepository.findByUserGroupIdAndOperationName(groupID, operationName);
-    if (gho != null) {
-      retVal = !gho.isDeny();
-    } else if (userGroup.getParent() != null) {
-      // If this userGroup is not assigned the operation check the userGroup's
-      // parents until a result is found or until no other parent exists.
-      retVal = isPermittedForGroup(userGroup.getParent().getId(), operationName, resourceName);
-    }
-
-    return retVal;
   }
 
   public Boolean isPermittedForGroup(String groupID, String operationName,
@@ -356,8 +325,7 @@ public class OperationService {
     if (gho != null) {
       // First check whether this is a dynamic operation.
       if (operation.isDynamic()) {
-        retVal = evaluateDynamicOperation(operation, null, groupID,
-            resourceObjectID);
+          retVal = evaluateDynamicOperation(operation, null, groupID, resourceObjectID);
       } else {
         retVal = !gho.isDeny();
       }
@@ -458,7 +426,8 @@ public class OperationService {
     return returnedUsers;
   }
 
-  public Set<String> getAllowedUsersForOperation(String operationName,
+
+    public Set<String> getAllowedUsersForOperation(String operationName,
       boolean checkUserGroups) {
     return getUsersForOperation(operationName, null, checkUserGroups, true);
   }
