@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
@@ -48,7 +47,6 @@ public class AuditServiceTest {
     private AuditLevelRepository auditLevelRepository = mock(AuditLevelRepository.class);
     private AuditTraceRepository auditTraceRepository = mock(AuditTraceRepository.class);
     private AuditProperties auditProperties = mock(AuditProperties.class);
-    //private ObjectMapper m = mock(ObjectMapper.class);
 
     @Spy
     private AuditMapper auditMapper;
@@ -63,14 +61,53 @@ public class AuditServiceTest {
 
     @Before
     public void init() {
-        auditService = new AuditService(auditProperties, auditRepository, auditMapper, auditLevelRepository, auditTraceRepository);
+        auditService = new AuditService(auditProperties, auditRepository, auditMapper,
+                auditLevelRepository, auditTraceRepository);
         initTestValues = new InitTestValues();
         audit = initTestValues.createAudit();
         auditDTO = initTestValues.createAuditDTO();
         auditsDTO = initTestValues.createAuditsDTO();
         audits = initTestValues.createAudits();
         qAudit = new QAudit("audit");
-        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void testAuditWith6Parameters(){
+        when(auditMapper.mapToEntity(any(AuditDTO.class))).thenReturn(audit);
+        auditService.audit(auditDTO.getLevel(), auditDTO.getEvent(), auditDTO.getGroupName(),
+                auditDTO.getShortDescription(), auditDTO.getPrinSessionId(), auditDTO.getTrace());
+
+        verify(auditRepository, times(1)).save(audit);
+        verify(auditTraceRepository, times(1)).save(audit.getTrace());
+    }
+
+    @Test
+    public void testAuditWith7Parameters(){
+        when(auditMapper.mapToEntity(any(AuditDTO.class))).thenReturn(audit);
+        auditService.audit(auditDTO.getLevel(), auditDTO.getEvent(), auditDTO.getGroupName(),
+                auditDTO.getShortDescription(), auditDTO.getPrinSessionId(), auditDTO.getTrace(), audit.getReferenceId());
+
+        verify(auditRepository, times(1)).save(audit);
+        verify(auditTraceRepository, times(1)).save(audit.getTrace());
+    }
+
+    @Test
+    public void testAuditWithTraceDataAsString(){
+        when(auditMapper.mapToEntity(any(AuditDTO.class))).thenReturn(audit);
+        auditService.audit(auditDTO.getLevel(), auditDTO.getEvent(), auditDTO.getGroupName(),
+                auditDTO.getShortDescription(), auditDTO.getPrinSessionId(), auditDTO.getTrace().getTraceData());
+
+        verify(auditRepository, times(1)).save(audit);
+        verify(auditTraceRepository, times(1)).save(audit.getTrace());
+    }
+
+    @Test
+    public void testAuditWithSingleArgument(){
+        when(auditMapper.mapToEntity(auditDTO)).thenReturn(audit);
+        auditService.audit(auditDTO);
+
+        verify(auditRepository, times(1)).save(audit);
+        verify(auditTraceRepository, times(1)).save(audit.getTrace());
     }
 
     @Test
@@ -82,7 +119,7 @@ public class AuditServiceTest {
 
         assertEquals(auditDTO.getId(), auditId);
         verify(auditRepository, times(1)).save(audit);
-        verify(auditTraceRepository, never()).save(any());
+        verify(auditTraceRepository, never()).save(audit.getTrace());
     }
 
     @Test
