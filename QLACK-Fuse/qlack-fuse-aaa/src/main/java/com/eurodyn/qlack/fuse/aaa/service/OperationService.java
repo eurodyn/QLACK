@@ -356,7 +356,7 @@ public class OperationService {
       resourceId = resourceRepository.findByObjectId(resourceObjectID).getId();
     }
 
-    // First check the permissions of users themselves
+    // Checking the permissions of users themselves
     List<UserHasOperation> uhoList;
     if (resourceId == null) {
       uhoList = userHasOperationRepository.findByOperationName(operationName);
@@ -378,51 +378,54 @@ public class OperationService {
       }
     }
 
-    // Then iterate over the remaining users to check userGroup permissions
-    if (checkUserGroups) {
-      // Using Iterator to iterate over allUsers in order to avoid
-      // ConcurrentModificationException caused by user removal in the for loop
-      Iterator<String> userIt = allUsers.iterator();
-      while (userIt.hasNext()) {
-        String userId = userIt.next();
-        List<UserGroup> userUserGroups = userRepository.fetchById(userId).getUserGroups();
-        Boolean userPermission = null;
-        for (UserGroup userGroup : userUserGroups) {
-          Boolean groupPermission;
-          if (resourceObjectID == null) {
-            groupPermission = isPermittedForGroup(userGroup.getId(), operationName);
-          } else {
-            groupPermission = isPermittedForGroup(userGroup.getId(), operationName, resourceObjectID);
-          }
-          // We have the following cases depending on the userGroup permission:
-          // a. If it was positive and we are prioritising positive permissions the user
-          // is allowed and we end the check for this user. The user will be added to
-          // the returned users if getAllowed == true.
-          // b. If it was negative and we are prioritising negative permissions the user
-          // is not allowed and we end the check for this user. The user will be added to
-          // the returned users if getAllowed == false.
-          // c. In all other cases we wait until the rest of the user userGroups are checked
-          // before we make a final decision. For this reason we assign the groupPermission
-          // to the userPermission variable to be checked after userGroup check is finished.
-          if (groupPermission != null) {
-            userIt.remove();
-            if (groupPermission.booleanValue() == prioritisePositive) {
-              if (groupPermission.booleanValue() == getAllowed) {
-                returnedUsers.add(userId);
-              }
-              userPermission = null;
-              break;
-            } else {
-              userPermission = groupPermission;
-            }
-          }
+    //Checking user group permissions if desired, or returns users found so far.
+    return checkUserGroups ?
+        getUsersForOperationByUserGroups(operationName, resourceObjectID, getAllowed, allUsers, returnedUsers) : returnedUsers;
+  }
+
+  private Set<String> getUsersForOperationByUserGroups(String operationName,
+      String resourceObjectID, boolean getAllowed, Set<String> allUsers, Set<String> returnedUsers) {
+    // Using Iterator to iterate over allUsers in order to avoid
+    // ConcurrentModificationException caused by user removal in the for loop
+    Iterator<String> userIt = allUsers.iterator();
+    while (userIt.hasNext()) {
+      String userId = userIt.next();
+      List<UserGroup> userUserGroups = userRepository.fetchById(userId).getUserGroups();
+      Boolean userPermission = null;
+      for (UserGroup userGroup : userUserGroups) {
+        Boolean groupPermission;
+        if (resourceObjectID == null) {
+          groupPermission = isPermittedForGroup(userGroup.getId(), operationName);
+        } else {
+          groupPermission = isPermittedForGroup(userGroup.getId(), operationName, resourceObjectID);
         }
-        if ((userPermission != null) && (userPermission.booleanValue() == getAllowed)) {
-          returnedUsers.add(userId);
+        // We have the following cases depending on the userGroup permission:
+        // a. If it was positive and we are prioritising positive permissions the user
+        // is allowed and we end the check for this user. The user will be added to
+        // the returned users if getAllowed == true.
+        // b. If it was negative and we are prioritising negative permissions the user
+        // is not allowed and we end the check for this user. The user will be added to
+        // the returned users if getAllowed == false.
+        // c. In all other cases we wait until the rest of the user userGroups are checked
+        // before we make a final decision. For this reason we assign the groupPermission
+        // to the userPermission variable to be checked after userGroup check is finished.
+        if (groupPermission != null) {
+          userIt.remove();
+          if (groupPermission.booleanValue() == prioritisePositive) {
+            if (groupPermission.booleanValue() == getAllowed) {
+              returnedUsers.add(userId);
+            }
+            userPermission = null;
+            break;
+          } else {
+            userPermission = groupPermission;
+          }
         }
       }
+      if ((userPermission != null) && (userPermission.booleanValue() == getAllowed)) {
+        returnedUsers.add(userId);
+      }
     }
-
     return returnedUsers;
   }
 
