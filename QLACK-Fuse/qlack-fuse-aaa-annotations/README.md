@@ -60,32 +60,25 @@ When the resourceIdField property is used, the referenced field in the DTO shoul
 ```java
 import com.eurodyn.qlack.fuse.aaa.annotations.annotation.ResourceAccess;
 import com.eurodyn.qlack.fuse.aaa.annotations.annotation.ResourceOperation;
-import com.eurodyn.qlack.fuse.aaa.dto.UserDTO;
-import com.eurodyn.qlack.fuse.aaa.service.UserService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 // ..
 
-@Autowired
-private UserService userService;
-// ..
-
-RequestMapping(method = RequestMethod.PUT, value="/app/users")
+RequestMapping(method = RequestMethod.PUT, value="/app/docs")
 @ResourceAccess(
     operations = {
             @ResourceOperation(operation = "UPDATE_PERMISSION", 
             resourceIdField = "id")
     }
  )
-public void updateUser(@RequestBody UserDTO user) {
-    userService.updateUser(user);
+public void updateDocument(@RequestBody DocumentDTO document) {
+    // ..
 }
 ```
 ```java
-package com.eurodyn.qlack.fuse.aaa.dto;
-// ..
+import com.eurodyn.qlack.fuse.aaa.annotations.annotation.ResourceId;
 
-public class UserDTO extends BaseDTO {
+public class DocumentDTO {
 
     @ResourceId("id")
     private String id;
