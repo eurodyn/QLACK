@@ -120,9 +120,9 @@ public class ResourceServiceTest {
 
     @Test
     public void testGetResourceByObjectId() {
-        when(resourceRepository.findByObjectId(resourceDTO.getObjectID())).thenReturn(resource);
+        when(resourceRepository.findByObjectId(resourceDTO.getObjectId())).thenReturn(resource);
         when(resourceMapper.mapToDTO(resource)).thenReturn(resourceDTO);
-        ResourceDTO foundResourceDTO = resourceService.getResourceByObjectId(resourceDTO.getObjectID());
+        ResourceDTO foundResourceDTO = resourceService.getResourceByObjectId(resourceDTO.getObjectId());
         assertEquals(resourceDTO, foundResourceDTO);
     }
 }

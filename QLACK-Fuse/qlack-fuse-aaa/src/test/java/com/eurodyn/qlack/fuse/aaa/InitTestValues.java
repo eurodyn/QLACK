@@ -226,7 +226,7 @@ public class InitTestValues {
         resourceDTO.setDescription("DELETE USER");
         resourceDTO.setName("DELETE");
         resourceDTO.setId("d1c86593-6b99-463d-93c6-2429119473de");
-        resourceDTO.setObjectID("0b422f60-a66b-4526-937d-26802cd9c8a1");
+        resourceDTO.setObjectId("0b422f60-a66b-4526-937d-26802cd9c8a1");
         return resourceDTO;
     }
 
