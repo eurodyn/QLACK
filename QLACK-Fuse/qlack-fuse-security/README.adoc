@@ -1,0 +1,180 @@
+# Qlack Security module
+
+The Qlack Security module integrates Spring Security with the Qlack AAA module and Qlack framework.
+
+##  Module information
+
+The Qlack Security module provides user authentication functionality based on the https://spring.io/projects/spring-security[Spring Security framework] and JWT (JSON Web Tokens) standard, https://tools.ietf.org/html/rfc7519[RFC-7519].
+
+The authorization (access control) is carried out by an AspectJ class that works as an interceptor. This class intercepts every call on a CXF endpoint or a business method annotated by the `@ResourceAccess` annotation and authorizes the request by matching permissions described by `@ResourceOperation` annotation with user/group/resource permissions provided by the authenticated user principal. `@ResourceAccess` can be described by multiple `@ResourceOperation` annotations.
+
+example:
+
+[source,java]
+----
+@ResourceAccess(
+        roleAccess = {"Administrator", "User"},
+        operations = {
+            @ResourceOperation(operation = "READ_COMPANY_USER", resourceIdParameter = "companyId"),
+            @ResourceOperation(operation = "READ", resourceIdParameter = "id")
+    })
+public UserDTO read(@PathParam("companyId") String companyId, @PathParam("id") String id) {
+    ...
+}
+----
+
+## Module Use
+To use Qlack Security module in your Qlack application:
+
+1. Add the following maven dependency to your pom.xml :
+
+```
+<dependencies>
+	...
+    <dependency>
+        <groupId>com.eurodyn.qlack.fuse</groupId>
+        <artifactId>qlack-fuse-security</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    ...
+</dependencies>
+```
+2 . Annotate with `@ComponentScan` your Spring boot application main class declaration and add the following packages to the basePackages property.
+
+[source,java]
+----
+@ComponentScan(basePackages = {
+    "com.eurodyn.qlack.fuse.aaa.ws",
+    "com.eurodyn.qlack.fuse.security",
+    ...
+    }
+----
+
+3 . Create a custom Security configuration class with the following code:
+
+.SecurityConfig.java
+[source,java]
+----
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Value("${cxf.path}")
+    private String cxfPath;
+
+    private final UserService userService;
+
+    @Autowired
+    public SecurityConfig(UserService userService) {
+        this.userService = userService;
+    }
+
+    /**
+     * Enable JWT authentication.
+     */
+    @Bean
+    public JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter() {
+        return new JwtTokenAuthenticationFilter();
+    }
+
+
+    /**
+     * Configures AAA authentication provider with a user service and a password encoder.
+     * The AAA user service should be used.
+     */
+    @Bean
+    public AAAUsernamePasswordProvider authenticationProvider() {
+        AAAUsernamePasswordProvider authProvider = new AAAUsernamePasswordProvider();
+        authProvider.setUserDetailsService(userService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+
+    /**
+     * Sets bcrypt as the password encoding practice.
+     */
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+}
+
+----
+
+3.1. Add the following method and configure session, security, filters and url access according to your application's needs.
+
+[source,java]
+----
+@Override
+protected void configure(HttpSecurity http) throws Exception {
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and().csrf().disable()
+            .addFilterBefore(jwtTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+            .authorizeRequests()
+            .antMatchers(cxfPath + "/user/login").permitAll()
+            .antMatchers(cxfPath + "/auth/unauthorized").permitAll()
+            .antMatchers(cxfPath + "/auth/authorized").authenticated()
+            .anyRequest().permitAll();
+    }
+----
+
+
+##  Securing an endpoint
+
+To secure an endpoint use `@ResourceAccess` annotation. The `@ResourceAccess` describes access to resources
+at a role level (roleAccess property) or at an operation and/or unique resource level (operations property).
+
+To describe access at a role level, the roleAccess property is used. The `roleAcess` is an array containing the names of the roles
+allowed to access this endpoint. For example, the following code gives access to users who have the role "Administrator". Access to
+more than one roles can be described separated by comma.
+
+example:
+
+[source,java]
+----
+@ResourceAccess(roleAccess = {"Administrator"})
+public UserDTO read(@PathParam("id") String id) {
+    ...
+}
+----
+
+`@ResourceOperation` is used to describe access at an operation/unique resource level. `@ResourceOperation` holds a pair
+of operation - resourceId properties which declare the operation name and perhaps the resource (object),
+a user must have permissions for. If the user has such permissions, the request is authorized.
+
+The `@ResourceOperation` has the following properties:
+
+- *operation*: the name of the allowed operation. This operation should already exist in the database
+- *resourceIdParameter* (Optional): the name of the parameter which represents the resourceId (GET, DELETE scenarios)
+- *resourceIdField* (Optional): the name of the DTO field which represents the resourceId (POST, PUT scenarios)
+
+When the *resourceIdField* property is used, the referenced field in the DTO should always be annotated
+with the `@ResourceId` annotation and reference the field name as its value. Consider the following example:
+
+
+[source,java]
+----
+@PUT
+@Path("/update")
+@ResourceAccess(
+    operations = {
+        @ResourceOperation(operation = "UPDATE", resourceIdField = "id")})
+    public void update(UserDTO user) {
+        userService.updateUser(user);
+    }
+----
+
+Then the UserDTO should have a field named id annotated with `@ResourceId`, like the following example:
+
+[source,java]
+----
+public class UserDTO extends BaseDTO {
+
+    @ResourceId("id")
+    private String id;
+    ...
+}
+----
+
+*`@ResourceId` value (i.e. "id") is always required.*
