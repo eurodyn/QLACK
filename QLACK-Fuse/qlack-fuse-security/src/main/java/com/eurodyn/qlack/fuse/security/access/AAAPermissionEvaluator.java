@@ -38,7 +38,6 @@ public class AAAPermissionEvaluator implements PermissionEvaluator {
     private boolean hasPrivilege(Authentication auth, String targetType, String permission) {
         UserDetailsDTO user = (UserDetailsDTO) auth.getPrincipal();
 
-
         // If user has no such operation, check in group operations.
         return user.getUserGroupHasOperations().stream()
                 .anyMatch(gho -> gho.getOperationDTO().getName().toUpperCase().equals(permission.toUpperCase()) && !gho.isDeny());

@@ -25,7 +25,7 @@ public class AuthenticationService {
     @Autowired
     private UserService userService;
 
-    @Value("${security.jwt.secret:aqlacksecret}")
+    @Value("${security.jwt.secret:qlackjwtsecret}")
     private String jwtSecret;
 
     /**
