@@ -215,7 +215,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - addForeignKeyConstraint:
-            constraintName: fk_aaa_user_group_aaa_user_group
+            constraintName: fk_aaa_user_group_user_group
             baseTableName: aaa_user_group
             baseColumnNames: parent
             referencedTableName: aaa_user_group
