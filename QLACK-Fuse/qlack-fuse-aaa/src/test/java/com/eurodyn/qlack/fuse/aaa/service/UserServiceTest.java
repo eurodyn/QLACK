@@ -108,7 +108,6 @@ public class UserServiceTest {
         String userId = userService.createUser(userDTO);
         assertEquals(user.getId(), userId);
         verify(userRepository, times(1)).save(user);
-        verify(userAttributeRepository, never()).save(any());
     }
 
     @Test
@@ -118,9 +117,6 @@ public class UserServiceTest {
         String userId = userService.createUser(userDTO);
         assertEquals(user.getId(), userId);
         verify(userRepository, times(1)).save(user);
-        for(UserAttribute a: user.getUserAttributes()){
-            verify(userAttributeRepository, times(1)).save(a);
-        }
     }
 
     @Test

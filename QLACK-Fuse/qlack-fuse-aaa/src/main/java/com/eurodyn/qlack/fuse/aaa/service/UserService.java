@@ -108,11 +108,11 @@ public class UserService implements UserDetailsService {
   public String createUser(UserDTO dto) {
     User user = userMapper.mapToEntity(dto);
     setUserPassword(dto, user);
-    userRepository.save(user);
     for(UserAttribute attribute: user.getUserAttributes()){
       attribute.setUser(user);
-      userAttributeRepository.save(attribute);
     }
+
+    userRepository.save(user);
 
     return user.getId();
   }

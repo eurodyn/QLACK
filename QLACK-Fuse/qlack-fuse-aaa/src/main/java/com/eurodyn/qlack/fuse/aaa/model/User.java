@@ -3,6 +3,7 @@ package com.eurodyn.qlack.fuse.aaa.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
@@ -59,8 +60,7 @@ public class User extends AAAModel {
   private List<UserGroup> userGroups;
 
   //bi-directional many-to-one association to UserAttribute
-  @OneToMany(mappedBy = "user")
-  @OnDelete(action = OnDeleteAction.CASCADE)
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   private List<UserAttribute> userAttributes;
 
   // bi-directional many-to-one association to VerificationToken.
