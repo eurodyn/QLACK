@@ -26,9 +26,12 @@ databaseChangeLog:
                   name: key_name
                   type: varchar(254)
                   constraints:
-                    nullable: false     
+                    nullable: false
               - column:
-                  name: val  
+                  name: psswrd
+                  type: boolean
+              - column:
+                  name: val
                   type: varchar(2048)
                   constraints:
                     nullable: true     

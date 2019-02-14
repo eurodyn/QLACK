@@ -57,11 +57,7 @@ public class SettingsService {
 
   public SettingDTO getSetting(String owner, String key, String group) {
     SettingDTO retVal;
-
-    Predicate predicate = qsetting.owner.eq(owner)
-        .and(qsetting.key.eq(key))
-        .and(qsetting.group.eq(group));
-    Optional<Setting> setting = settingRepository.findOne(predicate);
+    Optional<Setting> setting = getOptionalSetting(owner, key, group);
 
     retVal = settingMapper.map(setting.orElseThrow(
         () -> new QDoesNotExistException(MessageFormat.format(
@@ -90,15 +86,16 @@ public class SettingsService {
   }
 
   public void setVal(String owner, String key, String val, String group) {
+    Setting setting = getOptionalSetting(owner, key, group).orElseThrow(
+        () -> new QDoesNotExistException(MessageFormat.format("Did not find a setting with key: {0}.", key)));
+    setting.setVal(val);
+  }
+
+
+  private Optional<Setting> getOptionalSetting(String owner, String key, String group) {
     Predicate predicate = qsetting.owner.eq(owner)
         .and(qsetting.key.eq(key))
         .and(qsetting.group.eq(group));
-    Setting setting = settingRepository.findAll(predicate).get(0);
-    if (setting != null) {
-      setting.setVal(val);
-    } else {
-      throw new QDoesNotExistException(MessageFormat.format(
-          "Did not find a setting with key: {0}.", key));
-    }
+    return settingRepository.findOne(predicate);
   }
 }
