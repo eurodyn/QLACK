@@ -305,7 +305,7 @@ public class InitTestValues {
         userGroup2.setId("909626ef-df62-4ce0-a1ec-102f98a63a2a");
 
         UserGroup userGroup3 = createUserGroup();
-        userGroup2.setId("180cb78d-7447-49b3-8693-e959bcddea7a");
+        userGroup3.setId("180cb78d-7447-49b3-8693-e959bcddea7a");
 
         userGroups.add(userGroup2);
         userGroups.add(userGroup3);
