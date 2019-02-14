@@ -41,6 +41,8 @@ public class UserDetailsDTO extends BaseDTO implements UserDetails {
      */
     private String sessionId;
 
+    private List<UserHasOperationDTO> userHasOperations = new ArrayList<>();
+
     private List<UserGroupHasOperationDTO> userGroupHasOperations = new ArrayList<>();
 
     private List<UserGroupDTO> userGroups = new ArrayList<>();

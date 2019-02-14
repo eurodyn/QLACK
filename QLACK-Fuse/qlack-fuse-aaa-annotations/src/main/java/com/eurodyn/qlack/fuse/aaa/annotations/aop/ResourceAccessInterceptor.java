@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.eurodyn.qlack.fuse.aaa.dto.UserHasOperationDTO;
 import lombok.extern.java.Log;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -55,7 +57,18 @@ public class ResourceAccessInterceptor {
     private List<ResourceOperationDTO> getResourceOperations(UserDetailsDTO user, String operation) {
         List<ResourceOperationDTO> resourceOperations = new ArrayList<>();
 
+        List<UserHasOperationDTO> uho = user.getUserHasOperations();
         List<UserGroupHasOperationDTO> gho = user.getUserGroupHasOperations();
+
+        for (UserHasOperationDTO userHasOperationDTO : uho) {
+            if (userHasOperationDTO.getOperation().getName().equals(operation)) {
+                ResourceOperationDTO roDTO = new ResourceOperationDTO();
+                roDTO.setOperation(operation);
+                roDTO.setResourceId(userHasOperationDTO.getResource() != null && userHasOperationDTO.getResource().getObjectId() != null
+                        ? userHasOperationDTO.getResource().getObjectId() : "");
+                resourceOperations.add(roDTO);
+            }
+        }
 
         for (UserGroupHasOperationDTO userGroupHasOperationDTO : gho) {
             if (userGroupHasOperationDTO.getOperationDTO().getName().equals(operation)) {

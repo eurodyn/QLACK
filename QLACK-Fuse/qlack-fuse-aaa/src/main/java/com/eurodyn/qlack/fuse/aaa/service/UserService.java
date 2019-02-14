@@ -9,6 +9,7 @@ import com.eurodyn.qlack.fuse.aaa.dto.UserDTO;
 import com.eurodyn.qlack.fuse.aaa.mappers.SessionMapper;
 import com.eurodyn.qlack.fuse.aaa.mappers.UserAttributeMapper;
 import com.eurodyn.qlack.fuse.aaa.mappers.UserDetailsMapper;
+import com.eurodyn.qlack.fuse.aaa.mappers.UserGroupHasOperationMapper;
 import com.eurodyn.qlack.fuse.aaa.mappers.UserMapper;
 import com.eurodyn.qlack.fuse.aaa.model.UserGroup;
 import com.eurodyn.qlack.fuse.aaa.model.QSession;
@@ -74,6 +75,7 @@ public class UserService implements UserDetailsService {
   private final SessionMapper sessionMapper;
   private final UserAttributeMapper userAttributeMapper;
   private final UserDetailsMapper userDetailsMapper;
+  private final UserGroupHasOperationMapper userGroupHasOperationMapper;
 
   //QueryDSL helpers
   private QUser qUser = QUser.user;
@@ -87,7 +89,8 @@ public class UserService implements UserDetailsService {
                      UserRepository userRepository, UserAttributeRepository userAttributeRepository,
                      SessionRepository sessionRepository, UserGroupRepository userGroupRepository, UserMapper userMapper,
                      SessionMapper sessionMapper, UserAttributeMapper userAttributeMapper,
-                     UserDetailsMapper userDetailsMapper, @Lazy PasswordEncoder passwordEncoder) {
+                     UserDetailsMapper userDetailsMapper, @Lazy PasswordEncoder passwordEncoder,
+                     UserGroupHasOperationMapper userGroupHasOperationMapper) {
     this.accountingService = accountingService;
     this.ldapUserUtil = ldapUserUtil;
     this.userRepository = userRepository;
@@ -99,6 +102,7 @@ public class UserService implements UserDetailsService {
     this.userAttributeMapper = userAttributeMapper;
     this.userDetailsMapper = userDetailsMapper;
     this.passwordEncoder = passwordEncoder;
+    this.userGroupHasOperationMapper = userGroupHasOperationMapper;
   }
 
   public String createUser(UserDTO dto) {
@@ -449,7 +453,7 @@ public class UserService implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     User user = userRepository.findByUsername(username);
-    return userDetailsMapper.mapToDTO(user);
+    return userDetailsMapper.mapToDTO(user, userGroupHasOperationMapper);
   }
 
   private void setUserPassword(UserDTO dto, User user) {
