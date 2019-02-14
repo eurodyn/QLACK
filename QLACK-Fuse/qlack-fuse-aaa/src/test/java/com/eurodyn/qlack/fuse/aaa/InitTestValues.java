@@ -313,6 +313,22 @@ public class InitTestValues {
         return userGroups;
     }
 
+    public List<UserGroupDTO> createUserGroupsDTO(){
+        List<UserGroupDTO> userGroupsDTO = new ArrayList<>();
+        userGroupsDTO.add(createUserGroupDTO());
+
+        UserGroupDTO userGroupDTO2 = createUserGroupDTO();
+        userGroupDTO2.setId("909626ef-df62-4ce0-a1ec-102f98a63a2a");
+
+        UserGroupDTO userGroupDTO3 = createUserGroupDTO();
+        userGroupDTO3.setId("180cb78d-7447-49b3-8693-e959bcddea7a");
+
+        userGroupsDTO.add(userGroupDTO2);
+        userGroupsDTO.add(userGroupDTO3);
+
+        return userGroupsDTO;
+    }
+
     public OpTemplate createOpTemplate() {
         OpTemplate template = new OpTemplate();
         template.setId("abc29181-cee0-44f8-9f5a-5e91f05f7230");

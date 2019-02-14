@@ -24,7 +24,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "aaa_user_group")
 @Getter
 @Setter
-public class UserGroup extends  AAAModel {
+public class UserGroup extends AAAModel {
 
   private static final long serialVersionUID = 1L;
 
