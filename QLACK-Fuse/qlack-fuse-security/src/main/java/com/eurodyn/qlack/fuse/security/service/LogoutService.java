@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Service
 @Validated
 @Transactional
@@ -35,8 +37,8 @@ public class LogoutService {
     @Value("${security.jwt.expiration:#{24*60*60}}")
     private int jwtExpiration;
 
-    public void performLogout(String token){
-        String username = String.valueOf(JWTUtil.getSubject(new JWTClaimsRequestDTO(token, jwtSecret, jwtExpiration)));
+    public void performLogout(HttpServletRequest req){
+        String username = String.valueOf(JWTUtil.getSubject(new JWTClaimsRequestDTO(JWTUtil.getRawToken(req), jwtSecret, jwtExpiration)));
 
         UserDTO user = userService.getUserByName(username);
 
