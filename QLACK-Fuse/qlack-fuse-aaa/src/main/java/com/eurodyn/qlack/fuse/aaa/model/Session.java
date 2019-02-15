@@ -2,6 +2,7 @@ package com.eurodyn.qlack.fuse.aaa.model;
 
 import java.util.List;
 import java.util.UUID;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -40,7 +41,7 @@ public class Session extends AAAModel {
   private User user;
 
   //bi-directional many-to-one association to SessionAttribute
-  @OneToMany(mappedBy = "session", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private List<SessionAttribute> sessionAttributes;
 
   public Session() {

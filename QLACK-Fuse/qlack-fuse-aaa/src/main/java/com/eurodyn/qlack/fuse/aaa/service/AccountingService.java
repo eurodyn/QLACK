@@ -15,14 +15,6 @@ import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
-
 import java.text.MessageFormat;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -34,6 +26,13 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Provides accounting information for the user. For details regarding the functionality offered see
@@ -79,14 +78,12 @@ public class AccountingService {
       entity.setCreatedOn(Instant.now().toEpochMilli());
     }
     entity.setUser(userRepository.fetchById(sessionDTO.getUserId()));
-    sessionRepository.save(entity);
     if (entity.getSessionAttributes() != null) {
       for (SessionAttribute attribute : entity.getSessionAttributes()) {
         attribute.setSession(entity);
-        sessionAttributeRepository.save(attribute);
       }
     }
-
+    sessionRepository.save(entity);
     return entity.getId();
   }
 
