@@ -4,14 +4,12 @@ import com.eurodyn.qlack.fuse.audit.dto.AuditDTO;
 import com.eurodyn.qlack.fuse.audit.mappers.AuditMapper;
 import com.eurodyn.qlack.fuse.audit.repository.AuditLevelRepository;
 import com.eurodyn.qlack.fuse.audit.repository.AuditRepository;
-import com.eurodyn.qlack.fuse.audit.repository.AuditTraceRepository;
 import com.eurodyn.qlack.fuse.audit.util.AuditProperties;
+import java.util.Date;
 import javax.transaction.Transactional;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-
-import java.util.Date;
 
 @Service
 @Validated
@@ -21,9 +19,8 @@ public class AuditAsyncService extends AuditService {
   public AuditAsyncService(AuditProperties auditProperties,
       AuditRepository auditRepository,
       AuditMapper auditMapper,
-      AuditLevelRepository auditLevelRepository,
-      AuditTraceRepository auditTraceRepository) {
-    super(auditProperties, auditRepository, auditMapper, auditLevelRepository, auditTraceRepository);
+      AuditLevelRepository auditLevelRepository) {
+    super(auditProperties, auditRepository, auditMapper, auditLevelRepository);
   }
 
   @Override

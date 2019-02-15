@@ -1,5 +1,6 @@
 package com.eurodyn.qlack.fuse.audit.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,7 +19,7 @@ public class Audit extends AuditBaseEntity{
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "level_id")
   private AuditLevel levelId;
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @JoinColumn(name = "trace_id")
   private AuditTrace trace;
   @Column(name = "prin_session_id")

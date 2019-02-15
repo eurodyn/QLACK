@@ -6,7 +6,6 @@ import com.eurodyn.qlack.fuse.audit.mappers.AuditMapper;
 import com.eurodyn.qlack.fuse.audit.model.Audit;
 import com.eurodyn.qlack.fuse.audit.repository.AuditLevelRepository;
 import com.eurodyn.qlack.fuse.audit.repository.AuditRepository;
-import com.eurodyn.qlack.fuse.audit.repository.AuditTraceRepository;
 import com.eurodyn.qlack.fuse.audit.util.AuditProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.types.Predicate;
@@ -37,19 +36,16 @@ public class AuditService {
   private AuditProperties auditProperties;
   private AuditRepository auditRepository;
   private final AuditLevelRepository auditLevelRepository;
-  private final AuditTraceRepository auditTraceRepository;
   private final AuditMapper auditMapper;
 
   @Autowired
   public AuditService(AuditProperties auditProperties,
       AuditRepository auditRepository, AuditMapper auditMapper,
-      AuditLevelRepository auditLevelRepository,
-      AuditTraceRepository auditTraceRepository) {
+      AuditLevelRepository auditLevelRepository) {
     this.auditProperties = auditProperties;
     this.auditRepository = auditRepository;
     this.auditMapper = auditMapper;
     this.auditLevelRepository = auditLevelRepository;
-    this.auditTraceRepository = auditTraceRepository;
   }
 
   public void audit(String level, String event, String groupName,
@@ -67,6 +63,15 @@ public class AuditService {
     return audit(dto);
   }
 
+  public void audit(String level, String event, String groupName,
+      String description, String sessionID, String traceData) {
+    AuditDTO dto = new AuditDTO(level, event, groupName, description, sessionID);
+    if (auditProperties.isTraceData()) {
+      dto.setTrace(new AuditTraceDTO(traceData));
+    }
+    audit(dto);
+  }
+
   private String createTraceDataStr(Object traceData) {
     String traceDataStr = "";
     if (traceData != null) {
@@ -77,15 +82,6 @@ public class AuditService {
       }
     }
     return traceDataStr;
-  }
-
-  public void audit(String level, String event, String groupName,
-      String description, String sessionID, String traceData) {
-    AuditDTO dto = new AuditDTO(level, event, groupName, description, sessionID);
-    if (auditProperties.isTraceData()) {
-      dto.setTrace(new AuditTraceDTO(traceData));
-    }
-    audit(dto);
   }
 
   public String audit(AuditDTO audit) {
@@ -100,9 +96,7 @@ public class AuditService {
     }
     Audit alAudit = auditMapper.mapToEntity(audit);
     alAudit.setLevelId(auditLevelRepository.findByName(audit.getLevel()));
-    if (null != alAudit.getTrace()) {
-      auditTraceRepository.save(alAudit.getTrace());
-    }
+
     if(alAudit.getCreatedOn() == null){
       alAudit.setCreatedOn(Calendar.getInstance().getTimeInMillis());
     }

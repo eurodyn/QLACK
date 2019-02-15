@@ -3,7 +3,6 @@ package com.eurodyn.qlack.fuse.audit.service;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -15,7 +14,6 @@ import com.eurodyn.qlack.fuse.audit.model.Audit;
 import com.eurodyn.qlack.fuse.audit.model.QAudit;
 import com.eurodyn.qlack.fuse.audit.repository.AuditLevelRepository;
 import com.eurodyn.qlack.fuse.audit.repository.AuditRepository;
-import com.eurodyn.qlack.fuse.audit.repository.AuditTraceRepository;
 import com.eurodyn.qlack.fuse.audit.util.AuditProperties;
 import com.querydsl.core.types.Predicate;
 import java.util.ArrayList;
@@ -45,7 +43,6 @@ public class AuditServiceTest {
 
     private AuditRepository auditRepository = mock(AuditRepository.class);
     private AuditLevelRepository auditLevelRepository = mock(AuditLevelRepository.class);
-    private AuditTraceRepository auditTraceRepository = mock(AuditTraceRepository.class);
     private AuditProperties auditProperties = mock(AuditProperties.class);
 
     @Spy
@@ -61,8 +58,7 @@ public class AuditServiceTest {
 
     @Before
     public void init() {
-        auditService = new AuditService(auditProperties, auditRepository, auditMapper,
-                auditLevelRepository, auditTraceRepository);
+        auditService = new AuditService(auditProperties, auditRepository, auditMapper, auditLevelRepository);
         initTestValues = new InitTestValues();
         audit = initTestValues.createAudit();
         auditDTO = initTestValues.createAuditDTO();
@@ -78,7 +74,6 @@ public class AuditServiceTest {
                 auditDTO.getShortDescription(), auditDTO.getPrinSessionId(), auditDTO.getTrace());
 
         verify(auditRepository, times(1)).save(audit);
-        verify(auditTraceRepository, times(1)).save(audit.getTrace());
     }
 
     @Test
@@ -88,7 +83,6 @@ public class AuditServiceTest {
                 auditDTO.getShortDescription(), auditDTO.getPrinSessionId(), auditDTO.getTrace(), audit.getReferenceId());
 
         verify(auditRepository, times(1)).save(audit);
-        verify(auditTraceRepository, times(1)).save(audit.getTrace());
     }
 
     @Test
@@ -98,7 +92,6 @@ public class AuditServiceTest {
                 auditDTO.getShortDescription(), auditDTO.getPrinSessionId(), auditDTO.getTrace().getTraceData());
 
         verify(auditRepository, times(1)).save(audit);
-        verify(auditTraceRepository, times(1)).save(audit.getTrace());
     }
 
     @Test
@@ -107,7 +100,6 @@ public class AuditServiceTest {
         auditService.audit(auditDTO);
 
         verify(auditRepository, times(1)).save(audit);
-        verify(auditTraceRepository, times(1)).save(audit.getTrace());
     }
 
     @Test
@@ -119,7 +111,6 @@ public class AuditServiceTest {
 
         assertEquals(auditDTO.getId(), auditId);
         verify(auditRepository, times(1)).save(audit);
-        verify(auditTraceRepository, never()).save(audit.getTrace());
     }
 
     @Test
@@ -129,7 +120,6 @@ public class AuditServiceTest {
 
         assertEquals(auditDTO.getId(), auditId);
         verify(auditRepository, times(1)).save(audit);
-        verify(auditTraceRepository, times(1)).save(any());
     }
 
     @Test
@@ -144,7 +134,6 @@ public class AuditServiceTest {
 
         List<String> createdAuditIDs = auditService.audits(auditsDTO, initTestValues.getCorrelationId());
         assertEquals(auditIds, createdAuditIDs);
-        verify(auditTraceRepository, never()).save(any());
     }
 
     @Test
@@ -157,7 +146,6 @@ public class AuditServiceTest {
 
         List<String> createdAuditIDs = auditService.audits(auditsDTO, initTestValues.getCorrelationId());
         assertEquals(auditIds, createdAuditIDs);
-        verify(auditTraceRepository, times(createdAuditIDs.size())).save(any());
     }
 
     @Test
