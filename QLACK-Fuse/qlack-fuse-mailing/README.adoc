@@ -1,6 +1,6 @@
 # QLACK mailing module
 
-This module is responsible for storing and configuring internal mailing of the application.
+This module is responsible for configuring, storing and sending internal/external mailing of the application.
 
 ## Integration
 
@@ -60,8 +60,7 @@ spring.mail.polling = true
 
 ```java
 
-import com.eurodyn.qlack.fuse.mailing.mailingService;
-import com.eurodyn.qlack.fuse.mailing.dto.SettingDTO;
+import com.eurodyn.qlack.fuse.mailing.service.MailService;
 // ..
 
    @Autowired
