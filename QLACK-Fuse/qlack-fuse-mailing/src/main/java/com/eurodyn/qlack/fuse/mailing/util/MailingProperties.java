@@ -1,84 +1,29 @@
 package com.eurodyn.qlack.fuse.mailing.util;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Primary;
 
+@Getter
+@Setter
+@Primary
 @Configuration
-@ConfigurationProperties(prefix = "qlack.fuse.mailing")
-@PropertySource("classpath:qlack.fuse.mailing.application.properties")
-public class MailingProperties {
+public class MailingProperties extends MailProperties {
 
-  private byte maxTries;
-  private boolean debug;
-  private String serverHost;
-  private int serverPort;
-  private String serverUsername;
-  private String serverPassword;
-  private boolean startTls;
-  private boolean polling;
+    /**
+     * Whether sending emails is activated.
+     */
+    private boolean polling;
 
-  public boolean isDebug() {
-    return debug;
-  }
+    /**
+     * The number of tries before marking an email as failed.
+     */
+    private byte maxTries;
 
-  public void setDebug(boolean debug) {
-    this.debug = debug;
-  }
-
-  public String getServerHost() {
-    return serverHost;
-  }
-
-  public void setServerHost(String serverHost) {
-    this.serverHost = serverHost;
-  }
-
-  public int getServerPort() {
-    return serverPort;
-  }
-
-  public void setServerPort(int serverPort) {
-    this.serverPort = serverPort;
-  }
-
-  public String getServerUsername() {
-    return serverUsername;
-  }
-
-  public void setServerUsername(String serverUsername) {
-    this.serverUsername = serverUsername;
-  }
-
-  public String getServerPassword() {
-    return serverPassword;
-  }
-
-  public void setServerPassword(String serverPassword) {
-    this.serverPassword = serverPassword;
-  }
-
-  public boolean isStartTls() {
-    return startTls;
-  }
-
-  public void setStartTls(boolean startTls) {
-    this.startTls = startTls;
-  }
-
-  public byte getMaxTries() {
-    return maxTries;
-  }
-
-  public void setMaxTries(byte maxTries) {
-    this.maxTries = maxTries;
-  }
-
-  public boolean isPolling() {
-    return polling;
-  }
-
-  public void setPolling(boolean polling) {
-    this.polling = polling;
-  }
+    /**
+     * Whether to output extra logging information. Use only during debugging.
+     */
+    private boolean debug;
 }

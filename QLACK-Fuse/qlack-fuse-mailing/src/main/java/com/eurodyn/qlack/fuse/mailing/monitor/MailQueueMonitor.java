@@ -1,32 +1,26 @@
 package com.eurodyn.qlack.fuse.mailing.monitor;
 
-import com.eurodyn.qlack.fuse.mailing.dto.AttachmentDTO;
 import com.eurodyn.qlack.fuse.mailing.dto.EmailDTO;
 import com.eurodyn.qlack.fuse.mailing.exception.MailingException;
-import com.eurodyn.qlack.fuse.mailing.mappers.AttachmentMapper;
 import com.eurodyn.qlack.fuse.mailing.mappers.EmailMapper;
-import com.eurodyn.qlack.fuse.mailing.mappers.MailingMapper;
-import com.eurodyn.qlack.fuse.mailing.model.Attachment;
+import com.eurodyn.qlack.fuse.mailing.model.Contact;
+import com.eurodyn.qlack.fuse.mailing.model.DistributionList;
 import com.eurodyn.qlack.fuse.mailing.model.Email;
 import com.eurodyn.qlack.fuse.mailing.model.QEmail;
+import com.eurodyn.qlack.fuse.mailing.repository.DistributionListRepository;
 import com.eurodyn.qlack.fuse.mailing.repository.EmailRepository;
-import com.eurodyn.qlack.fuse.mailing.util.ConverterUtil;
 import com.eurodyn.qlack.fuse.mailing.util.MailConstants.EMAIL_STATUS;
 import com.eurodyn.qlack.fuse.mailing.util.MailingProperties;
 import com.querydsl.core.types.Predicate;
-
-//import javax.persistence.EntityManager;
-//import javax.persistence.PersistenceContext;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Monitor email queue.
@@ -47,35 +41,27 @@ public class MailQueueMonitor {
 	private MailQueueSender mailQueueSender;
 	private MailingProperties mailingProperties;
 	private EmailMapper emailMapper;
-	private AttachmentMapper attachmentMapper;
 
 	private final EmailRepository emailRepository;
+	private final DistributionListRepository distributionListRepository;
 
 	private static QEmail qEmail = QEmail.email;
 
 	@Autowired
 	public MailQueueMonitor(MailQueueSender mailQueueSender, MailingProperties mailingProperties,
-			EmailRepository emailRepository, EmailMapper emailMapper, AttachmentMapper attachmentMapper) {
+			EmailRepository emailRepository,
+			DistributionListRepository distributionListRepository,
+      EmailMapper emailMapper) {
 		this.mailQueueSender = mailQueueSender;
 		this.mailingProperties = mailingProperties;
 		this.emailRepository = emailRepository;
+		this.distributionListRepository = distributionListRepository;
 		this.emailMapper = emailMapper;
-		this.attachmentMapper = attachmentMapper;
 	}
 
 	private void send(Email email) {
 		/** Create a DTO for the email about to be sent */
-		EmailDTO dto = new EmailDTO();
-
-		dto = emailMapper.mapToDTOyWithRecipilents(email, true);
-
-		/** Process attachments. */
-		Set<Attachment> attachments = email.getAttachments();
-		for (Attachment attachment : attachments) {
-			AttachmentDTO attachmentDTO = new AttachmentDTO();
-			attachmentDTO = attachmentMapper.mapToDTO(attachment);
-			dto.addAttachment(attachmentDTO);
-		}
+		EmailDTO dto = emailMapper.mapToDTOyWithRecipilents(email, true) ;
 
 		/**
 		 * Update email's tries and date sent in the database, irrespectively of the
@@ -113,6 +99,40 @@ public class MailQueueMonitor {
 	public void sendOne(String emailId) {
 		send(emailRepository.fetchById(emailId));
 	}
+
+	/**
+	 * Sends email to a mail distribution lists recipients.
+	 * @param emailId the email to send.
+	 * @param distributionListId the mail distribution list.
+	 */
+	public void sendToDistributionList(String emailId, String distributionListId) {
+	    Email email = emailRepository.fetchById(emailId);
+
+	    email.setToEmails(null);
+	    email.setCcEmails(null);
+	    email.setBccEmails(getContactEmailsFromDistributionList(distributionListId));
+
+	    send(email);
+	}
+
+	/**
+	 * Retrieves mails from a distribution list contacts in a CSV format
+	 * @param distributionListId the mail distribution list.
+	 * @return distribution list contacts mails in CSV format
+	 * @throws MailingException Indicating no distributionListId was provided or no recipients in the distribution list
+	 */
+	private String getContactEmailsFromDistributionList(String distributionListId) throws MailingException {
+      if(distributionListId==null || distributionListId.isEmpty()) {
+          throw new MailingException("No distribution list was provided. The email cannot be sent.");
+      }
+
+      DistributionList dlist = distributionListRepository.fetchById(distributionListId);
+
+      return dlist.getContacts().stream()
+          .map(Contact::getEmail).reduce((t, u) -> t + ", " + u).orElseThrow(() -> new MailingException(
+              String.format("The distribution list \"%s\" has no recipients. Please add recipients first, then try again",
+                  dlist.getName())));
+  }
 
 	/**
 	 * Check for QUEUED emails and send them.

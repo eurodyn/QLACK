@@ -49,7 +49,10 @@ databaseChangeLog:
                   name: added_on_date  
                   type: bigint 
                   constraints:
-                    nullable: false 		
+                    nullable: false
+              - column:
+                  name: reply_to_emails
+                  type: varchar(1024)
               - column:
                   name: tries  
                   type: tinyint 
@@ -139,60 +142,6 @@ databaseChangeLog:
                   name: created_by
                   type: varchar(254)
         - createTable:
-            tableName: mai_template
-            columns:
-              - column:
-                  name: id
-                  type: varchar(36)
-                  constraints:
-                    nullable: false
-                    primaryKey: true
-              - column:
-                  name: name
-                  type: varchar(45)
-              - column:
-                  name: description
-                  type: varchar(255)
-              - column:
-                  name: body
-                  type: text		  
-        - createTable:
-            tableName: mai_newsletter
-            columns:
-              - column:
-                  name: id
-                  type: varchar(36)
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: description  
-                  type: varchar(512)
-              - column:
-                  name: template_id
-                  type: varchar(36)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: title
-                  type: varchar(254)
-                  constraints:
-                    nullable: false  
-        - createIndex:
-              indexName: idx_newsletter_mai_template1
-              tableName: mai_newsletter
-              columns:
-                - column:
-                   name: template_id	  
-        - addForeignKeyConstraint:
-              constraintName: fk_mai_newsletter_mai_templ1
-              baseTableName: mai_newsletter
-              baseColumnNames: template_id
-              referencedTableName: mai_template
-              referencedColumnNames: id
-              onDelete: cascade
-              onUpdate: cascade	
-        - createTable:
             tableName: mai_contact
             columns:
               - column:
@@ -202,7 +151,7 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: user_id  
+                  name: user_id
                   type: varchar(36)
               - column:
                   name: email
@@ -219,47 +168,6 @@ databaseChangeLog:
                   name: locale
                   type: varchar(5)
         - createTable:
-            tableName: mai_newsletter_schedule
-            columns:
-              - column:
-                  name: id
-                  type: varchar(36)
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: newsletter_id
-                  type: varchar(36)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: scheduledFor
-                  type: bigint
-                  constraints:
-                    nullable: false
-              - column:
-                  name: sent
-                  type: tinyint(1)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: sentOn
-                  type: bigint
-        - createIndex:
-              indexName: idx_mai_newsletter_sched_id1
-              tableName: mai_newsletter_schedule
-              columns:
-                - column:
-                   name: newsletter_id	
-        - addForeignKeyConstraint:
-              constraintName: fk_mai_nlr_schedule_mai_nlr1
-              baseTableName: mai_newsletter_schedule
-              baseColumnNames: newsletter_id
-              referencedTableName: mai_newsletter
-              referencedColumnNames: id
-              onDelete: cascade
-              onUpdate: cascade
-        - createTable:
             tableName: mai_distr_list_has_contact
             columns:
               - column:
@@ -269,7 +177,7 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: contact_id  
+                  name: contact_id
                   type: varchar(36)
                   constraints:
                     primaryKey: true
@@ -402,46 +310,3 @@ databaseChangeLog:
               referencedColumnNames: id
               onDelete: cascade
               onUpdate: cascade
-        - createTable:
-            tableName: mai_newsletter_has_dl
-            columns:
-              - column:
-                  name: newsletter_id
-                  type: varchar(36)
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: dlist_id  
-                  type: varchar(36)
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-        - createIndex:
-              indexName: fk_nhdl_news_id
-              tableName: mai_newsletter_has_dl
-              columns:
-                - column:
-                   name: newsletter_id	
-        - createIndex:
-              indexName: fk_njdl_dlist_id
-              tableName: mai_newsletter_has_dl
-              columns:
-                - column:
-                   name: dlist_id	
-        - addForeignKeyConstraint:
-              constraintName: fk_nhdl_news_id
-              baseTableName: mai_newsletter_has_dl
-              baseColumnNames: newsletter_id
-              referencedTableName: mai_newsletter
-              referencedColumnNames: id
-              onDelete: cascade
-              onUpdate: no action
-        - addForeignKeyConstraint:
-              constraintName: fk_njdl_dlist_id
-              baseTableName: mai_newsletter_has_dl
-              baseColumnNames: dlist_id
-              referencedTableName: mai_distribution_list
-              referencedColumnNames: id
-              onDelete: no action
-              onUpdate: no action

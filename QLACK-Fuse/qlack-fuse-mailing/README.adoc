@@ -1,0 +1,86 @@
+# QLACK mailing module
+
+This module is responsible for storing and configuring internal mailing of the application.
+
+## Integration
+
+### Add qlack-fuse-mailing dependency to your pom.xml:
+
+```
+    <properties>
+        <!-- ... -->
+        <version.qlack>3.0.0-SNAPSHOT</version.qlack>
+    </properties>
+
+    <dependency>
+        <groupId>com.eurodyn.qlack.fuse</groupId>
+        <artifactId>qlack-fuse-mailing</artifactId>
+        <version>${version.qlack}</version>
+    </dependency>
+```
+
+### Add the mail configuration properties in the Spring boot application.properties file:
+```
+# Spring mail
+# The address of the mail server to use.
+spring.mail.host = <mailserver_hostname>
+# The port of the mail server to use.
+spring.mail.port = <mailserver_port>
+# Server authentication
+spring.mail.properties.mail.smtp.auth = true
+# The user to connect with to the mail server.
+spring.mail.username = <mailserver_username>
+# The password of the user to connect to the mail server.
+spring.mail.password = <mailserver_pasword>
+# Whether the email server requires TLS.
+spring.mail.properties.mail.smtp.starttls.enable = false
+# The number of tries before marking an email as failed.
+spring.mail.max_tries = 3
+# Whether to output extra logging information. Use only during debugging.
+spring.mail.debug = true
+# Whether sending emails is activated. By setting this property to `false` you can still use
+# qlack-fuse-mailing as a dependency in your project in order to queue emails, however your own
+# application will not actually send any emails (in that case, you need another application instance
+# running with this property set to `true`)
+spring.mail.polling = true
+```
+
+### Add the packages in the Spring boot application main class declaration:
+
+```java
+@SpringBootApplication
+@EnableJpaRepositories("com.eurodyn.qlack.fuse.mailing.repository")
+@EntityScan("com.eurodyn.qlack.fuse.mailing.model")
+@ComponentScan(basePackages = {
+    "com.eurodyn.qlack.fuse.mailing"
+})
+```
+
+### Example
+
+```java
+
+import com.eurodyn.qlack.fuse.mailing.mailingService;
+import com.eurodyn.qlack.fuse.mailing.dto.SettingDTO;
+// ..
+
+   @Autowired
+   MailService mailService;
+// ..
+
+    public void run(String... args) {
+        mailService.sendOne("anEmailId");
+        mailService.sendToDistributionList("anEmailId", "aDistributionListId");
+    }
+
+    // Send an email
+    public void sendEmail(String emailId) {
+        mailService.sendOne(emailId);
+    }
+
+    // Send an email to a mail distribution list
+    public void sendEmailToDistributionList(String emailId, String distributionListId) {
+        mailService.sendToDistributionList(emailId, distributionListId);
+    }
+// ..
+```

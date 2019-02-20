@@ -1,18 +1,5 @@
 package com.eurodyn.qlack.fuse.mailing.service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-
 import com.eurodyn.qlack.fuse.mailing.dto.AttachmentDTO;
 import com.eurodyn.qlack.fuse.mailing.dto.EmailDTO;
 import com.eurodyn.qlack.fuse.mailing.mappers.AttachmentMapper;
@@ -23,6 +10,16 @@ import com.eurodyn.qlack.fuse.mailing.monitor.MailQueueMonitor;
 import com.eurodyn.qlack.fuse.mailing.repository.AttachmentRepository;
 import com.eurodyn.qlack.fuse.mailing.repository.EmailRepository;
 import com.eurodyn.qlack.fuse.mailing.util.MailConstants.EMAIL_STATUS;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.transaction.Transactional;
+import javax.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Bean implementation for Send and Search Mail functionality
@@ -47,6 +44,7 @@ public class MailService {
 		this.mailQueueMonitor = mailQueueMonitor;
 		this.emailMapper = emailMapper;
 		this.emailRepository = emailRepository;
+		this.attachmentMapper = attachmentMapper;
 		this.attachmentRepository = attachmentRepository;
 	}
 
@@ -74,7 +72,7 @@ public class MailService {
 	 * @return email id
 	 */
 	public String queueEmail(@Valid EmailDTO emailDto) {
-		Email email = new Email();
+		Email email;
 
 		email = emailMapper.mapToEntity(emailDto);
 		email.setTries((byte) 0);
@@ -149,5 +147,14 @@ public class MailService {
 
 	public void sendOne(String emailId) {
 		mailQueueMonitor.sendOne(emailId);
+	}
+
+	/**
+	 * Sends email to a mail distribution lists recipients.
+	 * @param emailId the email to send.
+	 * @param distributionListId the mail distribution list.
+	 */
+	public void sendToDistributionList(String emailId, String distributionListId) {
+		mailQueueMonitor.sendToDistributionList(emailId, distributionListId);
 	}
 }

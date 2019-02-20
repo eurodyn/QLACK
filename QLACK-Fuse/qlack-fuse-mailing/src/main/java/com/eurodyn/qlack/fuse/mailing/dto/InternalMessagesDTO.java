@@ -17,8 +17,8 @@ public class InternalMessagesDTO extends MailBaseDTO {
 	private static final long serialVersionUID = 1L;
 	private String subject;
 	private String message;
-	private String from;
-	private String to;
+	private String mailFrom;
+	private String mailTo;
 	private Date dateSent;
 	private Date dateReceived;
 	private String status;

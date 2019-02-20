@@ -132,8 +132,8 @@ public class ConverterUtil {
 
     entity.setSubject(dto.getSubject());
     entity.setMessage(dto.getMessage());
-    entity.setMailFrom(dto.getFrom());
-    entity.setMailTo(dto.getTo());
+    entity.setMailFrom(dto.getMailFrom());
+    entity.setMailTo(dto.getMailTo());
     entity.setDateSent(dto.getDateSent().getTime());
     entity.setDateReceived(dto.getDateReceived().getTime());
 
@@ -176,8 +176,8 @@ public class ConverterUtil {
     dto.setId(entity.getId());
     dto.setSubject(entity.getSubject());
     dto.setMessage(entity.getMessage());
-    dto.setFrom(entity.getMailFrom());
-    dto.setTo(entity.getMailTo());
+    dto.setMailFrom(entity.getMailFrom());
+    dto.setMailTo(entity.getMailTo());
     dto.setDateSent(entity.getDateSent());
     dto.setDateReceived(entity.getDateReceived());
     dto.setStatus(entity.getStatus());
