@@ -6,7 +6,7 @@ This module is responsible for configuring, storing and sending internal/externa
 
 ### Add qlack-fuse-mailing dependency to your pom.xml:
 
-```
+```xml
     <properties>
         <!-- ... -->
         <version.qlack>3.0.0-SNAPSHOT</version.qlack>
@@ -20,7 +20,7 @@ This module is responsible for configuring, storing and sending internal/externa
 ```
 
 ### Add the mail configuration properties in the Spring boot application.properties file:
-```
+```properties
 # Spring mail
 # The address of the mail server to use.
 spring.mail.host = <mailserver_hostname>
