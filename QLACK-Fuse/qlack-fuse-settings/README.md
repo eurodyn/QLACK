@@ -5,7 +5,6 @@ This module is responsible for storing and configuring internal settings of the 
 ## Integration
 
 ### Add qlack-fuse-settings dependency to your pom.xml:
-
 ```
     <properties>
         <!-- ... -->
@@ -19,8 +18,12 @@ This module is responsible for storing and configuring internal settings of the 
     </dependency>
 ```
 
-### Add the packages in the Spring boot application main class declaration:
+### Add qlack-fuse-settings changelog in your application liquibase changelog
+```
+<include file="db/changelog/qlack.fuse.settings.changelog.xml"/>
+```
 
+### Add the packages in the Spring boot application main class declaration:
 ```java
 @SpringBootApplication
 @EnableJpaRepositories("com.eurodyn.qlack.fuse.settings.repository")

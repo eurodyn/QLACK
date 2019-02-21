@@ -5,7 +5,6 @@ This module provides custom Authentication, Authorization and Accounting operati
 ## Integration
 
 ### Add qlack-fuse-aaa dependency to your pom.xml:
-
 ```
     <properties>
         <!-- ... -->
@@ -19,9 +18,13 @@ This module provides custom Authentication, Authorization and Accounting operati
     </dependency>
 ```
 
-### Add the packages in the Spring boot application main class declaration:
-#### Inject a password encoder bean (qlack-fuse-security has already this step implemented)
+### Add qlack-fuse-aaa changelog in your application liquibase changelog:
+```
+<include file="db/changelog/qlack.fuse.aaa.changelog.xml"/>
+```
 
+### Add the packages in the Spring boot application main class declaration:
+#### Inject a password encoder bean (qlack-fuse-security has already this step implemented).
 ```java
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -43,7 +46,6 @@ public BCryptPasswordEncoder passwordEncoder() {
 ```
 
 ### Example
-
 ```java
 import com.eurodyn.qlack.fuse.aaa.dto.UserAttributeDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.UserDTO;
