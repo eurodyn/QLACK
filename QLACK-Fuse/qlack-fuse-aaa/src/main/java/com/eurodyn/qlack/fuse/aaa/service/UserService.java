@@ -119,11 +119,11 @@ public class UserService implements UserDetailsService {
 
   public void updateUser(UserDTO dto, boolean updatePassword, boolean createIfMissing) {
     User user = userRepository.fetchById(dto.getId());
+    userMapper.mapToExistingEntity(dto, user);
+
     if (updatePassword) {
       setUserPassword(dto, user);
     }
-    userMapper.mapToExistingEntity(dto, user);
-
     if (dto.getUserAttributes() != null) {
       for (UserAttributeDTO attribute : dto.getUserAttributes()) {
         updateAttribute(attribute, createIfMissing);

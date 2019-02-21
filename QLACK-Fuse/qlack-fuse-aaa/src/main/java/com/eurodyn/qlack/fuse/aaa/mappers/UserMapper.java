@@ -12,5 +12,6 @@ uses = UserAttributeMapper.class)
 public interface UserMapper extends AAAMapper<User, UserDTO> {
 
   @Mapping(target = "userAttributes", ignore = true)
+  @Mapping(target = "password", ignore = true)
   void mapToExistingEntity(UserDTO dto,@MappingTarget User user);
 }
