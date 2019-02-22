@@ -37,17 +37,34 @@ This module is responsible for storing and configuring internal settings of the 
 
 ```java
 
-import com.eurodyn.qlack.fuse.settings.SettingsService;
+import com.eurodyn.qlack.common.exceptions.QAlreadyExistsException;
 import com.eurodyn.qlack.fuse.settings.dto.SettingDTO;
+import com.eurodyn.qlack.fuse.settings.service.SettingsService;
+import org.springframework.beans.factory.annotation.Autowired;
 // ..
 
     @Autowired
     private SettingsService settingsService;
 // ..
 
-    public void run(String... args) {
-        SettingDTO setting = settingsService.getSetting("TheOwner", "SomeKey", "SomeGroup");
-        List<SettingDTO> groupSettings = settingsService.getGroupSettings("TheOwner", "SomeGroup");
+    public void createSetting(){
+        try {
+            settingsService.createSetting(createSettingDTO());
+            System.out.println("A new setting has been added.");
+        } catch (QAlreadyExistsException e){
+            System.out.println(e.getMessage());
+        }
     }
+
+    private SettingDTO createSettingDTO(){
+        SettingDTO settingDTO = new SettingDTO();
+        settingDTO.setKey("Setting Key 1");
+        settingDTO.setGroup("Test Group");
+        settingDTO.setOwner("Test Owner");
+        settingDTO.setPassword(true);
+        settingDTO.setCreatedOn(1625145120000L);
+        return settingDTO;
+    }
+
 }
 ```

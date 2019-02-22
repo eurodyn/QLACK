@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.fuse.settings;
+package com.eurodyn.qlack.fuse.settings.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -8,12 +8,14 @@ import static org.mockito.Mockito.when;
 
 import com.eurodyn.qlack.common.exceptions.QAlreadyExistsException;
 import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
+import com.eurodyn.qlack.fuse.settings.InitTestValues;
 import com.eurodyn.qlack.fuse.settings.dto.GroupDTO;
 import com.eurodyn.qlack.fuse.settings.dto.SettingDTO;
 import com.eurodyn.qlack.fuse.settings.mappers.SettingMapper;
 import com.eurodyn.qlack.fuse.settings.model.QSetting;
 import com.eurodyn.qlack.fuse.settings.model.Setting;
 import com.eurodyn.qlack.fuse.settings.repository.SettingRepository;
+import com.eurodyn.qlack.fuse.settings.service.SettingsService;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import java.util.ArrayList;

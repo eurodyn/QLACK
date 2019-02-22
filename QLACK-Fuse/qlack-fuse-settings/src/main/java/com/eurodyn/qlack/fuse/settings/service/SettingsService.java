@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.fuse.settings;
+package com.eurodyn.qlack.fuse.settings.service;
 
 import com.eurodyn.qlack.common.exceptions.QAlreadyExistsException;
 import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
