@@ -5,12 +5,12 @@ import com.eurodyn.qlack.fuse.mailing.dto.ContactDTO;
 import com.eurodyn.qlack.fuse.mailing.dto.DistributionListDTO;
 import com.eurodyn.qlack.fuse.mailing.dto.EmailDTO;
 import com.eurodyn.qlack.fuse.mailing.dto.InternalAttachmentDTO;
-import com.eurodyn.qlack.fuse.mailing.dto.InternalMessagesDTO;
+import com.eurodyn.qlack.fuse.mailing.dto.InternalMessageDTO;
 import com.eurodyn.qlack.fuse.mailing.model.Contact;
 import com.eurodyn.qlack.fuse.mailing.model.DistributionList;
 import com.eurodyn.qlack.fuse.mailing.model.Email;
 import com.eurodyn.qlack.fuse.mailing.model.InternalAttachment;
-import com.eurodyn.qlack.fuse.mailing.model.InternalMessages;
+import com.eurodyn.qlack.fuse.mailing.model.InternalMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -118,17 +118,17 @@ public class ConverterUtil {
 
   
   /**
-   * Converts InternalMessagesDTO DTO to InternalMessages without attachments.
+   * Converts InternalMessageDTO DTO to InternalMessage without attachments.
    *
    * @param dto internal message data transfer object.
-   * @return InternalMessages entity.
+   * @return InternalMessage entity.
    */
-  public static InternalMessages internalMessageConvert(InternalMessagesDTO dto) {
+  public static InternalMessage internalMessageConvert(InternalMessageDTO dto) {
     if (dto == null) {
       return null;
     }
 
-    InternalMessages entity = new InternalMessages();
+    InternalMessage entity = new InternalMessage();
 
     entity.setSubject(dto.getSubject());
     entity.setMessage(dto.getMessage());
@@ -162,17 +162,17 @@ public class ConverterUtil {
   }
 
   /**
-   * Converts InternalMessages entity to InternalMessagesDTO.
+   * Converts InternalMessage entity to InternalMessageDTO.
    *
-   * @param entity InternalMessages
-   * @return InternalMessagesDTO
+   * @param entity InternalMessage
+   * @return InternalMessageDTO
    */
-  public static InternalMessagesDTO internalMessageConvert(InternalMessages entity) {
+  public static InternalMessageDTO internalMessageConvert(InternalMessage entity) {
     if (entity == null) {
       return null;
     }
 
-    InternalMessagesDTO dto = new InternalMessagesDTO();
+    InternalMessageDTO dto = new InternalMessageDTO();
     dto.setId(entity.getId());
     dto.setSubject(entity.getSubject());
     dto.setMessage(entity.getMessage());
@@ -220,17 +220,17 @@ public class ConverterUtil {
   }
 
   /**
-   * Converts list of InternalMessages entities to list data transfer object.
+   * Converts list of InternalMessage entities to list data transfer object.
    *
-   * @param internalMessagesList list of InternalMessages entities.
+   * @param internalMessageList list of InternalMessage entities.
    * @return list of data transfer object.
    */
-  public static List<InternalMessagesDTO> internalMessageConvertList(
-      List<InternalMessages> internalMessagesList) {
-    List<InternalMessagesDTO> messagesDtoList = new ArrayList<>();
+  public static List<InternalMessageDTO> internalMessageConvertList(
+      List<InternalMessage> internalMessageList) {
+    List<InternalMessageDTO> messagesDtoList = new ArrayList<>();
 
-    for (InternalMessages internalMessages : internalMessagesList) {
-      InternalMessagesDTO dto = internalMessageConvert(internalMessages);
+    for (InternalMessage internalMessage : internalMessageList) {
+      InternalMessageDTO dto = internalMessageConvert(internalMessage);
       messagesDtoList.add(dto);
     }
 

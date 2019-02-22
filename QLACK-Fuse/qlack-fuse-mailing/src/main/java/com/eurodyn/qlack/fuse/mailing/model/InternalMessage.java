@@ -14,10 +14,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "mai_internal_messages")
+@Table(name = "mai_internal_message")
 @Getter
 @Setter
-public class InternalMessages extends MailingModel {
+public class InternalMessage extends MailingModel {
 
 	private static final long serialVersionUID = 1L;
 

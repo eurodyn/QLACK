@@ -12,7 +12,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class InternalMessagesDTO extends MailBaseDTO {
+public class InternalMessageDTO extends MailBaseDTO {
 
 	private static final long serialVersionUID = 1L;
 	private String subject;

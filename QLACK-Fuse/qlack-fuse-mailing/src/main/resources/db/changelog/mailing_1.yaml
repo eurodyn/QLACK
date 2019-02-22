@@ -211,7 +211,7 @@ databaseChangeLog:
               onDelete: cascade
               onUpdate: no action
         - createTable:
-            tableName: mai_internal_messages
+            tableName: mai_internal_message
             columns:
               - column:
                   name: id
@@ -255,7 +255,7 @@ databaseChangeLog:
                     nullable: false    
         - createIndex:
               indexName: idx_mim_mailtotype
-              tableName: mai_internal_messages
+              tableName: mai_internal_message
               columns:
                 - column:
                    name: mail_to
@@ -263,7 +263,7 @@ databaseChangeLog:
                    name: delete_type	
         - createIndex:
               indexName: idx_mim_mf_dt
-              tableName: mai_internal_messages
+              tableName: mai_internal_message
               columns:
                 - column:
                    name: mail_from	
@@ -306,7 +306,7 @@ databaseChangeLog:
               constraintName: fk_mai_int_attachment_mai_msg1
               baseTableName: mai_internal_attachment
               baseColumnNames: messages_id
-              referencedTableName: mai_internal_messages
+              referencedTableName: mai_internal_message
               referencedColumnNames: id
               onDelete: cascade
               onUpdate: cascade

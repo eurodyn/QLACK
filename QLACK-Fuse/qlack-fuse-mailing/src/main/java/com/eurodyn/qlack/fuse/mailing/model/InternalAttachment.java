@@ -20,7 +20,7 @@ public class InternalAttachment extends MailingModel {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "messages_id", nullable = false)
-	private InternalMessages messages;
+	private InternalMessage messages;
 
 	@Column(name = "filename", length = 254)
 	private String filename;

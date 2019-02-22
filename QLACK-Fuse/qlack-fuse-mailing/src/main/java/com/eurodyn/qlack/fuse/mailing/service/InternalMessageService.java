@@ -3,17 +3,17 @@ package com.eurodyn.qlack.fuse.mailing.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.eurodyn.qlack.fuse.mailing.dto.InternalMessageDTO;
+import com.eurodyn.qlack.fuse.mailing.mappers.InternalMessageMapper;
+import com.eurodyn.qlack.fuse.mailing.model.InternalMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import com.eurodyn.qlack.fuse.mailing.dto.InternalAttachmentDTO;
-import com.eurodyn.qlack.fuse.mailing.dto.InternalMessagesDTO;
 import com.eurodyn.qlack.fuse.mailing.mappers.InternalAttachmentMapper;
-import com.eurodyn.qlack.fuse.mailing.mappers.InternalMessagesMapper;
 import com.eurodyn.qlack.fuse.mailing.model.InternalAttachment;
-import com.eurodyn.qlack.fuse.mailing.model.InternalMessages;
-import com.eurodyn.qlack.fuse.mailing.model.QInternalMessages;
+import com.eurodyn.qlack.fuse.mailing.model.QInternalMessage;
 import com.eurodyn.qlack.fuse.mailing.repository.InternalAttachmentRepository;
 import com.eurodyn.qlack.fuse.mailing.repository.InternalMessagesRepository;
 import com.eurodyn.qlack.fuse.mailing.util.MailConstants;
@@ -34,18 +34,18 @@ public class InternalMessageService {
 	private final InternalMessagesRepository internalMessagesRepository;
 	private final InternalAttachmentRepository internalAttachmentRepository;
 
-	private InternalMessagesMapper internalMessagesMapper;
+	private InternalMessageMapper internalMessageMapper;
 	private InternalAttachmentMapper internalAttachmentMapper;
 
-	private static QInternalMessages qInternalMessages = QInternalMessages.internalMessages;
+	private static QInternalMessage qInternalMessages = QInternalMessage.internalMessage;
 
 	public InternalMessageService(InternalMessagesRepository internalMessagesRepository,
-			InternalAttachmentRepository internalAttachmentRepository, InternalMessagesMapper internalMessagesMapper,
+			InternalAttachmentRepository internalAttachmentRepository, InternalMessageMapper internalMessageMapper,
 			InternalAttachmentMapper internalAttachmentMapper) {
 
 		this.internalMessagesRepository = internalMessagesRepository;
 		this.internalAttachmentRepository = internalAttachmentRepository;
-		this.internalMessagesMapper = internalMessagesMapper;
+		this.internalMessageMapper = internalMessageMapper;
 		this.internalAttachmentMapper = internalAttachmentMapper;
 	}
 
@@ -54,16 +54,16 @@ public class InternalMessageService {
 	 *
 	 * @param dto
 	 *            - the internal message data
-	 * @return - an InternalMessagesDTO object
+	 * @return - an InternalMessageDTO object
 	 */
-	public InternalMessagesDTO sendInternalMail(InternalMessagesDTO dto) {
+	public String sendInternalMail(InternalMessageDTO dto) {
 
-		InternalMessages internalMessages = internalMessagesMapper.mapToEntity(dto);
+		InternalMessage internalMessage = internalMessageMapper.mapToEntity(dto);
 
 		// Status can be READ, UNREAD, REPLIED.
-		internalMessages.setStatus("UNREAD");
-		internalMessages.setDeleteType("N");
-		internalMessagesRepository.save(internalMessages);
+		internalMessage.setStatus("UNREAD");
+		internalMessage.setDeleteType("N");
+		internalMessagesRepository.save(internalMessage);
 
 		List<InternalAttachmentDTO> internalAttachments = dto.getAttachments();
 		if (internalAttachments == null) {
@@ -78,11 +78,11 @@ public class InternalMessageService {
 
 		for (InternalAttachmentDTO attachmentDto : internalAttachments) {
 			InternalAttachment attachment = internalAttachmentMapper.mapToEntity(attachmentDto);
-			attachment.setMessages(internalMessages);
+			attachment.setMessages(internalMessage);
 			internalAttachmentRepository.save(attachment);
 		}
 
-		return internalMessagesMapper.mapToDTO(internalMessages);
+		return internalMessage.getId();
 	}
 
 	/**
@@ -90,15 +90,15 @@ public class InternalMessageService {
 	 *
 	 * @param userId
 	 *            - the person that the message was sent to
-	 * @return a list of InternalMessagesDTO
+	 * @return a list of InternalMessageDTO
 	 */
-	public List<InternalMessagesDTO> getInternalInboxFolder(String userId) {
+	public List<InternalMessageDTO> getInternalInboxFolder(String userId) {
 
 		Predicate predicate = qInternalMessages.mailTo.eq(userId)
 				.and(qInternalMessages.deleteType.notEqualsIgnoreCase("I"));
 
-		List<InternalMessages> internalMessagesList = internalMessagesRepository.findAll(predicate);
-		return internalMessagesMapper.mapToDTO(internalMessagesList);
+		List<InternalMessage> internalMessageList = internalMessagesRepository.findAll(predicate);
+		return internalMessageMapper.mapToDTO(internalMessageList);
 	}
 
 	/**
@@ -108,13 +108,13 @@ public class InternalMessageService {
 	 *            - the person that sent the message
 	 * @return a list of messages
 	 */
-	public List<InternalMessagesDTO> getInternalSentFolder(String userId) {
+	public List<InternalMessageDTO> getInternalSentFolder(String userId) {
 
 		Predicate predicate = qInternalMessages.mailTo.eq(userId)
 				.and(qInternalMessages.deleteType.notEqualsIgnoreCase("S"));
-		List<InternalMessages> internalMessagesList = internalMessagesRepository.findAll(predicate);
+		List<InternalMessage> internalMessageList = internalMessagesRepository.findAll(predicate);
 
-		return internalMessagesMapper.mapToDTO(internalMessagesList);
+		return internalMessageMapper.mapToDTO(internalMessageList);
 	}
 
 	/**
@@ -148,8 +148,8 @@ public class InternalMessageService {
 	 *            - the message Id
 	 */
 	public void markMessageAsRead(String messageId) {
-		InternalMessages internalMessages = internalMessagesRepository.fetchById(messageId);
-		internalMessages.setStatus(MailConstants.MARK_READ);
+		InternalMessage internalMessage = internalMessagesRepository.fetchById(messageId);
+		internalMessage.setStatus(MailConstants.MARK_READ);
 	}
 
 	/**
@@ -159,8 +159,8 @@ public class InternalMessageService {
 	 *            - the message Id
 	 */
 	public void markMessageAsReplied(String messageId) {
-		InternalMessages internalMessages = internalMessagesRepository.fetchById(messageId);
-		internalMessages.setStatus(MailConstants.MARK_REPLIED);
+		InternalMessage internalMessage = internalMessagesRepository.fetchById(messageId);
+		internalMessage.setStatus(MailConstants.MARK_REPLIED);
 	}
 
 	/**
@@ -170,8 +170,8 @@ public class InternalMessageService {
 	 *            - the message Id
 	 */
 	public void markMessageAsUnread(String messageId) {
-		InternalMessages internalMessages = internalMessagesRepository.fetchById(messageId);
-		internalMessages.setStatus(MailConstants.MARK_UNREAD);
+		InternalMessage internalMessage = internalMessagesRepository.fetchById(messageId);
+		internalMessage.setStatus(MailConstants.MARK_UNREAD);
 	}
 
 	/**
@@ -200,20 +200,20 @@ public class InternalMessageService {
 	 *            - the folder type (inbox or sent)
 	 */
 	public void deleteMessage(String messageId, String folderType) {
-		InternalMessages internalMessages = internalMessagesRepository.fetchById(messageId);
+		InternalMessage internalMessage = internalMessagesRepository.fetchById(messageId);
 		if (MailConstants.INBOX_FOLDER_TYPE.equals(folderType)) {
-			if ("S".equals(internalMessages.getDeleteType())) {
-				internalMessagesRepository.delete(internalMessages);
+			if ("S".equals(internalMessage.getDeleteType())) {
+				internalMessagesRepository.delete(internalMessage);
 
 			} else {
-				internalMessages.setDeleteType("I");
+				internalMessage.setDeleteType("I");
 			}
 		}
 		if (MailConstants.SENT_FOLDER_TYPE.equals(folderType)) {
-			if ("I".equals(internalMessages.getDeleteType())) {
-				internalMessagesRepository.delete(internalMessages);
+			if ("I".equals(internalMessage.getDeleteType())) {
+				internalMessagesRepository.delete(internalMessage);
 			} else {
-				internalMessages.setDeleteType("S");
+				internalMessage.setDeleteType("S");
 			}
 		}
 	}
@@ -225,9 +225,9 @@ public class InternalMessageService {
 	 *            - the message Id
 	 * @return the message
 	 */
-	public InternalMessagesDTO getInternalMessage(String messageId) {
-		InternalMessages internalMessages = internalMessagesRepository.fetchById(messageId);
-		return internalMessagesMapper.mapToDTO(internalMessages);
+	public InternalMessageDTO getInternalMessage(String messageId) {
+		InternalMessage internalMessage = internalMessagesRepository.fetchById(messageId);
+		return internalMessageMapper.mapToDTO(internalMessage);
 	}
 
 	/**

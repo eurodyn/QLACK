@@ -6,13 +6,13 @@ import com.eurodyn.qlack.fuse.mailing.dto.DistributionListDTO;
 import com.eurodyn.qlack.fuse.mailing.dto.EmailDTO;
 import com.eurodyn.qlack.fuse.mailing.dto.EmailDTO.EMAIL_TYPE;
 import com.eurodyn.qlack.fuse.mailing.dto.InternalAttachmentDTO;
-import com.eurodyn.qlack.fuse.mailing.dto.InternalMessagesDTO;
+import com.eurodyn.qlack.fuse.mailing.dto.InternalMessageDTO;
 import com.eurodyn.qlack.fuse.mailing.model.Attachment;
 import com.eurodyn.qlack.fuse.mailing.model.Contact;
 import com.eurodyn.qlack.fuse.mailing.model.DistributionList;
 import com.eurodyn.qlack.fuse.mailing.model.Email;
 import com.eurodyn.qlack.fuse.mailing.model.InternalAttachment;
-import com.eurodyn.qlack.fuse.mailing.model.InternalMessages;
+import com.eurodyn.qlack.fuse.mailing.model.InternalMessage;
 import com.eurodyn.qlack.fuse.mailing.util.MailConstants.EMAIL_STATUS;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -239,8 +239,8 @@ public class InitTestValues {
         return internalAttachmentsDTO;
     }
 
-    public InternalMessages createInternalMessages() {
-        InternalMessages internalMessage = new InternalMessages();
+    public InternalMessage createInternalMessages() {
+        InternalMessage internalMessage = new InternalMessage();
         internalMessage.setSubject("Test Subject");
         internalMessage.setStatus(EMAIL_STATUS.QUEUED.name());
         internalMessage.setMessage("This is a test internal message");
@@ -254,8 +254,8 @@ public class InitTestValues {
         return internalMessage;
     }
 
-    public InternalMessagesDTO createInternalMessagesDTO() {
-        InternalMessagesDTO internalMessageDTO = new InternalMessagesDTO();
+    public InternalMessageDTO createInternalMessagesDTO() {
+        InternalMessageDTO internalMessageDTO = new InternalMessageDTO();
         internalMessageDTO.setSubject("Test Subject");
         internalMessageDTO.setStatus(EMAIL_STATUS.QUEUED.name());
         internalMessageDTO.setMessage("This is a test internal message");
