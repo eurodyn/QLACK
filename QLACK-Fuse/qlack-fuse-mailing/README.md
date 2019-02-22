@@ -19,6 +19,11 @@ This module is responsible for configuring, storing and sending internal/externa
     </dependency>
 ```
 
+### Add qlack-fuse-mailing changelog in your application liquibase changelog:
+```
+<include file="db/changelog/qlack.fuse.mailing.changelog.xml"/>
+```
+
 ### Add the mail configuration properties in the Spring boot application.properties file:
 ```properties
 # Spring mail
@@ -60,26 +65,67 @@ spring.mail.polling = true
 
 ```java
 
+import com.eurodyn.qlack.fuse.mailing.dto.AttachmentDTO;
+import com.eurodyn.qlack.fuse.mailing.dto.EmailDTO;
 import com.eurodyn.qlack.fuse.mailing.service.MailService;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 // ..
 
    @Autowired
-   MailService mailService;
+   private MailService mailService;
 // ..
 
-    public void run(String... args) {
-        mailService.sendOne("anEmailId");
-        mailService.sendToDistributionList("anEmailId", "aDistributionListId");
+    public void queueEmail(){
+        String emailId = mailService.queueEmail(createEmailDTO());
+        System.out.println("Email with id "+emailId+" has been queued.");
+        sendOne(emailId);
     }
 
-    // Send an email
-    public void sendEmail(String emailId) {
+    private void sendOne(String emailId){
         mailService.sendOne(emailId);
+        System.out.println("Mail with id "+emailId+" has been sent.");
     }
 
-    // Send an email to a mail distribution list
-    public void sendEmailToDistributionList(String emailId, String distributionListId) {
-        mailService.sendToDistributionList(emailId, distributionListId);
+    private List<AttachmentDTO> createAttachmentsDTO(){
+        List<AttachmentDTO> attachments = new ArrayList<>();
+
+        try {
+            BufferedImage bImage = ImageIO.read(new File("E:\\pic.jpg"));
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+            ImageIO.write(bImage, "jpg", bos);
+            byte [] data = bos.toByteArray();
+
+            AttachmentDTO attachmentDTO = new AttachmentDTO();
+            attachmentDTO.setData(data);
+            attachmentDTO.setContentType("image/jpeg");
+            attachmentDTO.setFilename("pic.jpg");
+            attachments.add(attachmentDTO);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return attachments;
+    }
+
+    private EmailDTO createEmailDTO(){
+        EmailDTO emailDTO = new EmailDTO();
+        emailDTO.setSubject("QLACK test email");
+        emailDTO.setBody("<p>Email content</p>");
+        emailDTO.setFromEmail("ioannis.mousmoutis@eurodyn.com");
+        emailDTO.setToEmails(Arrays.asList("wapis_user@delos.eurodyn.com"));
+        emailDTO.setEmailType(EmailDTO.EMAIL_TYPE.HTML);
+        emailDTO.setAttachments(createAttachmentsDTO());
+        return emailDTO;
     }
 // ..
 ```

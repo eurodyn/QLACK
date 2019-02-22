@@ -84,10 +84,9 @@ public class MailService {
 		if (emailDto.getAttachments() != null && !emailDto.getAttachments().isEmpty()) {
 			Set<Attachment> attachments = new HashSet<Attachment>();
 			for (AttachmentDTO attachmentDto : emailDto.getAttachments()) {
-				Attachment attachment = new Attachment();
+				Attachment attachment = attachmentMapper.mapToEntity(attachmentDto);
 				attachment.setEmail(email);
 
-				attachment = attachmentMapper.mapToEntity(attachmentDto);
 				attachment.setAttachmentSize(Long.valueOf(attachmentDto.getData().length));
 				attachments.add(attachment);
 				attachmentRepository.save(attachment);
