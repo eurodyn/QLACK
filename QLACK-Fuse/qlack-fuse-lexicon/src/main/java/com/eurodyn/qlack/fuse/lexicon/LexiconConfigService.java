@@ -1,7 +1,12 @@
 package com.eurodyn.qlack.fuse.lexicon;
 
+import com.eurodyn.qlack.fuse.lexicon.dto.GroupDTO;
+import com.eurodyn.qlack.fuse.lexicon.dto.KeyDTO;
+import com.eurodyn.qlack.fuse.lexicon.dto.LanguageDTO;
+import com.eurodyn.qlack.fuse.lexicon.exception.LexiconYMLProcessingException;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -9,20 +14,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
-
-import com.eurodyn.qlack.fuse.lexicon.dto.GroupDTO;
-import com.eurodyn.qlack.fuse.lexicon.dto.KeyDTO;
-import com.eurodyn.qlack.fuse.lexicon.dto.LanguageDTO;
-import com.eurodyn.qlack.fuse.lexicon.exception.LexiconYMLProcessingException;
 
 @Service
 @Validated
@@ -36,6 +34,10 @@ public class LexiconConfigService {
   private LanguageService languageService;
   private KeyService keyService;
 
+  //Holds groupId + key pairs of translations with forceDelete
+  private static List<Map<String, String>> deletedGroupKeys = new ArrayList<>();
+  private static List<Map<String, String>> skippedGroupKeys = new ArrayList<>();
+
   @Autowired
   public LexiconConfigService(GroupService groupService,
       LanguageService languageService, KeyService keyService) {
@@ -43,38 +45,6 @@ public class LexiconConfigService {
     this.languageService = languageService;
     this.keyService = keyService;
   }
-
-  private void updateKeys(List<Map<String, Object>> translations, String groupId,
-      String languageId) {
-    for (Map<String, Object> translation : translations) {
-      String translationKey = translation.keySet().iterator().next();
-      String translationValue = (String) translation.get(translationKey);
-      KeyDTO keyDTO = keyService.getKeyByName(translationKey, groupId, true);
-      // If the key does not exist in the DB then create it.
-      if (keyDTO == null) {
-        keyDTO = new KeyDTO();
-        keyDTO.setGroupId(groupId);
-        keyDTO.setName(translationKey);
-        Map<String, String> keyTranslations = new HashMap<>();
-        keyTranslations.put(languageId, translationValue);
-        keyDTO.setTranslations(keyTranslations);
-        keyService.createKey(keyDTO, false);
-      }
-      // If the key exists check if a translation exists and if it
-      // does check if it is the same as the key name, which means
-      // that the translation was created automatically (ex. when
-      // adding a new language) and therefore it should be
-      // updated. Otherwise only update the key if the forceUpdate
-      // flag is set to true.
-      else if ((keyDTO.getTranslations().get(languageId) == null)
-          || (keyDTO.getTranslations().get(languageId).equals(translationKey))
-          || ((translation.get("forceUpdate") != null)
-          && ((Boolean) translation.get("forceUpdate") == true))) {
-        keyService.updateTranslation(keyDTO.getId(), languageId, translationValue);
-      }
-    }
-  }
-
   @PostConstruct
   public void init() {
     try {
@@ -179,4 +149,50 @@ public class LexiconConfigService {
     }
 
   }
+
+  private void updateKeys(List<Map<String, Object>> translations, String groupId,
+      String languageId) {
+    for (Map<String, Object> translation : translations) {
+      String translationKey = translation.keySet().iterator().next();
+      String translationValue = (String) translation.get(translationKey);
+      boolean shouldDelete = translation.get("forceDelete") != null && (Boolean) translation.get("forceDelete") == true;
+      KeyDTO keyDTO = keyService.getKeyByName(translationKey, groupId, true);
+
+      Map<String, String> candidate = new HashMap<>();
+      candidate.put(groupId, translationKey);
+
+      // If the key does not exist in the DB then create it.
+      if (keyDTO == null) {
+        if (shouldDelete || deletedGroupKeys.contains(candidate) || skippedGroupKeys.contains(candidate)) {
+          skippedGroupKeys.add(candidate);
+          LOGGER.log(Level.WARNING, "Skipped key: " + translationKey +
+              " because it was deleted recently. QLACK Lexicon configuration file should be updated manually.");
+        } else {
+          keyDTO = new KeyDTO();
+          keyDTO.setGroupId(groupId);
+          keyDTO.setName(translationKey);
+          Map<String, String> keyTranslations = new HashMap<>();
+          keyTranslations.put(languageId, translationValue);
+          keyDTO.setTranslations(keyTranslations);
+          keyService.createKey(keyDTO, false);
+        }
+      } else if (shouldDelete) {
+        deletedGroupKeys.add(candidate);
+        keyService.deleteKey(keyDTO.getId());
+      }
+      // If the key exists check if a translation exists and if it
+      // does check if it is the same as the key name, which means
+      // that the translation was created automatically (ex. when
+      // adding a new language) and therefore it should be
+      // updated. Otherwise only update the key if the forceUpdate
+      // flag is set to true.
+      else if ((keyDTO.getTranslations().get(languageId) == null)
+          || (keyDTO.getTranslations().get(languageId).equals(translationKey))
+          || ((translation.get("forceUpdate") != null)
+          && ((Boolean) translation.get("forceUpdate") == true))) {
+        keyService.updateTranslation(keyDTO.getId(), languageId, translationValue);
+      }
+    }
+  }
+
 }

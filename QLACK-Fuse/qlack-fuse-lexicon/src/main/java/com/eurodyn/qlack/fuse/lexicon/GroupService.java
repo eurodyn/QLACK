@@ -1,18 +1,5 @@
 package com.eurodyn.qlack.fuse.lexicon;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
-
 import com.eurodyn.qlack.fuse.lexicon.dto.GroupDTO;
 import com.eurodyn.qlack.fuse.lexicon.mappers.GroupMapper;
 import com.eurodyn.qlack.fuse.lexicon.model.Data;
@@ -27,6 +14,16 @@ import com.eurodyn.qlack.fuse.lexicon.repository.GroupRepository;
 import com.eurodyn.qlack.fuse.lexicon.repository.LanguageRepository;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.JPAExpressions;
+import java.time.Instant;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 @Transactional
 @Service
@@ -72,16 +69,13 @@ public class GroupService {
 	public GroupDTO getGroup(String groupID) {
 		return groupMapper.mapToDTO(groupRepository.fetchById(groupID));
 	}
-	
 
 	public GroupDTO getGroupByName(String groupName) {
 		return groupMapper.mapToDTO(groupRepository.findByTitle(groupName));
 	}
 
 	public List<Group> findAll() {
-		List<Group> groups = new ArrayList<>();
-		groupRepository.findAll().forEach(groups::add);
-		return groups;
+      return groupRepository.findAll();
 	}
 
 	public Group findByTitle(String title) {
@@ -99,10 +93,7 @@ public class GroupService {
 
 	public void deleteLanguageTranslations(String groupID, String languageID) {
 		Language language = languageRepository.fetchById(languageID);
-		List<Data> dataList = dataRepository.findByKeyGroupIdAndLanguageLocale(groupID, language.getLocale());
-		for (Data data : dataList) {
-			dataRepository.delete(data);
-		}
+      deleteLanguageTranslationsByLocale(groupID, language.getLocale());
 	}
 
 	public void deleteLanguageTranslationsByLocale(String groupID, String locale) {
@@ -113,20 +104,14 @@ public class GroupService {
 	}
 
 	public long getLastUpdateDateForLocale(String groupID, String locale) {
-		// The default return value is 'now'.
-		long retVal = Instant.now().toEpochMilli();
-
 		// Find when was the last update of any keys on the requested group and
 		// locale.
 		Predicate predicate = qData.key.group.id.eq(groupID).and(qData.language.id
 				.eq(JPAExpressions.select(qLanguage.id).from(qLanguage).where(qLanguage.locale.eq(locale))));
 		Data data = dataRepository.findAll(predicate, Sort.by("lastUpdatedOn").descending()).iterator().next();
 
-		if (data != null) {
-			retVal = data.getLastUpdatedOn();
-		}
-
-		return retVal;
+      // The default return value is 'now'.
+      return data != null ? data.getLastUpdatedOn() : Instant.now().toEpochMilli();
 	}
 
 }

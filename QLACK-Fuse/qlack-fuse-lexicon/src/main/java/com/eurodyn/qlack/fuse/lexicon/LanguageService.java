@@ -1,5 +1,13 @@
 package com.eurodyn.qlack.fuse.lexicon;
 
+import com.eurodyn.qlack.fuse.lexicon.dto.LanguageDTO;
+import com.eurodyn.qlack.fuse.lexicon.exception.LanguageProcessingException;
+import com.eurodyn.qlack.fuse.lexicon.mappers.LanguageMapper;
+import com.eurodyn.qlack.fuse.lexicon.model.Group;
+import com.eurodyn.qlack.fuse.lexicon.model.Key;
+import com.eurodyn.qlack.fuse.lexicon.model.Language;
+import com.eurodyn.qlack.fuse.lexicon.repository.KeyRepository;
+import com.eurodyn.qlack.fuse.lexicon.repository.LanguageRepository;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,7 +18,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -23,15 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-
-import com.eurodyn.qlack.fuse.lexicon.dto.LanguageDTO;
-import com.eurodyn.qlack.fuse.lexicon.exception.LanguageProcessingException;
-import com.eurodyn.qlack.fuse.lexicon.mappers.LanguageMapper;
-import com.eurodyn.qlack.fuse.lexicon.model.Group;
-import com.eurodyn.qlack.fuse.lexicon.model.Key;
-import com.eurodyn.qlack.fuse.lexicon.model.Language;
-import com.eurodyn.qlack.fuse.lexicon.repository.KeyRepository;
-import com.eurodyn.qlack.fuse.lexicon.repository.LanguageRepository;
 
 @Transactional
 @Service
@@ -73,8 +71,7 @@ public class LanguageService {
 		languageRepository.save(entity);
 		Map<String, String> translations = new HashMap<>();
 		for (Key key : keyRepository.findAll()) {
-			translations.put(key.getId(),
-					(translationPrefix != null) ? (translationPrefix + key.getName()) : key.getName());
+			translations.put(key.getId(), (translationPrefix != null ? (translationPrefix + key.getName()) : key.getName()));
 		}
 		keyService.updateTranslationsForLanguage(entity.getId(), translations);
 
@@ -85,10 +82,9 @@ public class LanguageService {
 		Language entity = languageMapper.mapToEntity(language);
 		entity.setId(language.getId());
 		languageRepository.save(entity);
-		Map<String, String> translations;
 
-		translations = keyService
-				.getTranslationsForLocale((languageRepository.fetchById(sourceLanguageId)).getLocale());
+		Map<String, String> translations = keyService.getTranslationsForLocale((languageRepository.fetchById(sourceLanguageId)).getLocale());
+
 		if (translationPrefix != null) {
 			for (String keyId : translations.keySet()) {
 				translations.put(keyId, translationPrefix + translations.get(keyId));
@@ -105,22 +101,22 @@ public class LanguageService {
 		entity.setLocale(language.getLocale());
 	}
 
-	public void deleteLanguage(String languageID) {
-		languageRepository.deleteById(languageID);
+	public void deleteLanguage(String languageId) {
+		languageRepository.deleteById(languageId);
 	}
 
-	public void activateLanguage(String languageID) {
-		Language language = languageRepository.fetchById(languageID); 
+	public void activateLanguage(String languageId) {
+		Language language = languageRepository.fetchById(languageId);
 		language.setActive(true);
 	}
 
-	public void deactivateLanguage(String languageID) {
-		Language language = languageRepository.fetchById(languageID); 
+	public void deactivateLanguage(String languageId) {
+		Language language = languageRepository.fetchById(languageId);
 		language.setActive(false);
 	}
 
-	public LanguageDTO getLanguage(String languageID) {
-		return languageMapper.mapToDTO(languageRepository.fetchById(languageID));
+	public LanguageDTO getLanguage(String languageId) {
+		return languageMapper.mapToDTO(languageRepository.fetchById(languageId));
 	}
 
 	public LanguageDTO getLanguageByLocale(String locale) {
@@ -130,18 +126,13 @@ public class LanguageService {
 	public LanguageDTO getLanguageByLocale(String locale, boolean fallback) {
 		Language language = languageRepository.findByLocale(locale); 
 		if (fallback && language == null) {
-			language = languageRepository.findByLocale(getEffectiveLanguage(locale, null)); 
+			language = languageRepository.findByLocale(getEffectiveLanguage(locale, null));
 		}
 		return languageMapper.mapToDTO(language);
 	}
 
 	public List<LanguageDTO> getLanguages(boolean includeInactive) {
-		List<Language> languages = null;
-		if (includeInactive) {
-			languages = languageRepository.findAll(); 
-		} else {
-			languages = languageRepository.findByActiveTrueOrderByNameAsc();
-		}
+		List<Language> languages = includeInactive ? languageRepository.findAll() : languageRepository.findByActiveTrueOrderByNameAsc();
 		return  languageMapper.mapToDTO(languages);
 	}
 
@@ -153,14 +144,9 @@ public class LanguageService {
 
 		// If no active language was found and the user-locale can be further
 		// reduced, try again,
-		if (locale.contains("_")) {
-			String reducedLocale = locale.substring(0, locale.indexOf("_"));
-			language = languageRepository.findByLocale(reducedLocale);
-			if ((language != null) && (language.isActive())) {
-				return reducedLocale;
-			}
-		} else if (locale.contains("-")) {
-			String reducedLocale = locale.substring(0, locale.indexOf("-"));
+		int index = StringUtils.indexOfAny(locale, "_-");
+		if (index > 0) {
+			String reducedLocale = locale.substring(0, index);
 			language = languageRepository.findByLocale(reducedLocale);
 			if ((language != null) && (language.isActive())) {
 				return reducedLocale;
@@ -176,11 +162,10 @@ public class LanguageService {
 		return null;
 	}
 
-	public byte[] downloadLanguage(String languageID) {
-		byte[] retVal = null;
+	public byte[] downloadLanguage(String languageId) {
 
 		// Check that the language exists and get its translations
-		Language language = languageRepository.fetchById(languageID); 
+		Language language = languageRepository.fetchById(languageId);
 
 		// Create an Excel workbook. The workbook will contain a sheet for each
 		// group.
@@ -199,8 +184,7 @@ public class LanguageService {
 		emptyGroup.setTitle("<No group>");
 		groups.add(0, emptyGroup);
 		for (Group group : groups) {
-			Map<String, String> translations;
-			translations = keyService.getTranslationsForGroupAndLocale(group.getId(), language.getLocale());
+			Map<String, String> translations = keyService.getTranslationsForGroupAndLocale(group.getId(), language.getLocale());
 			if (!translations.isEmpty()) {
 				Sheet sheet = wb.createSheet(group.getTitle());
 
@@ -223,26 +207,24 @@ public class LanguageService {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try {
 			wb.write(bos);
-			retVal = bos.toByteArray();
+			return bos.toByteArray();
 		} catch (IOException ex) {
 			// Convert to a runtime exception in order to roll back transaction
 			LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
-			throw new LanguageProcessingException("Error creating Excel file for language " + languageID);
+			throw new LanguageProcessingException("Error creating Excel file for language " + languageId);
 		}
-
-		return retVal;
 	}
 
-	public void uploadLanguage(String languageID, byte[] lgXL) {
-		Map<String, String> translations = new HashMap<>();
+	public void uploadLanguage(String languageId, byte[] lgXL) {
 		try {
 			Workbook wb = WorkbookFactory.create(new BufferedInputStream(new ByteArrayInputStream(lgXL)));
 			for (int si = 0; si < wb.getNumberOfSheets(); si++) {
+				Map<String, String> translations = new HashMap<>();
 				Sheet sheet = wb.getSheetAt(si);
 				String groupName = sheet.getSheetName();
-				String groupID = null;
+				String groupId = null;
 				if (StringUtils.isNotBlank(groupName)) {
-					groupID = groupService.findByTitle(groupName).getId();
+					groupId = groupService.findByTitle(groupName).getId();
 				}
 				// Skip first row (the header of the Excel file) and start
 				// parsing translations.
@@ -251,12 +233,12 @@ public class LanguageService {
 					String keyValue = sheet.getRow(i).getCell(1).getStringCellValue();
 					translations.put(keyName, keyValue);
 				}
-				keyService.updateTranslationsForLanguageByKeyName(languageID, groupID, translations);
+				keyService.updateTranslationsForLanguageByKeyName(languageId, groupId, translations);
 			}
 		} catch (IOException | InvalidFormatException ex) {
 			// Convert to a runtime exception in order to roll back transaction
 			LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
-			throw new LanguageProcessingException("Error reading Excel file for language " + languageID);
+			throw new LanguageProcessingException("Error reading Excel file for language " + languageId);
 		}
 
 	}

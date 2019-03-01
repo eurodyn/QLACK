@@ -22,9 +22,9 @@ public class InitTestValues {
     private String shortDescription = "Audit short description";
     private String groupName = "Audit group";
     private String auditPrinSessionId = "sessionId";
-    private String opt1 = "First optional attribute";
-    private String opt2 = "Second optional attribute";
-    private String opt3 = "Third optional attribute";
+    private String opt1 = "new users: 3";
+    private String opt2 = "deleted users: 0";
+    private String opt3 = "expired users: 1";
     private String correlationId = "12345";
     private String referenceId = "11111";
     private Long auditCreatedOn = 1625145120000L;
@@ -33,7 +33,10 @@ public class InitTestValues {
     private String auditLevelDescription = "Level Description";
 
     private String auditTraceId = "311a084c-1109-4965-b6ba-be2d2199c612";
-    private String auditTraceData = "Sample trace data";
+    private String auditTraceData = "{\n" +
+        "\tcolor: \"red\",\n" +
+        "\tvalue: \"#f00\"\n" +
+        "}";
 
     public AuditDTO createAuditDTO() {
         AuditDTO auditDTO = new AuditDTO();
@@ -48,8 +51,6 @@ public class InitTestValues {
         auditDTO.setOpt3(opt3);
         auditDTO.setReferenceId(referenceId);
         auditDTO.setCreatedOn(auditCreatedOn);
-        auditDTO.setTrace(createAuditTraceDTO());
-
         auditDTO.setTrace(createAuditTraceDTO());
         return auditDTO;
     }
@@ -98,7 +99,6 @@ public class InitTestValues {
         auditsDTO.add(auditDTO2);
 
         AuditDTO auditDTO3 = createAuditDTO();
-        auditDTO3 = createAuditDTO();
         auditDTO3.setId("ed9884fd-2015-4d55-a8b0-80d56606e811");
         auditDTO3.setEvent("Back End Event");
         auditsDTO.add(auditDTO3);

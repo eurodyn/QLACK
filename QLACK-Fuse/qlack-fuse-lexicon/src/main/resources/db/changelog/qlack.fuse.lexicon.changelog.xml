@@ -7,8 +7,5 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
     <include file="db/changelog/lexicon_1.yaml"/>
-    <include file="db/changelog/lexicon_2.yaml"/>
-    <include file="db/changelog/lexicon_3.yaml"/>
-    <include file="db/changelog/lexicon_4.yaml"/>
 
 </databaseChangeLog>

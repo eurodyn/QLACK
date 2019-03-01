@@ -1,14 +1,14 @@
 databaseChangeLog:
   - changeSet:
       id: lexicon_1
-      author: European Dynamics SA (christina.kaskoura@eurodyn.com)
+      author: European Dynamics SA
       changes:
         - createTable:
             tableName: lex_group
             columns:
               - column:
                   name: id
-                  type: uuid
+                  type: varchar(36)
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -32,7 +32,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: uuid
+                  type: varchar(36)
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -63,7 +63,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: uuid
+                  type: varchar(36)
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -74,7 +74,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: group_id
-                  type: uuid
+                  type: varchar(36)
                   constraints:
                     nullable: true
               - column:
@@ -90,18 +90,22 @@ databaseChangeLog:
             referencedColumnNames: id
             onDelete: restrict
             onUpdate: cascade
+        - addUniqueConstraint:
+            tableName: lex_key
+            columnNames: name, group_id
+            constraintName: name_group
         - createTable:
             tableName: lex_data
             columns:
               - column:
                   name: id
-                  type: uuid
+                  type: varchar(36)
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
                   name: key_id
-                  type: uuid
+                  type: varchar(36)
                   constraints:
                     nullable: false
               - column:
@@ -111,7 +115,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: language_id
-                  type: uuid
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_updated_on
+                  type: bigint
                   constraints:
                     nullable: false
               - column:
@@ -140,7 +149,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: uuid
+                  type: varchar(36)
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -156,7 +165,7 @@ databaseChangeLog:
                     nullable: true
               - column:
                   name: language_id
-                  type: uuid
+                  type: varchar(36)
                   constraints:
                     nullable: false
               - column:
@@ -176,3 +185,33 @@ databaseChangeLog:
             tableName: lex_template
             columnNames: name, language_id
             constraintName: name_language
+        - createTable:
+            tableName: lex_application
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: symbolic_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: checksum
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: executed_on
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dbversion
+                  type: bigint
+                  constraints:
+                    nullable: false
