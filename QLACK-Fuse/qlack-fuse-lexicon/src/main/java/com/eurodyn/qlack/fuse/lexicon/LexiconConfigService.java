@@ -60,22 +60,6 @@ public class LexiconConfigService {
     }
   }
 
-  
-  public void insertFromFile(URL yamlUrl) {
-    try {
-      Enumeration<URL> entries =  this.getClass().getClassLoader()
-          .getResources(yamlUrl.toString());
-      if (entries != null) {
-        while (entries.hasMoreElements()) {
-          updateTranslations(entries.nextElement());
-        }
-      }
-    } catch (IOException e) {
-      LOGGER.log(Level.SEVERE, "Could not search QLACK Lexicon configuration files.", e);
-    }
-  }
-  
-  
   public void updateTranslations(URL yamlUrl) {
     try {
       Yaml yaml = new Yaml(new CustomClassLoaderConstructor(getClass().getClassLoader()));
