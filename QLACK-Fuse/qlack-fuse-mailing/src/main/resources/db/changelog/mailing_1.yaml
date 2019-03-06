@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: mailing_01
-      author: European Dynamics SA (stephan.schreck@eurodyn.com)
+      author: European Dynamics SA
       changes:
         - createTable:
             tableName: mai_email
