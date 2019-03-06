@@ -37,15 +37,18 @@ This module provides language translations for the system.
 // ..
 
 import org.springframework.beans.factory.annotation.Autowired;
-import com.eurodyn.qlack.fuse.lexicon.services.GroupService;
-import com.eurodyn.qlack.fuse.lexicon.services.KeyService;
-import com.eurodyn.qlack.fuse.lexicon.services.LanguageService;
+import com.eurodyn.qlack.fuse.lexicon.service.GroupService;
+import com.eurodyn.qlack.fuse.lexicon.service.KeyService;
+import com.eurodyn.qlack.fuse.lexicon.service.LanguageService;
 
 @Autowired
 private LanguageService languageService;
 
 @Autowired
 private KeyService keyService;
+
+@Autowired
+private GroupService groupService;
 // ..
 
 
