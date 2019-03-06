@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: settings_01
+      id: settings_1
       author: European Dynamics SA
       changes:
         - createTable:

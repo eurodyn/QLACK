@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: mailing_01
+      id: mailing_1
       author: European Dynamics SA
       changes:
         - createTable:
