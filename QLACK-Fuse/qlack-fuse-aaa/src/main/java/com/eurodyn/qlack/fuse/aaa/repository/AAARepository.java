@@ -1,6 +1,6 @@
 package com.eurodyn.qlack.fuse.aaa.repository;
 
-import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
+import com.eurodyn.qlack.common.exception.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.aaa.model.AAAModel;
 import com.querydsl.core.types.Predicate;
 import java.io.Serializable;

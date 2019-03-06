@@ -1,7 +1,7 @@
 package com.eurodyn.qlack.fuse.settings.service;
 
-import com.eurodyn.qlack.common.exceptions.QAlreadyExistsException;
-import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
+import com.eurodyn.qlack.common.exception.QAlreadyExistsException;
+import com.eurodyn.qlack.common.exception.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.settings.dto.GroupDTO;
 import com.eurodyn.qlack.fuse.settings.dto.SettingDTO;
 import com.eurodyn.qlack.fuse.settings.mappers.SettingMapper;

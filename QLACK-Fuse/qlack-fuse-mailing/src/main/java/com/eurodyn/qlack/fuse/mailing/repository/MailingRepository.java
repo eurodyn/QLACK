@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.lang.NonNull;
 
-import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
+import com.eurodyn.qlack.common.exception.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.mailing.model.MailingModel;
 import com.querydsl.core.types.Predicate;
 

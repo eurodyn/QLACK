@@ -1,7 +1,7 @@
 package com.eurodyn.qlack.fuse.fileupload.exception;
 
 
-import com.eurodyn.qlack.common.exceptions.QException;
+import com.eurodyn.qlack.common.exception.QException;
 
 public class FileUploadException extends QException {
 

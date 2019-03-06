@@ -1,7 +1,7 @@
 package com.eurodyn.qlack.fuse.lexicon.exception;
 
 
-import com.eurodyn.qlack.common.exceptions.QException;
+import com.eurodyn.qlack.common.exception.QException;
 
 public class TemplateProcessingException extends QException {
 

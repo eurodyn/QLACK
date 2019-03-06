@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.common.exceptions;
+package com.eurodyn.qlack.common.exception;
 
 /**
  * A generic exception superclass to facilitate marking of any type of security-related exception.

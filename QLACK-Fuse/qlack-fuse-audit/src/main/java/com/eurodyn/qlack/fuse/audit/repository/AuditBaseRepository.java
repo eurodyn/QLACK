@@ -1,6 +1,6 @@
 package com.eurodyn.qlack.fuse.audit.repository;
 
-import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
+import com.eurodyn.qlack.common.exception.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.audit.model.AuditBaseEntity;
 import com.querydsl.core.types.Predicate;
 import java.io.Serializable;

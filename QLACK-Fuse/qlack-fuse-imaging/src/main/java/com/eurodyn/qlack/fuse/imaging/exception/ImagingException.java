@@ -1,6 +1,6 @@
 package com.eurodyn.qlack.fuse.imaging.exception;
 
-import com.eurodyn.qlack.common.exceptions.QException;
+import com.eurodyn.qlack.common.exception.QException;
 
 /**
  * A generic exception for errors related to image processing.

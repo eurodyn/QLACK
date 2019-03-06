@@ -1,6 +1,6 @@
 package com.eurodyn.qlack.fuse.lexicon.service;
 
-import com.eurodyn.qlack.common.exceptions.QAlreadyExistsException;
+import com.eurodyn.qlack.common.exception.QAlreadyExistsException;
 import com.eurodyn.qlack.fuse.lexicon.dto.LanguageDTO;
 import com.eurodyn.qlack.fuse.lexicon.exception.LanguageProcessingException;
 import com.eurodyn.qlack.fuse.lexicon.mappers.LanguageMapper;

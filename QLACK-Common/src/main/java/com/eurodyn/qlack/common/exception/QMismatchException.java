@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.common.exceptions;
+package com.eurodyn.qlack.common.exception;
 
 /**
  * A generic exception representing an "mismatch" condition.

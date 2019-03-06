@@ -1,6 +1,6 @@
 package com.eurodyn.qlack.util.data.exceptions;
 
-import com.eurodyn.qlack.common.exceptions.QExceptionWrapper;
+import com.eurodyn.qlack.common.exception.QExceptionWrapper;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;

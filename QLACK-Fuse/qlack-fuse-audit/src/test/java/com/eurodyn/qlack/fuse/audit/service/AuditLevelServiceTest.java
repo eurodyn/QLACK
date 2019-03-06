@@ -6,7 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.eurodyn.qlack.common.exceptions.QAlreadyExistsException;
+import com.eurodyn.qlack.common.exception.QAlreadyExistsException;
 import com.eurodyn.qlack.fuse.audit.InitTestValues;
 import com.eurodyn.qlack.fuse.audit.dto.AuditLevelDTO;
 import com.eurodyn.qlack.fuse.audit.mappers.AuditLevelMapper;

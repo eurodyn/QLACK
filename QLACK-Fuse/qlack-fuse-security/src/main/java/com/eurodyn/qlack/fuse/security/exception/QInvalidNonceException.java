@@ -14,7 +14,7 @@
  */
 package com.eurodyn.qlack.fuse.security.exception;
 
-import com.eurodyn.qlack.common.exceptions.QException;
+import com.eurodyn.qlack.common.exception.QException;
 
 public class QInvalidNonceException extends QException {
 

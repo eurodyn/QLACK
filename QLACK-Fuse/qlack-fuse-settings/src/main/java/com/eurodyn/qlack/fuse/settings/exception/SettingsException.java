@@ -1,7 +1,7 @@
 package com.eurodyn.qlack.fuse.settings.exception;
 
 
-import com.eurodyn.qlack.common.exceptions.QException;
+import com.eurodyn.qlack.common.exception.QException;
 
 /**
  * Exception class for forum module

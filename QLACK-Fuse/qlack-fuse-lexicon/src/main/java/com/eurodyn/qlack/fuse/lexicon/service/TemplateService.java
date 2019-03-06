@@ -1,7 +1,7 @@
 package com.eurodyn.qlack.fuse.lexicon.service;
 
 
-import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
+import com.eurodyn.qlack.common.exception.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.lexicon.dto.TemplateDTO;
 import com.eurodyn.qlack.fuse.lexicon.exception.TemplateProcessingException;
 import com.eurodyn.qlack.fuse.lexicon.mappers.TemplateMapper;

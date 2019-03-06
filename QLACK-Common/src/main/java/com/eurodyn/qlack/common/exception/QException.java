@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.common.exceptions;
+package com.eurodyn.qlack.common.exception;
 
 import java.io.Serializable;
 import java.text.MessageFormat;

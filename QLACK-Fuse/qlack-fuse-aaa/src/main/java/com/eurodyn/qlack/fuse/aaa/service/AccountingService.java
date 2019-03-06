@@ -1,6 +1,6 @@
 package com.eurodyn.qlack.fuse.aaa.service;
 
-import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
+import com.eurodyn.qlack.common.exception.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.aaa.dto.SessionAttributeDTO;
 import com.eurodyn.qlack.fuse.aaa.dto.SessionDTO;
 import com.eurodyn.qlack.fuse.aaa.mappers.SessionAttributeMapper;

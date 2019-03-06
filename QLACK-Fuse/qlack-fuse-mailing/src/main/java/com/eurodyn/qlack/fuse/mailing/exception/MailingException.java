@@ -14,7 +14,7 @@
  */
 package com.eurodyn.qlack.fuse.mailing.exception;
 
-import com.eurodyn.qlack.common.exceptions.QException;
+import com.eurodyn.qlack.common.exception.QException;
 
 /**
  * Exceptions wrapper for Mailing module.

@@ -1,6 +1,6 @@
 package com.eurodyn.qlack.fuse.lexicon.service;
 
-import com.eurodyn.qlack.common.exceptions.QAlreadyExistsException;
+import com.eurodyn.qlack.common.exception.QAlreadyExistsException;
 import com.eurodyn.qlack.fuse.lexicon.criteria.KeySearchCriteria;
 import com.eurodyn.qlack.fuse.lexicon.criteria.KeySearchCriteria.SortType;
 import com.eurodyn.qlack.fuse.lexicon.dto.KeyDTO;

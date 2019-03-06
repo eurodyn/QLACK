@@ -1,6 +1,6 @@
 package com.eurodyn.qlack.util.data.optional;
 
-import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
+import com.eurodyn.qlack.common.exception.QDoesNotExistException;
 import com.google.common.collect.Iterables;
 
 import java.text.MessageFormat;

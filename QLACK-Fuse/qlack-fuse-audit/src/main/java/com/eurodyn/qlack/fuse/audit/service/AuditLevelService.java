@@ -1,7 +1,7 @@
 package com.eurodyn.qlack.fuse.audit.service;
 
 
-import com.eurodyn.qlack.common.exceptions.QAlreadyExistsException;
+import com.eurodyn.qlack.common.exception.QAlreadyExistsException;
 import com.eurodyn.qlack.fuse.audit.dto.AuditLevelDTO;
 import com.eurodyn.qlack.fuse.audit.mappers.AuditLevelMapper;
 import com.eurodyn.qlack.fuse.audit.model.AuditLevel;

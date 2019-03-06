@@ -1,6 +1,6 @@
 package com.eurodyn.qlack.fuse.scheduler.exception;
 
-import com.eurodyn.qlack.common.exceptions.QException;
+import com.eurodyn.qlack.common.exception.QException;
 
 public class QSchedulerException extends QException {
 

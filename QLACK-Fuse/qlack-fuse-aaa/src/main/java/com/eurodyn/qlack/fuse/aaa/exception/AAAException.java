@@ -14,7 +14,7 @@
  */
 package com.eurodyn.qlack.fuse.aaa.exception;
 
-import com.eurodyn.qlack.common.exceptions.QException;
+import com.eurodyn.qlack.common.exception.QException;
 
 public class AAAException extends QException {
 

@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.common.exceptions;
+package com.eurodyn.qlack.common.exception;
 
 /**
  * A generic exception wrapper. This wrapper is also taken into account by

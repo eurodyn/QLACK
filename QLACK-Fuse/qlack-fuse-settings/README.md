@@ -37,7 +37,7 @@ This module is responsible for storing and configuring internal settings of the 
 
 ```java
 
-import com.eurodyn.qlack.common.exceptions.QAlreadyExistsException;
+import com.eurodyn.qlack.common.exception.QAlreadyExistsException;
 import com.eurodyn.qlack.fuse.settings.dto.SettingDTO;
 import com.eurodyn.qlack.fuse.settings.service.SettingsService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package com.eurodyn.qlack.fuse.lexicon.repository;
 
-import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
+import com.eurodyn.qlack.common.exception.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.lexicon.model.LexiconModel;
 import com.querydsl.core.types.Predicate;
 

@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.common.exceptions;
+package com.eurodyn.qlack.common.exception;
 
 /**
  * An exception indicating that something went wrong while processing a signed
