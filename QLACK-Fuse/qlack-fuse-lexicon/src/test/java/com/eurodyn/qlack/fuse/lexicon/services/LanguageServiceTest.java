@@ -10,10 +10,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.eurodyn.qlack.fuse.lexicon.GroupService;
+import com.eurodyn.qlack.common.exceptions.QAlreadyExistsException;
 import com.eurodyn.qlack.fuse.lexicon.InitTestValues;
-import com.eurodyn.qlack.fuse.lexicon.KeyService;
-import com.eurodyn.qlack.fuse.lexicon.LanguageService;
 import com.eurodyn.qlack.fuse.lexicon.dto.LanguageDTO;
 import com.eurodyn.qlack.fuse.lexicon.mappers.LanguageMapper;
 import com.eurodyn.qlack.fuse.lexicon.model.Data;
@@ -112,6 +110,22 @@ public class LanguageServiceTest {
     public void testCreateLanguage() {
         when(languageMapper.mapToEntity(languageDTO)).thenReturn(language);
         String createdLanguageId = languageService.createLanguage(languageDTO);
+        verify(languageRepository, times(1)).save(language);
+        assertEquals(languageDTO.getId(), createdLanguageId);
+    }
+
+    @Test
+    public void testCreateLanguageIfNotExists() {
+        when(languageMapper.mapToEntity(languageDTO)).thenReturn(language);
+        String createdLanguageId = languageService.createLanguageIfNotExists(languageDTO);
+        verify(languageRepository, times(1)).save(language);
+        assertEquals(languageDTO.getId(), createdLanguageId);
+    }
+
+    @Test(expected = QAlreadyExistsException.class)
+    public void testCreateLanguageIfNotExistsException() {
+        when(languageRepository.findByLocale(languageDTO.getLocale())).thenReturn(language);
+        String createdLanguageId = languageService.createLanguageIfNotExists(languageDTO);
         verify(languageRepository, times(1)).save(language);
         assertEquals(languageDTO.getId(), createdLanguageId);
     }
@@ -300,9 +314,9 @@ public class LanguageServiceTest {
     public void testUploadLanguage() throws IOException, InvalidFormatException {
         List<Group> groups = initTestValues.createGroups();
         List<String> groupsIds = new ArrayList<>();
-        for (int i = 0; i < groups.size(); i++) {
-            when(groupService.findByTitle(groups.get(i).getTitle())).thenReturn(groups.get(i));
-            groupsIds.add(groups.get(i).getId());
+        for (Group group : groups) {
+            when(groupService.findByTitle(group.getTitle())).thenReturn(group);
+            groupsIds.add(group.getId());
         }
         languageService.uploadLanguage(language.getId(), lgXl);
 

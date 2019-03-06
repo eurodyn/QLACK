@@ -15,7 +15,6 @@ import com.eurodyn.qlack.fuse.settings.mappers.SettingMapper;
 import com.eurodyn.qlack.fuse.settings.model.QSetting;
 import com.eurodyn.qlack.fuse.settings.model.Setting;
 import com.eurodyn.qlack.fuse.settings.repository.SettingRepository;
-import com.eurodyn.qlack.fuse.settings.service.SettingsService;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import java.util.ArrayList;
@@ -81,6 +80,7 @@ public class SettingsServiceTest {
 
     @Test
     public void testGetSettingsExcludingSensitive() {
+
         List<Setting> notSensitiveSettings = settings.stream().filter(s -> !s.isSensitive()).collect(Collectors.toList());
         List<SettingDTO> notSensitiveSettingsDTO = settingsDTO.stream().filter(s -> !s.isSensitive()).collect(Collectors.toList());
         Predicate predicate = qSetting.owner.endsWith(settingDTO.getOwner());

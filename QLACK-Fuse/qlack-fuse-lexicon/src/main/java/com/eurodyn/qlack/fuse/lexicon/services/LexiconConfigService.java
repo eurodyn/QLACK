@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.fuse.lexicon;
+package com.eurodyn.qlack.fuse.lexicon.services;
 
 import com.eurodyn.qlack.fuse.lexicon.dto.GroupDTO;
 import com.eurodyn.qlack.fuse.lexicon.dto.KeyDTO;
@@ -138,7 +138,7 @@ public class LexiconConfigService {
             }
           } else { // Process group
             String groupName = (String) translationContent.get("group");
-            String groupId = groupService.getGroupByName(groupName).getId();
+              String groupId = groupName != null ? groupService.getGroupByName(groupName).getId() : null;
             updateKeys(translations, groupId, languageId);
           }
         }

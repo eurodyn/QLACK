@@ -6,13 +6,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.eurodyn.qlack.common.exceptions.QAlreadyExistsException;
 import com.eurodyn.qlack.fuse.audit.InitTestValues;
 import com.eurodyn.qlack.fuse.audit.dto.AuditLevelDTO;
-import com.eurodyn.qlack.fuse.audit.exceptions.AlreadyExistsException;
 import com.eurodyn.qlack.fuse.audit.mappers.AuditLevelMapper;
 import com.eurodyn.qlack.fuse.audit.model.AuditLevel;
 import com.eurodyn.qlack.fuse.audit.repository.AuditLevelRepository;
-import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,15 +62,14 @@ public class AuditLevelServiceTest {
 
     @Test
     public void testAddNotExistingLevel() {
-        when(auditLevelService.listAuditLevels()).thenReturn(new ArrayList<>());
         when(auditLevelMapper.mapToEntity(auditLevelDTO)).thenReturn(auditLevel);
         auditLevelService.addLevelIfNotExists(auditLevelDTO);
         verify(auditLevelRepository, times(1)).save(auditLevel);
     }
 
-    @Test(expected = AlreadyExistsException.class)
+    @Test(expected = QAlreadyExistsException.class)
     public void testAddExistingLevel() {
-        when(auditLevelService.listAuditLevels()).thenReturn(auditLevelsDTO);
+        when(auditLevelRepository.findByName(auditLevelDTO.getName())).thenReturn(auditLevel);
         auditLevelService.addLevelIfNotExists(auditLevelDTO);
     }
 

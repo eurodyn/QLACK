@@ -6,7 +6,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.eurodyn.qlack.fuse.lexicon.GroupService;
 import com.eurodyn.qlack.fuse.lexicon.InitTestValues;
 import com.eurodyn.qlack.fuse.lexicon.dto.GroupDTO;
 import com.eurodyn.qlack.fuse.lexicon.mappers.GroupMapper;

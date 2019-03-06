@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.fuse.lexicon;
+package com.eurodyn.qlack.fuse.lexicon.services;
 
 
 import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;

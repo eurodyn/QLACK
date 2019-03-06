@@ -1,5 +1,6 @@
-package com.eurodyn.qlack.fuse.lexicon;
+package com.eurodyn.qlack.fuse.lexicon.services;
 
+import com.eurodyn.qlack.common.exceptions.QAlreadyExistsException;
 import com.eurodyn.qlack.fuse.lexicon.dto.LanguageDTO;
 import com.eurodyn.qlack.fuse.lexicon.exception.LanguageProcessingException;
 import com.eurodyn.qlack.fuse.lexicon.mappers.LanguageMapper;
@@ -65,6 +66,15 @@ public class LanguageService {
 		languageRepository.save(entity);
 		return entity.getId();
 	}
+
+
+    public String createLanguageIfNotExists(LanguageDTO language) throws QAlreadyExistsException {
+        if (languageRepository.findByLocale(language.getLocale()) == null) {
+            return createLanguage(language);
+        } else {
+            throw new QAlreadyExistsException("Language: " + language.getName() + " already exists and will not be created.");
+        }
+    }
 
 	public String createLanguage(LanguageDTO language, String translationPrefix) {
 		Language entity = languageMapper.mapToEntity(language); 

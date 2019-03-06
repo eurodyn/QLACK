@@ -8,8 +8,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.eurodyn.qlack.common.exceptions.QAlreadyExistsException;
 import com.eurodyn.qlack.fuse.lexicon.InitTestValues;
-import com.eurodyn.qlack.fuse.lexicon.KeyService;
 import com.eurodyn.qlack.fuse.lexicon.criteria.KeySearchCriteria;
 import com.eurodyn.qlack.fuse.lexicon.criteria.KeySearchCriteria.SortType;
 import com.eurodyn.qlack.fuse.lexicon.dto.KeyDTO;
@@ -40,6 +40,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -112,6 +113,24 @@ public class KeyServiceTest {
         verify(dataRepository, times(keyDTO.getTranslations().size())).save(any());
     }
 
+    @Test(expected = QAlreadyExistsException.class)
+    public void testCreateExistingKey() {
+        when(groupRepository.fetchById(keyDTO.getGroupId())).thenReturn(group);
+        when(keyService.getKeyByName(keyDTO.getName(), keyDTO.getGroupId(), false)).thenReturn(keyDTO);
+        keyService.createKey(keyDTO, false);
+        verify(keyRepository, times(0)).save(any());
+        verify(dataRepository, times(0)).save(any());
+    }
+
+    @Test(expected = QAlreadyExistsException.class)
+    public void testCreateExistingKeysWithoutGroups() {
+        when(groupRepository.fetchById(keyDTO.getGroupId())).thenReturn(group);
+        when(keyService.getKeyByName(keyDTO.getName(), keyDTO.getGroupId(), false)).thenThrow(IncorrectResultSizeDataAccessException.class);
+        keyService.createKey(keyDTO, false);
+        verify(keyRepository, times(0)).save(any());
+        verify(dataRepository, times(0)).save(any());
+    }
+
     @Test
     public void testCreateKeyWithDefaultTranslations() {
         when(groupRepository.fetchById(keyDTO.getGroupId())).thenReturn(group);
@@ -123,6 +142,7 @@ public class KeyServiceTest {
 
     @Test
     public void testCreateKeys() {
+        groups.forEach(group1 -> when(groupRepository.fetchById(group1.getId())).thenReturn(group1));
         List<String> createdKeys = keyService.createKeys(keysDTO, true);
         assertEquals(keysDTO.size(), createdKeys.size());
     }

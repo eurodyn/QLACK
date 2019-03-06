@@ -1,10 +1,12 @@
-package com.eurodyn.qlack.fuse.lexicon;
+package com.eurodyn.qlack.fuse.lexicon.services;
 
+import com.eurodyn.qlack.common.exceptions.QAlreadyExistsException;
 import com.eurodyn.qlack.fuse.lexicon.criteria.KeySearchCriteria;
 import com.eurodyn.qlack.fuse.lexicon.criteria.KeySearchCriteria.SortType;
 import com.eurodyn.qlack.fuse.lexicon.dto.KeyDTO;
 import com.eurodyn.qlack.fuse.lexicon.mappers.KeyMapper;
 import com.eurodyn.qlack.fuse.lexicon.model.Data;
+import com.eurodyn.qlack.fuse.lexicon.model.Group;
 import com.eurodyn.qlack.fuse.lexicon.model.Key;
 import com.eurodyn.qlack.fuse.lexicon.model.Language;
 import com.eurodyn.qlack.fuse.lexicon.model.QData;
@@ -28,6 +30,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -57,13 +60,29 @@ public class KeyService {
         this.languageRepository = languageRepository;
     }
 
-    public String createKey(KeyDTO key, boolean createDefaultTranslations) {
+    public String createKey(KeyDTO key, boolean createDefaultTranslations) throws QAlreadyExistsException {
+
         // Create the new key.
         Key entity = new Key();
         entity.setName(key.getName());
+
+        String keyGroupPair = key.getName() + "/";
         if (key.getGroupId() != null) {
-            entity.setGroup(groupRepository.fetchById(key.getGroupId()));
+            Group group = groupRepository.fetchById(key.getGroupId());
+            entity.setGroup(group);
+            keyGroupPair += group.getTitle();
+        } else {
+            keyGroupPair += "No Group";
         }
+
+        try {
+            if (getKeyByName(key.getName(), key.getGroupId(), false) != null) {
+                throw new QAlreadyExistsException("Key/Group pair already exists:" + keyGroupPair);
+            }
+        } catch (IncorrectResultSizeDataAccessException e) {
+            throw new QAlreadyExistsException("Key/Group pair already exists:" + keyGroupPair);
+        }
+
         keyRepository.save(entity);
 
         if (createDefaultTranslations) {

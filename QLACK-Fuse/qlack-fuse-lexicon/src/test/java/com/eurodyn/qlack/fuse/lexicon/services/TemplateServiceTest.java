@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 
 import com.eurodyn.qlack.common.exceptions.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.lexicon.InitTestValues;
-import com.eurodyn.qlack.fuse.lexicon.TemplateService;
 import com.eurodyn.qlack.fuse.lexicon.dto.TemplateDTO;
 import com.eurodyn.qlack.fuse.lexicon.exception.TemplateProcessingException;
 import com.eurodyn.qlack.fuse.lexicon.mappers.TemplateMapper;
