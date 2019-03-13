@@ -1,9 +1,10 @@
 package com.eurodyn.qlack.fuse.settings.dto;
 
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * @author European Dynamics SA
@@ -28,4 +29,15 @@ public class SettingDTO implements Serializable {
     this.val = val;
   }
 
+  public int getValAsInt() {
+    return Integer.valueOf(val);
+  }
+
+  public long getValAsLong() {
+    return Long.valueOf(val);
+  }
+
+  public boolean getValAsBoolean() {
+    return Boolean.valueOf(val);
+  }
 }
