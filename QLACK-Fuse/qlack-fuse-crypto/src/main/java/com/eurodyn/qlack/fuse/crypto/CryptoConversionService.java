@@ -96,17 +96,9 @@ public class CryptoConversionService {
   }
 
   public String certificateToPEM(X509CertificateHolder certificateHolder) throws IOException {
-//    StringWriter sw = new StringWriter();
-//    try (JcaPEMWriter pw = new JcaPEMWriter(sw)) {
-//      PemObjectGenerator gen = new JcaMiscPEMGenerator(certificateHolder);
-//      pw.writeObject(gen);
-//    }
-//
-//    return sw.toString();
-
     try (StringWriter pemStrWriter = new StringWriter()) {
       try (PemWriter writer = new PemWriter(pemStrWriter)) {
-//        writer.writeObject(new PemObject(CERTIFICATE, certificateHolder.toASN1Structure().getEncoded()));
+        //        writer.writeObject(new PemObject(CERTIFICATE, certificateHolder.toASN1Structure().getEncoded()));
         writer.writeObject(new PemObject(CERTIFICATE, certificateHolder.getEncoded()));
         writer.flush();
         return pemStrWriter.toString();
@@ -132,7 +124,7 @@ public class CryptoConversionService {
    * @param algorithm The security algorithm with which this key was generated.
    */
   private PublicKey pemToPublicKey(String publicKey, String provider, String algorithm)
-      throws IOException, NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
+      throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
     PublicKey key = null;
 
     // Cleanup the PEM from unwanted text.
