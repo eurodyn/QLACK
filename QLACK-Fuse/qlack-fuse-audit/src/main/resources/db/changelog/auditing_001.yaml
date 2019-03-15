@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: auditing_1
+      id: auditing_001
       author: European Dynamics SA
       changes:
         - createTable:

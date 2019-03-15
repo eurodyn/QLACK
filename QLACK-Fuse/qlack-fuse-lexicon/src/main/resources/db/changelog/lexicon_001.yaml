@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: lexicon_1
+      id: lexicon_001
       author: European Dynamics SA
       changes:
         - createTable:

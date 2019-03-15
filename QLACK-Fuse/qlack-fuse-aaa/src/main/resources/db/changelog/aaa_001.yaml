@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: aaa_1
+      id: aaa_001
       author: European Dynamics SA
       changes:
         - createTable:
@@ -20,14 +20,12 @@ databaseChangeLog:
                     unique: true
               - column:
                   name: pswd
-                  type: varchar(32)
+                  type: varchar(60)
                   constraints:
                     nullable: false
               - column:
                   name: salt
                   type: varchar(16)
-                  constraints:
-                    nullable: false
               - column:
                   name: status
                   type: tinyint
