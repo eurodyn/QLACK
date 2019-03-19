@@ -7,6 +7,8 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
+import com.eurodyn.qlack.fuse.mailing.util.EmailCharset;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -35,6 +37,7 @@ public class EmailDTO implements Serializable {
 	private Date dateSent;
 	private String serverResponse;
 	private Date serverResponseDate;
+	private String charset = EmailCharset.UTF_8.getValue();
 
 	public EmailDTO() {
 		this.emailType = EMAIL_TYPE.TEXT;

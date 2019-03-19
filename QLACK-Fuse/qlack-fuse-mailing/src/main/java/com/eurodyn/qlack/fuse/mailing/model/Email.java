@@ -64,6 +64,9 @@ public class Email extends MailingModel {
 	@Column(name = "server_response", length = 1024)
 	private String serverResponse;
 
+	@Column(name = "charset", length = 20)
+	private String charset;
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "email")
 	private Set<Attachment> attachments = new HashSet<Attachment>(0);
 

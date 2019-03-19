@@ -18,6 +18,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,6 +103,9 @@ public class MailQueueSender {
     public void send(EmailDTO vo) throws MailingException {
 
         try {
+            //set email encoding
+            ((JavaMailSenderImpl) emailSender).setDefaultEncoding(vo.getCharset());
+
             if (vo.getEmailType().equals(EMAIL_TYPE.HTML)) { // HTML email
                 prepareAndSendMimeMessage(emailSender.createMimeMessage(), vo, true);
             } else {  // Plaintext email
