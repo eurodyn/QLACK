@@ -1,6 +1,6 @@
 package com.eurodyn.qlack.fuse.search.dto;
 
-import com.eurodyn.qlack.fuse.search.IndexingService;
+import com.eurodyn.qlack.fuse.search.service.IndexingService;
 import java.io.Serializable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,10 +31,8 @@ public class IndexingDTO extends ESDocumentIdentifierDTO implements Serializable
     this(index, type, id, sourceObject, false);
   }
 
-  public IndexingDTO(String index, String type, String id, Object sourceObject,
-      boolean refresh) {
+  public IndexingDTO(String index, String type, String id, Object sourceObject, boolean refresh) {
     super(index, type, id, refresh);
     this.sourceObject = sourceObject;
   }
-
 }

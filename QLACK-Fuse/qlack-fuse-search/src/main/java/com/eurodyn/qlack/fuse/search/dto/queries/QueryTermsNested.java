@@ -18,8 +18,7 @@ import lombok.Getter;
  * 		.setExplain(false);
  * </pre>
  *
- * See also:<br> https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-term-
- * query.html
+ * See also:<br> https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-term-query.html
  */
 @Getter
 public class QueryTermsNested extends QuerySpec {

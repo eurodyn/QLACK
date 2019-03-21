@@ -32,8 +32,6 @@ public class SearchHitDTO {
 
   @Override
   public String toString() {
-    return "SearchHitDTO [source=" + source + ", score=" + score + ", type=" + type
-        + ", innerHits=" + innerHits + "]";
+    return "SearchHitDTO [source=" + source + ", score=" + score + ", type=" + type + ", innerHits=" + innerHits + "]";
   }
-
 }

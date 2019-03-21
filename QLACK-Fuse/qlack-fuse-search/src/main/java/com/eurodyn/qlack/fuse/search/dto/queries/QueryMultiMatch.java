@@ -17,8 +17,7 @@ import lombok.Getter;
  * </pre>
  *
  * See also:<br>
- * https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-multi-
- * match-query.html
+ * https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-multi-match-query.html
  */
 @Getter
 public class QueryMultiMatch extends QuerySpec {

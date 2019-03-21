@@ -1,12 +1,10 @@
 package com.eurodyn.qlack.fuse.search.dto;
 
 import java.io.Serializable;
+import javax.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import javax.persistence.Id;
-
-import org.springframework.data.elasticsearch.annotations.Document;
 
 
 /**
@@ -16,7 +14,6 @@ import org.springframework.data.elasticsearch.annotations.Document;
 @Getter
 @Setter
 @NoArgsConstructor
-//@Document(indexName = "qlackdocuments")
 public class ESDocumentIdentifierDTO implements Serializable {
 
   private static final long serialVersionUID = 3216613727616909251L;

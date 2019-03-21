@@ -19,8 +19,7 @@ import lombok.Setter;
  * 		.setExplain(false);
  * </pre>
  *
- * See also:<br> https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-match-
- * query.html
+ * See also:<br> https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-match-query.html
  */
 @Getter
 @Setter

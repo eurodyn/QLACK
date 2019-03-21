@@ -26,8 +26,7 @@ import java.util.Map;
  * </pre>
  *
  * See also:<br>
- * https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-bool-
- * query.html
+ * https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-bool-query.html
  */
 public class QueryBoolean extends QuerySpec {
 

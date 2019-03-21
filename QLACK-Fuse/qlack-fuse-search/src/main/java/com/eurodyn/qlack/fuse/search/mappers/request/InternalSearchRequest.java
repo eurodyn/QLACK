@@ -4,9 +4,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
-
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class InternalSearchRequest {
 
   @JsonInclude(Include.NON_NULL)
@@ -27,61 +30,5 @@ public class InternalSearchRequest {
   @JsonRawValue
   @JsonInclude(Include.NON_NULL)
   private String sort;
-
-  public Integer getFrom() {
-    return from;
-  }
-
-  public void setFrom(Integer from) {
-    this.from = from;
-  }
-
-  public Integer getSize() {
-    return size;
-  }
-
-  public void setSize(Integer size) {
-    this.size = size;
-  }
-
-  public Boolean isExplain() {
-    return explain;
-  }
-
-  public void setExplain(Boolean explain) {
-    this.explain = explain;
-  }
-
-  public String getQuery() {
-    return query;
-  }
-
-  public void setQuery(String query) {
-    this.query = query;
-  }
-
-  public String getSort() {
-    return sort;
-  }
-
-  public void setSort(String sort) {
-    this.sort = sort;
-  }
-
-  public String getAggs() {
-    return aggs;
-  }
-
-  public void setAggs(String aggs) {
-    this.aggs = aggs;
-  }
-
-  public List<String> getSource() {
-    return source;
-  }
-
-  public void setSource(List<String> source) {
-    this.source = source;
-  }
 
 }

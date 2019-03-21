@@ -16,8 +16,7 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 import org.springframework.data.repository.query.QueryLookupStrategy;
 
 @Configuration
-@EnableElasticsearchRepositories(queryLookupStrategy = QueryLookupStrategy.Key.CREATE_IF_NOT_FOUND,
-    basePackages = "com.eurodyn.qlack.fuse.search.repository")
+@EnableElasticsearchRepositories(queryLookupStrategy = QueryLookupStrategy.Key.CREATE_IF_NOT_FOUND)
 public class EsConfig {
 
 
@@ -27,12 +26,11 @@ public class EsConfig {
   @Bean
   public Client client() throws UnknownHostException {
 
-    Settings settings =
-        Settings.builder().put("cluster.name", env.getProperty("qlack.fuse.search.cluster.name"))
+    Settings settings = Settings.builder()
+        .put("cluster.name", env.getProperty("qlack.fuse.search.cluster.name"))
             .put("client.transport.sniff", false)
             .put("transport.host", env.getProperty("qlack.fuse.search.host.name")).build();
 
-    
     return new  PreBuiltTransportClient(settings).addTransportAddress( new
       TransportAddress(InetAddress.getByName(env.getProperty("qlack.fuse.search.host.name")),
       Integer.parseInt(env.getProperty("qlack.fuse.search.host.port"))));
@@ -43,4 +41,5 @@ public class EsConfig {
   public ElasticsearchOperations elasticsearchTemplate() throws UnknownHostException   {
     return new ElasticsearchTemplate(client());
   }
+
 }

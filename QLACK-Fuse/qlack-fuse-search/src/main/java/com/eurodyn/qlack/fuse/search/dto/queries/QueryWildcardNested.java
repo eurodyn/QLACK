@@ -21,8 +21,7 @@ import lombok.Getter;
  * 		.setExplain(false);
  * </pre>
  *
- * See:<br> https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-
- * wildcard-query.html
+ * See:<br> https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-wildcard-query.html
  */
 @Getter
 public class QueryWildcardNested extends QuerySpec {
