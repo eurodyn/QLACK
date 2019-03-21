@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 @Setter
 @Configuration
 @ConfigurationProperties(prefix = "qlack.fuse.search")
-
 public class Properties {
 
   private String esHosts;
