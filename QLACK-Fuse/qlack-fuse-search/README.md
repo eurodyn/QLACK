@@ -1,42 +1,42 @@
 # QLACK Search module
  
- This module is used to integrate elasticsearch to your application
- 
+ This module provides connection and communication with an elastic search database. 
+
+ You can use this module in order to index documents in the elastic search database and execute search queries. 
+ In order to do so, you have to create indices, put records in the database and syntax the queries. 
+ When creating an index, you have to define the mapping between the object and the database fieds by either defining the mapping in a json file or using the ES annotation `@Field`.
+ Also, in order to persist an object in the database, you have to create a repository that extends ElasticsearchRepository<ObjectClass, IdType> and define this repository in the `@EnableElasticsearchRepositories` Spring annotation. 
+ Qlack provides a variety of search queries than can be used to query documents. 
+ Moreover, elasticsearch repositories can be enhanced with findBy{Attribute} methods to implement wanted search functionality.
+
 ## Integration
 
-## Docker Elasticsearch 
+### Run elastictic search:
+Run the following cmd command to start ElasticSearch v6.4.3:
+`docker run --name=A_NAME_OF_YOUR_FLAVOR -p 9400:9200  -p 9401:9300 -e "http.host=0.0.0.0" -e "transport.host=0.0.0.0"  -e "xpack.security.enabled=false" -d docker.elastic.co/elasticsearch/elasticsearch:6.4.3`
 
-In a cmd enter the following :
-
-`docker run --name=A_NAME_OF_YOUR_FLAVOR -p 9400:9200  -p 9401:9300 -e "http.host=0.0.0.0" -e "transport.host=0.0.0.0"  -e "xpack.security.enabled=false" -d docker.elastic.co/elasticsearch/elasticsearch:6.4.2`
-
-## Spring boot Elasticsearch integration
-
-### Add qlack-fuse-search at your pom.xml:
+### Add qlack-fuse-search to your pom.xml:
 ```xml
-
-    <properties>
-<!-- ... -->
-    <qlack.version>3.0.0-SNAPSHOT</qlack.version>
+  <properties>
+      <!-- ... -->
+      <qlack.version>3.0.0-SNAPSHOT</qlack.version>
   </properties>
 
-<!-- ... -->
-
-    <dependency>
-	  <groupId>com.eurodyn.qlack.fuse</groupId>
-	  <artifactId>qlack-fuse-search</artifactId>
-	  <version>${qlack.version}</version>
-	</dependency>
-
+  <!-- ... -->
+  <dependency>
+	   <groupId>com.eurodyn.qlack.fuse</groupId>
+	   <artifactId>qlack-fuse-search</artifactId>
+	   <version>${qlack.version}</version>
+  </dependency>
 ```
 
-### Add the required properties at the application.properties file:
+### Add the required properties in the application.properties file:
 ```properties
 ################################################################################
 # Elasticsearch configuration
 ################################################################################
 ## Qlack uses 2 different Elasticsearch clients:
-#
+
 # RestHighLevelClient ES client
 qlack.fuse.search.es_hosts=http:localhost:9400
 
@@ -44,8 +44,8 @@ qlack.fuse.search.es_hosts=http:localhost:9400
 qlack.fuse.search.host.name=localhost
 qlack.fuse.search.host.port=9401
 
-#>`docker-cluster` is the docker default cluster.name, it will be different in any other Elasticsearch environment.
-qlack.fuse.search.cluster.name= docker-cluster
+#`docker-cluster` is the docker default cluster.name, it will be different in any other Elasticsearch environment.
+qlack.fuse.search.cluster.name=docker-cluster
 
 spring.main.allow-bean-definition-overriding=true
 ```
@@ -56,59 +56,28 @@ spring.main.allow-bean-definition-overriding=true
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 // ..
 
-
 @SpringBootApplication
 @EnableAsync
 @EnableJpaRepositories({
-    "com.eurodyn.qlack.fuse.search",
-    // ..
+  "com.eurodyn.qlack.fuse.search",
+  // ..
 
 })
 @EnableElasticsearchRepositories({
-// + The location of ElasticsearchRepositories in your app: 
-    "domain.appName.repository.es" 
+  "domain.appName.repository.es" 
 })
 @EnableCaching
 @ComponentScan({
   "com.eurodyn.qlack.fuse.search",
-    //..
+  //..
 })
-
 ```
+### Example
 
-### Add the ES annotations to each document (annotated class):
-```java
-
-import static org.springframework.data.elasticsearch.annotations.FieldType.Text;
-//..
-
-@Document(indexName = "animal")
-public class Animal  {
-
- 
-  @Field(type = Text, index = true)
-  private String id;
-
- // Searchable with the french analyzer and Retrievable
-  @Field(type = Text, index = true, searchAnalyzer="french", analyzer = "french")
-  private String name;
-
-  // Retrievable but not searchable
-  @Field(type = Text, index = false)
-  private String type;
-
- // Searchable and Retrievable 
-  @Field(type = Text, index = true)
-  private int age;
-
-//...
-}
-```
-
-### JSON index mapping example: 
+#### Define the mapping in a JSON file: 
 ```json
 {
-   "animals":{
+   "animals":{ //This is the type of the index
       "dynamic": false,
       "properties":{
          "id":{
@@ -143,10 +112,40 @@ public class Animal  {
 }
 ```
 
-### Create unique repositories, for each document class, which extend the ElasticsearchRepository.
-
+#### Define the mapping in the object ('@Field' annotations are needed only if the above step is missed):
 ```java
 
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+
+import static org.springframework.data.elasticsearch.annotations.FieldType.Text;
+//..
+
+@Document(indexName = "animal", type = "animals")
+public class Animal {
+
+    @Field(type = Text, index = true)
+    private String id;
+
+    // Searchable with the french analyzer and Retrievable
+    @Field(type = Text, index = true, searchAnalyzer="french", analyzer = "french")
+    private String name;
+
+    // Retrievable but not searchable
+    @Field(type = Text, index = false)
+    private String type;
+
+    // Searchable and Retrievable 
+    @Field(type = Text, index = true)
+    private int age;
+
+    //...
+}
+```
+
+#### Create the ES repository for the object:
+
+```java
 package domain.appName.repository.es;
 
 //...
@@ -155,23 +154,20 @@ public interface ApplicationAnimalsRepository extends ElasticsearchRepository<An
 
     // custom query declaration for the field 
     // int Age  of Animal class
-    //no further implemetation nedeed
-    List<Animal>  findByAge(int age);
-    
+    //no further implementation needed
+    List<Animal> findByAge(int age);
+
+    //...
+}
 ```
 
-## Index operations
-
-### Indices can be created using either a  JSON file mapping  or an annotated class.
-
-#### Index creation from json mapping example:
+#### Create the index for the object (using the JSON file):
 ```java
-
 import com.eurodyn.qlack.fuse.search.request.CreateIndexRequest;
 import com.eurodyn.qlack.fuse.search.service.AdminService;
 //..
 
-private AdminService adminService;
+    private AdminService adminService;
 
     @Autowired
     public AdminServiceTest(AdminService adminService) {
@@ -180,8 +176,8 @@ private AdminService adminService;
     
     public void createIndexFromJsonMapping() {
         CreateIndexRequest createIndexRequest = new CreateIndexRequest();
-        createIndexRequest.setName("animals");
-        createIndexRequest.setType("mammals");
+        createIndexRequest.setName("animal");
+        createIndexRequest.setType("animals");
 
         Path resourceDirectory = Paths.get("src/main/resources/animal.json");
 
@@ -194,16 +190,17 @@ private AdminService adminService;
         
         adminService.createIndex(createIndexRequest):
     }
+    //..
+}
 ```
 
-#### Index creation from annotated class example:
+#### Create the index for the object (using the object annotations):
 ```java
-
 import com.eurodyn.qlack.fuse.search.request.CreateIndexRequest;
 import com.eurodyn.qlack.fuse.search.service.AdminService;
 //..
 
-private AdminService adminService;
+    private AdminService adminService;
 
     @Autowired
     public AdminServiceTest(AdminService adminService) {
@@ -213,137 +210,142 @@ private AdminService adminService;
     public void createIndexFromAnnotatedClass() {
         adminService.createIndex(Animal.class):
     }
+    //..
+}
 ```
 
-### Indices can be deleted either by name or providing an annotated class.
-#### Delete index by name example: 
+#### Delete index (using the indexing name): 
  ```java
+import com.eurodyn.qlack.fuse.search.request.CreateIndexRequest;
+import com.eurodyn.qlack.fuse.search.service.AdminService;
+//..
  
- import com.eurodyn.qlack.fuse.search.request.CreateIndexRequest;
- import com.eurodyn.qlack.fuse.search.service.AdminService;
- //..
+    private AdminService adminService;
  
- private AdminService adminService;
- 
-     @Autowired
-     public AdminServiceTest(AdminService adminService) {
-         this.adminService = adminService;
-     }
+    @Autowired
+    public AdminServiceTest(AdminService adminService) {
+        this.adminService = adminService;
+    }
      
-     public void deleteIndexByName(){
-         adminService.deleteIndex("animals"):
-     }
+    public void deleteIndexByName(){
+        adminService.deleteIndex("animals"):
+    }
+    //..
  }
 ```
 
-#### Delete index by class example: 
+#### Delete index (using the object): 
  ```java
- 
- import com.eurodyn.qlack.fuse.search.request.CreateIndexRequest;
- import com.eurodyn.qlack.fuse.search.service.AdminService;
+import com.eurodyn.qlack.fuse.search.request.CreateIndexRequest;
+import com.eurodyn.qlack.fuse.search.service.AdminService;
  //..
  
- private AdminService adminService;
+    private AdminService adminService;
  
-     @Autowired
-     public AdminServiceTest(AdminService adminService) {
-         this.adminService = adminService;
-     }
+    @Autowired
+    public AdminServiceTest(AdminService adminService) {
+        this.adminService = adminService;
+    }
 
-     public void deleteIndexByClass(){
-         adminService.deleteIndex(Animal.class);
-     }
+    public void deleteIndexByClass(){
+        adminService.deleteIndex(Animal.class);
+    }
+
+    //..
  }
 ```
 
-### Indexing documents is done either by using ES repository or using Qlack's indexing service.
-#### Index document using repository example:
+#### Index document (using the ES repository method):
  ```java
- 
- import com.eurodyn.qlack.fuse.search.request.CreateIndexRequest;
- import com.eurodyn.qlack.fuse.search.service.AdminService;
+import com.eurodyn.qlack.fuse.search.request.CreateIndexRequest;
+import com.eurodyn.qlack.fuse.search.service.AdminService;
  //..
  
- private ApplicationAnimalsRepository applicationAnimalsRepository;
+    private ApplicationAnimalsRepository applicationAnimalsRepository;
  
-     @Autowired
-     public AdminServiceTest(ApplicationAnimalsRepository applicationAnimalsRepository) {
-         this.applicationAnimalsRepository = applicationAnimalsRepository;
-     }
+    @Autowired
+    public AdminServiceTest(ApplicationAnimalsRepository applicationAnimalsRepository) {
+        this.applicationAnimalsRepository = applicationAnimalsRepository;
+    }
 
-     public void indexDocuemntUsingRepository(){
-           List<Animal> animals = getAllAnimals();
-           applicationAnimalsRepository.saveAll(animals);
-     }
+    public void indexDocuemntUsingRepository(){
+        List<Animal> animals = getAllAnimals();
+        applicationAnimalsRepository.saveAll(animals);
+    }
+
+    //..
  }
  ```
 
-#### Index document using Qlack's indexing service example:
+#### Index document (using the Qlack service):
   ```java
+import com.eurodyn.qlack.fuse.search.request.CreateIndexRequest;
+import com.eurodyn.qlack.fuse.search.service.IndexingService;
+//..
   
-  import com.eurodyn.qlack.fuse.search.request.CreateIndexRequest;
-  import com.eurodyn.qlack.fuse.search.service.IndexingService;
-  //..
+    private IndexingService indexingService;
   
-  private IndexingService indexingService;
-  
-      @Autowired
-      public IndexingServiceTest(IndexingService indexingService;) {
-          this.indexingService = indexingService;
-      }
+    @Autowired
+    public IndexingServiceTest(IndexingService indexingService;) {
+        this.indexingService = indexingService;
+    }
  
-      public void indexDocuemntUsingService(){
-          Animal animal = new Animal("some_id", "Rex", "Dog", "5");
-          IndexingDTO indexingDTO = new IndexingDTO();
-          indexingDTO.setSourceObject(animal);
-          indexingDTO.setIndex("animals");
-          indexingDTO.setType("mammals");
-          indexingDTO.setId(animal.getId());
-          indexingService.indexDocument(indexingDTO);
-      }
-  }
+    public void indexDocuemntUsingService(){
+        Animal animal = new Animal("some_id", "Rex", "Dog", "5");
+        IndexingDTO indexingDTO = new IndexingDTO();
+        indexingDTO.setSourceObject(animal);
+        indexingDTO.setIndex("animal");
+        indexingDTO.setType("animals");
+        indexingDTO.setId(animal.getId());
+
+        indexingService.indexDocument(indexingDTO);
+    }
+
+    //..
+}
   ```
-  
-## Searching 
 
-Qlack provides a variety of search queries than can be used to query documents. 
-Moreover elasticsearch repositories can be enhanced with findBy{Attribute} methods to implement wanted search functionality.
-
-### Searching using Qlack's SearchService
-
+#### Search (using the ES repository method)
 ```java
-//**
-    import com.eurodyn.qlack.fuse.search.dto.SearchResultDTO;
-    import com.eurodyn.qlack.fuse.search.dto.queries.QueryRange;
-    import com.eurodyn.qlack.fuse.search.service.SearchService;
+import domain.appName.repository.es.ApplicationAnimalRepository;
 //**
 
-     private SearchService searchService;
+    private ApplicationAnimalsRepository applicationAnimalRepository;
 
-
-     public void searchQueryRange() {
-        System.out.println("******************");
-        System.out.println("Testing query range");
-        QueryRange queryRange = new QueryRange() {};
-        queryRange.setTerm("age", 28,30);
-        queryRange.setIndex("animals");
-    
-        SearchResultDTO searchResultDTO = searchService.search(queryRange);
-        System.out.println(searchResultDTO.getHits());
+    public void searchByAge() {
+      List<Animal> animals = applicationAnimalRepository.findByAge(5);
     }
+
+    //..
+}
 ```
-
-### Searching using ES repository methods
+  
+#### Search (using the Qlack service):
 
 ```java
+import com.eurodyn.qlack.fuse.search.dto.SearchResultDTO;
+import com.eurodyn.qlack.fuse.search.dto.queries.QueryRange;
+import com.eurodyn.qlack.fuse.search.service.SearchService;
 //**
-    import domain.appName.repository.es.ApplicationAnimalRepository;
-//**
 
-     private ApplicationAnimalsRepository applicationAnimalRepository;
+    private SearchService searchService;
 
+    public void searchQueryRange() {
+      System.out.println("******************");
+      System.out.println("Testing query range");
 
-     public void searchByAge() {
-        List<Animal> animals = applicationAnimalRepository.findByAge(5);
+      QueryRange queryRange = new QueryRange() {};
+      queryRange.setTerm("age", 28,30);
+      queryRange.setIndex("animal");
+      
+      QuerySort querySort = new QuerySort();
+      querySort.setSort("age", "asc");
+      queryRange.setQuerySort(querySort);
+
+      SearchResultDTO searchResultDTO = searchService.search(queryRange);
+      System.out.println(searchResultDTO.getHits());
     }
+
+    //..
+}
 ```
