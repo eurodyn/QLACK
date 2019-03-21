@@ -37,7 +37,7 @@ Run the following cmd command to start ElasticSearch v6.4.3:
 ################################################################################
 ## Qlack uses 2 different Elasticsearch clients:
 
-# RestHighLevelClient ES client
+# RestHighLevelClient ES client (A comma-separated list of ES hosts in the form of protocol1:host1:port1,protocol2:host2:port2,etc.)
 qlack.fuse.search.es_hosts=http:localhost:9400
 
 # Repo ES client (org.elasticsearch.client.Client)
@@ -46,6 +46,12 @@ qlack.fuse.search.host.port=9401
 
 #`docker-cluster` is the docker default cluster.name, it will be different in any other Elasticsearch environment.
 qlack.fuse.search.cluster.name=docker-cluster
+
+qlack.fuse.search.es_username=
+qlack.fuse.search.es_password=
+# Enable or disable hostname verification. Only applies when https is used to communicate with Elasticsearch.
+qlack.fuse.search.verify_hostname=false
+
 
 spring.main.allow-bean-definition-overriding=true
 ```
@@ -325,6 +331,7 @@ import domain.appName.repository.es.ApplicationAnimalRepository;
 ```java
 import com.eurodyn.qlack.fuse.search.dto.SearchResultDTO;
 import com.eurodyn.qlack.fuse.search.dto.queries.QueryRange;
+import com.eurodyn.qlack.fuse.search.dto.queries.QuerySort;
 import com.eurodyn.qlack.fuse.search.service.SearchService;
 //**
 
