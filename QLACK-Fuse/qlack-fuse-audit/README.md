@@ -23,6 +23,11 @@ This module provides standard operations for system audit actions.
 <include file="db/changelog/qlack.fuse.audit.changelog.xml"/>
 ```
 
+### If you wish to store audit trace data, add the following property in application.properties
+```properties
+qlack.fuse.audit.traceData=true
+```
+
 ### Add the packages in the Spring boot application main class declaration:
 ```java
 @SpringBootApplication
