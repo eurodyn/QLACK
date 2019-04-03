@@ -1,11 +1,19 @@
-package com.eurodyn.qlack.fuse.scheduler;
+package com.eurodyn.qlack.fuse.scheduler.service;
 
+import com.eurodyn.qlack.fuse.scheduler.dto.JobDTO;
 import com.eurodyn.qlack.fuse.scheduler.exception.QSchedulerException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
@@ -17,13 +25,6 @@ import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Transactional
 @Service
@@ -134,17 +135,7 @@ public class SchedulerService {
       if (scheduler.getJobDetail(JobKey.jobKey(getJobName(jobClass))) != null) {
         LOGGER.log(Level.CONFIG, "Job {0} is already registered.", getJobName(jobClass));
       } else {
-        JobDataMap jobDataMap = new JobDataMap();
-        if (jobData != null) {
-          jobDataMap.putAll(jobData);
-        }
-        scheduler.addJob(
-            JobBuilder
-                .newJob(jobClass)
-                .withIdentity(getJobName(jobClass))
-                .storeDurably()
-                .setJobData(jobDataMap)
-                .build(), true);
+        scheduler.addJob(buildJob(jobClass, jobData), true);
       }
     } catch (SchedulerException e) {
       throw new QSchedulerException(e);
@@ -158,33 +149,10 @@ public class SchedulerService {
       if (scheduler.getJobDetail(JobKey.jobKey(getJobName(jobClass))) != null) {
         LOGGER.log(Level.CONFIG, "Job {0} is already registered, rescheduling it.", getJobName(jobClass));
         final Trigger oldTrigger = scheduler.getTrigger(TriggerKey.triggerKey(getTriggerName(jobClass)));
-        final CronTrigger newTrigger = TriggerBuilder
-            .newTrigger()
-            .forJob(jobClass.getName())
-            .withIdentity(getTriggerName(jobClass))
-            .startNow()
-            .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
-            .build();
+        final CronTrigger newTrigger = buildTrigger(jobClass, cronExpression);
         scheduler.rescheduleJob(oldTrigger.getKey(), newTrigger);
       } else {
-        JobDataMap jobDataMap = new JobDataMap();
-        if (jobData != null) {
-          jobDataMap.putAll(jobData);
-        }
-        scheduler.scheduleJob(
-            JobBuilder
-                .newJob(jobClass)
-                .withIdentity(getJobName(jobClass))
-                .storeDurably()
-                .setJobData(jobDataMap)
-                .build(),
-            TriggerBuilder
-                .newTrigger()
-                .forJob(jobClass.getName())
-                .withIdentity(getTriggerName(jobClass))
-                .startNow()
-                .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
-                .build());
+        scheduler.scheduleJob(buildJob(jobClass, jobData), buildTrigger(jobClass, cronExpression));
       }
     } catch (SchedulerException e) {
       throw new QSchedulerException(e);
@@ -196,43 +164,51 @@ public class SchedulerService {
     scheduleJob(jobClass, cronExpression, null);
   }
 
-
   public <J extends Job> void rescheduleJob(Class<J> jobClass, String cronExpression)
       throws QSchedulerException {
     try {
-      scheduler.rescheduleJob(TriggerKey.triggerKey(getTriggerName(jobClass)),
-          TriggerBuilder
-              .newTrigger()
-              .forJob(jobClass.getName())
-              .withIdentity(getTriggerName(jobClass))
-              .startNow()
-              .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
-              .build());
+      scheduler.rescheduleJob(TriggerKey.triggerKey(getTriggerName(jobClass)), buildTrigger(jobClass, cronExpression));
     } catch (SchedulerException e) {
       throw new QSchedulerException(e);
     }
   }
 
-  public <J extends Job> boolean deleteJob(Class<J> jobClass) throws QSchedulerException {
+  private <J extends Job> JobDetail buildJob(Class<J> jobClass, Map<String, Object> jobData) {
+    JobDataMap jobDataMap = new JobDataMap();
+    if (jobData != null) {
+      jobDataMap.putAll(jobData);
+    }
+    return JobBuilder
+        .newJob(jobClass)
+        .withIdentity(getJobName(jobClass))
+        .storeDurably()
+        .setJobData(jobDataMap)
+        .build();
+  }
+
+  private <J extends Job> CronTrigger buildTrigger(Class<J> jobClass, String cronExpression) {
+    return TriggerBuilder
+        .newTrigger()
+        .forJob(jobClass.getName())
+        .withIdentity(getTriggerName(jobClass))
+        .startNow()
+        .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
+        .build();
+  }
+
+  public boolean deleteJob(String jobName) throws QSchedulerException {
     try {
-      return scheduler.deleteJob(JobKey.jobKey(getJobName(jobClass)));
+      return scheduler.deleteJob(JobKey.jobKey(jobName));
     } catch (SchedulerException ex) {
       throw new QSchedulerException(ex);
     }
   }
 
-  public <J extends Job> boolean deleteJobs(List<Class<J>> jobClasses) throws QSchedulerException {
+  public boolean deleteJobs(List<String> jobNames) {
     boolean deletedAll = true;
-
-    try {
-      for (Class jobClass : jobClasses) {
-        boolean deleted = scheduler.deleteJob(JobKey.jobKey(getJobName(jobClass)));
-        deletedAll = deletedAll && deleted;
-      }
-    } catch (SchedulerException ex) {
-      throw new QSchedulerException(ex);
+    for (String jobName : jobNames) {
+      deletedAll = deletedAll && deleteJob(jobName);
     }
-
     return deletedAll;
   }
 
@@ -240,8 +216,7 @@ public class SchedulerService {
     triggerJob(jobClass, null);
   }
 
-  public <J extends Job> void triggerJob(Class<J> jobClass, Map<String, Object> jobData)
-      throws QSchedulerException {
+  public <J extends Job> void triggerJob(Class<J> jobClass, Map<String, Object> jobData) throws QSchedulerException {
     try {
       JobDataMap jobDataMap = new JobDataMap();
       if (jobData != null) {
@@ -260,7 +235,6 @@ public class SchedulerService {
       throw new QSchedulerException(ex);
     }
   }
-
 
   public void pauseAllTriggers() throws QSchedulerException {
     try {
@@ -288,8 +262,7 @@ public class SchedulerService {
 
   public <J extends Job> Date getNextFireForJob(Class<J> jobClass) throws QSchedulerException {
     try {
-      return scheduler.getTrigger(TriggerKey.triggerKey(getTriggerName(jobClass)))
-          .getNextFireTime();
+      return scheduler.getTrigger(TriggerKey.triggerKey(getTriggerName(jobClass))).getNextFireTime();
     } catch (SchedulerException ex) {
       throw new QSchedulerException(ex);
     }
@@ -305,49 +278,42 @@ public class SchedulerService {
 
   public <J extends Job> boolean isTriggerExisting(Class<J> jobClass) {
     try {
-      return scheduler
-          .checkExists(TriggerKey.triggerKey(getTriggerName(jobClass)));
+      return scheduler.checkExists(TriggerKey.triggerKey(getTriggerName(jobClass)));
     } catch (SchedulerException ex) {
       throw new QSchedulerException(ex);
     }
   }
 
   public List<String> getCurrentlyExecutingJobsNames() {
-    List<String> names = null;
     try {
-      List<JobExecutionContext> runningJobs = scheduler
-          .getCurrentlyExecutingJobs();
-
-      names = new ArrayList<String>();
+      List<JobExecutionContext> runningJobs = scheduler.getCurrentlyExecutingJobs();
+      List<String> names = new ArrayList<>();
 
       for (JobExecutionContext runningJob : runningJobs) {
-        names.add(runningJob.getJobDetail().getKey().getName().toString());
+        names.add(runningJob.getJobDetail().getKey().getName());
       }
+      return names;
     } catch (SchedulerException ex) {
       throw new QSchedulerException(ex);
     }
-
-    return names;
   }
 
-  public List<String> getJobNames() {
-    List<String> jobs = new ArrayList<>();
+  public List<JobDTO> getJobInfo() {
+    List<JobDTO> jobs = new ArrayList<>();
 
     try {
       for (String groupName : scheduler.getJobGroupNames()) {
         for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
-          String jobName = jobKey.getName();
-          String jobGroup = jobKey.getGroup();
           List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
           Date nextFireTime = triggers.get(0).getNextFireTime();
 
-          jobs.add(jobName + "," + jobGroup + "," + nextFireTime);
+          JobDTO jobDTO = new JobDTO(jobKey.getName(), jobKey.getGroup(), nextFireTime);
+          jobs.add(jobDTO);
         }
       }
     } catch (SchedulerException e) {
       throw new QSchedulerException(e);
     }
-
     return jobs;
   }
 }
