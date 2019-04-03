@@ -21,8 +21,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 @AllArgsConstructor
 public class UserDetailsDTO extends BaseDTO implements UserDetails {
 
-    private String id;
-
     private String username;
 
     private String password;
