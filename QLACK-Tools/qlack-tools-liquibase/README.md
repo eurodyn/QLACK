@@ -1,6 +1,7 @@
 # QLACK tools - Liquibase
-A Docker container allowing to automatically detect changes in your database
-and export detected changes to Liquibase _changesets_.
+This is a little tool, based on a Docker container, allowing to automatically 
+detect changes in your database and export detected changes to 
+Liquibase _changesets_. 
 
 [![QLACK Tools liquibase](http://img.youtube.com/vi/K08foBXwo_Y/0.jpg)](http://www.youtube.com/watch?v=K08foBXwo_Y "QLACK Tools liquibase")
 
@@ -21,6 +22,8 @@ Liquibase changesets.
 Please make sure you read the _Word of caution_ section before you proceed.
 
 ### Word of caution
+TLDR; Always review the automatically-produced changeset!
+
 * It is suggested to use Liquibase from the beginning of your project
 and capture all database changes in manually crafted changesets. This provides
 you the greatest flexibility and control in how your schema evolves.
@@ -43,7 +46,7 @@ however if you want to build it locally you can execute:
 
 If you do not have `make` available, you can alternatively build it with:
 
-`docker build . -t eurodyn/qlack-tools-liquibase:1`
+`docker build . -t eurodyn/qlack-tools-liquibase`
 
 ## Compatible databases
 Currently the following databases are supported:
@@ -56,7 +59,8 @@ wholeheartedly welcome PRs for that.
 ## Prerequisites
 You need to have access to the database server from the host where your
 Docker Engine runs. To produce diffs, you need a user with appropriate
-privileges to create new databases.
+privileges to create new databases (a temporary database/schema needs to
+be created which is then dropped at the end).
 
 ## Producing the initial changelog
 To produce the initial changelog for your database you need to pass the
@@ -94,7 +98,7 @@ docker run --rm \
 -e DB_USER=root \
 -e DB_PASS=root \
 -v /Users/jdoe/tmp:/data \
-eurodyn/qlack-tools-liquibase:1 \
+eurodyn/qlack-tools-liquibase \
 generateChangeLog.sh
 ```
 
@@ -130,6 +134,9 @@ can be replied from it.
 
 `AUTHOR`: The author of the changelog.
 
+`EXCLUDE_OBJECTS`: A pattern for objects to exclude from diffing 
+(as per [Liquibase](http://www.liquibase.org/2015/01/liquibase-3-3-2-released.html)).
+
 Caveat #1: In case your changelog incorporates
 includes, make sure that these are referenced in a way that can be found
 in all environments. For example, since Liquibase automatically looks
@@ -151,9 +158,8 @@ to try automatically detecting the next-version number of your Liquibase
 changelogs. The script looks for a pattern of _prefixnumber.someextension_,
 for example, myproject_0001.xml, dbupdate0001.xml, etc.
 
-Do not forget to mount the folder with the changesets of your progress,
-so that this script can find them to use them for populating a temporary
-database.
+Do not forget to mount on the Docker container the folder with the changesets 
+of your project.
 
 Example:
 ```
@@ -169,6 +175,69 @@ docker run --rm \
 -e DIFFLOG=/db/changelog/changes/difflog.xml \
 -e AUTHOR="John Doe" \
 -v /Users/jdoe/Projects/proj1/src/main/resources/db:/db \
-eurodyn/qlack-tools-liquibase:1 \
+eurodyn/qlack-tools-liquibase \
 diffChangeLog.sh
 ```
+
+## FAQ
+### In my project's changelog I reference other/external changelogs. How do I include those?
+
+You can include external changelogs the same way you include the changelogs
+of your own project by mounting them in the Docker container. However,
+if you have many external references this may become tedious. Since most
+probably you do not need those external changes when trying to capture the changes
+of your own-maintained schema, an alternative approach is to maintain 
+two different changelogs in your project: 
+One with the external references and another without; you can use the latter
+with this tool to ignore external changelogs.
+
+### I followed the approach of maintaining two changelogs to separate external changesets, however in my own changelog I have changesets inserting data into the tables produced by the external changelog I am ignoring. Catch-22?
+
+This is a common use case which you can handle with some preparation. For example, let us say that in your project you are
+using the wonderful [QLACK Fuse Settings](https://github.com/eurodyn/QLACK/tree/master/QLACK-Fuse/qlack-fuse-settings) module.
+In your changelogs you have a changeset that inserts some default data into QLACK Fuse Settings, for example, regarding the
+system's temporary folder, with a changeset similar to:
+
+```
+<changeSet id="change_0349" author="European Dynamics">
+    <sql>
+      INSERT INTO set_setting(`id`, `owner`, `group_name`, `key_name`, `val`, `created_on`, `sensitivity`, `dbversion`,  `psswrd`)
+      VALUES ('248175bd-1b3e-44c9-b057-e8ede7a113a3', 'System', 'System', 'tempFolder', '/tmp', now(), 0, 0, 0);
+    </sql>
+</changeSet>
+```
+
+If in your changelog you are excluding external changelogs the above changeset 
+will, obviously, fail. However, do you really need this changeset to be 
+executed in the context of capturing database changes? Probably you do 
+not as it does not provide anything related to the structure of your 
+database (which is what you aim to automatically capture). We therefore
+need a way to tell liquibase to exclude all such changesets - this is
+easily done by using [Liquibase labels](https://www.liquibase.org/2014/11/contexts-vs-labels.html).
+
+Label all your scripts inserting data with a specific
+label, so when this tool is running it knows to ignore them. The default
+label used is **`ignorable`**. So, the above changeset should be effectively
+written as:
+
+```
+<changeSet id="change_0349" author="European Dynamics" labels="ignorable">
+    <sql>
+      INSERT INTO set_setting(`id`, `owner`, `group_name`, `key_name`, `val`, `created_on`, `sensitivity`, `dbversion`,  `psswrd`)
+      VALUES ('248175bd-1b3e-44c9-b057-e8ede7a113a3', 'System', 'System', 'tempFolder', '/tmp', now(), 0, 0, 0);
+    </sql>
+</changeSet>
+```
+
+OK, you are nearly there. 
+
+The last bit you still need to configure is to
+tell this tool to ignore the tables of your schema generated by the changelogs
+you ignore (otherwise, those tables will be detected as new). This can be easily
+done by specifying an [excludeObjects](http://www.liquibase.org/2015/01/liquibase-3-3-2-released.html) 
+pattern as a parameter to the diff script of this tool.
+
+To recap:
+- Maintain and use this tool with a separate changelog with no references to external changelogs.
+- Mark your changesets containing interactions with the tables ignored above with ``ignorable`` label.
+- Provide an ``excludeObjects`` parameter to exclude ignored tables from diff.
