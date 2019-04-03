@@ -65,9 +65,8 @@ public class AuthenticationService {
         String sessionId = userService.login(userId, applicationSessionId, true).getSessionId();
         authenticatedUser.setSessionId(sessionId);
 
-        String jwt = JWTUtil.generateToken(new JWTGenerateRequestDTO(jwtSecret, authenticatedUser.getUsername(), jwtExpiration));
+        return JWTUtil.generateToken(new JWTGenerateRequestDTO(jwtSecret, authenticatedUser.getUsername(), jwtExpiration));
 
-        return jwt;
     }
 
 }
