@@ -13,6 +13,7 @@ echo Populating diff database with existing changelogs
 --username=$DB_USER \
 --password=$DB_PASS \
 --changeLogFile=$CHANGELOG \
+--labels="!ignorable" \
 update
 
 # Check if the passed CHANGELOG is a file or a directory.
@@ -28,6 +29,9 @@ fi
 set +e
 
 echo Writing diff log in: $DIFFLOG
+if [[ ! -z $EXCLUDE_OBJECTS ]]; then
+  echo Exclude filter: $EXCLUDE_OBJECTS
+fi
 /opt/liquibase/liquibase \
 --driver=$DRIVER \
 --classpath=/opt/liquibase/lib/mariadb-java-client.jar:/opt/liquibase/lib/mysql-connector-java.jar \
@@ -38,7 +42,8 @@ echo Writing diff log in: $DIFFLOG
 diffChangeLog \
 --referenceUrl=jdbc:$DB://$DB_HOST:$DB_PORT/$DB_SCHEMA \
 --referenceUsername=$DB_USER \
---referencePassword=$DB_PASS
+--referencePassword=$DB_PASS \
+--excludeObjects=$EXCLUDE_OBJECTS
 
 # Check if there are no changes and exit in that case.
 CHANGESETS=$(grep -E '<changeSet' -c $DIFFLOG)
