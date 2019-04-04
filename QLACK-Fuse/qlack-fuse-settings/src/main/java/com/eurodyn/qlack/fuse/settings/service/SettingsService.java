@@ -13,8 +13,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 import javax.transaction.Transactional;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -22,80 +22,130 @@ import org.springframework.validation.annotation.Validated;
 @Transactional
 @Service
 @Validated
+@Log
 public class SettingsService {
 
-  // Logger ref.
-  public static final Logger LOGGER = Logger.getLogger(SettingsService.class.getName());
+    private final SettingMapper settingMapper;
+    private final SettingRepository settingRepository;
+    private QSetting qsetting = QSetting.setting;
 
-
-  // Service references.
-  private final SettingMapper settingMapper;
-  private QSetting qsetting = QSetting.setting;
-  private final SettingRepository settingRepository;
-
-  @Autowired
-  public SettingsService(SettingMapper settingMapper,
-      SettingRepository settingRepository) {
-    this.settingMapper = settingMapper;
-    this.settingRepository = settingRepository;
-  }
-
-  public List<SettingDTO> getSettings(String owner, boolean includeSensitive) {
-    Predicate predicate = qsetting.owner.endsWith(owner);
-    if(!includeSensitive){
-      predicate = ((BooleanExpression) predicate).and(qsetting.sensitive.ne(true));
+    @Autowired
+    public SettingsService(SettingMapper settingMapper,
+        SettingRepository settingRepository) {
+        this.settingMapper = settingMapper;
+        this.settingRepository = settingRepository;
     }
 
-    return settingMapper.map(settingRepository.findAll(predicate));
-  }
+    /**
+     * Finds all the settings that are owned by the given owner.
+     *
+     * @param owner the owner of the persisted settings
+     * @param includeSensitive flag determines whether to include the sensitive settings in the results
+     * @return a list of settings owned by the specific owner
+     */
+    public List<SettingDTO> getSettings(String owner, boolean includeSensitive) {
+        log.info(MessageFormat.format("Retrieving settings owned by: {0}.", owner));
+        BooleanExpression predicate = qsetting.owner.endsWith(owner);
+        if (!includeSensitive) {
+            predicate = predicate.and(qsetting.sensitive.ne(true));
+        }
 
-  public List<GroupDTO> getGroupNames(String owner) {
-    Predicate predicate = qsetting.owner.eq(owner);
-
-    return settingMapper.mapToGroupDTO(settingRepository.findAll(predicate));
-  }
-
-  public SettingDTO getSetting(String owner, String key, String group) {
-    SettingDTO retVal;
-    Optional<Setting> setting = getOptionalSetting(owner, key, group);
-
-    retVal = settingMapper.map(setting.orElseThrow(
-        () -> new QDoesNotExistException(MessageFormat.format(
-          "Did not find a setting with key: {0}.", key))));
-
-    return retVal;
-  }
-
-  public List<SettingDTO> getGroupSettings(String owner, String group) {
-    Predicate predicate = qsetting.owner.eq(owner)
-        .and(qsetting.group.eq(group));
-
-    return settingMapper.map(settingRepository.findAll(predicate));
-  }
-
-  public void createSetting(SettingDTO dto) {
-    try {
-      getSetting(dto.getOwner(), dto.getKey(), dto.getGroup());
-      throw new QAlreadyExistsException(MessageFormat.format(
-          "A setting already exists with key: {0}.", dto.getKey()));
-    } catch (QDoesNotExistException e) {
-      Setting setting = settingMapper.mapToEntity(dto);
-
-      settingRepository.save(setting);
+        return settingMapper.map(settingRepository.findAll(predicate));
     }
-  }
 
-  public void setVal(String owner, String key, String val, String group) {
-    Setting setting = getOptionalSetting(owner, key, group).orElseThrow(
-        () -> new QDoesNotExistException(MessageFormat.format("Did not find a setting with key: {0}.", key)));
-    setting.setVal(val);
-  }
+    /**
+     * Finds all the groups that are owned by the given owner.
+     *
+     * @param owner the owner of the persisted groups
+     * @return a list of group names owned by the specific owner
+     */
+    public List<GroupDTO> getGroupNames(String owner) {
+        log.info(MessageFormat.format("Retrieving groups owned by: {0}.", owner));
+        Predicate predicate = qsetting.owner.eq(owner);
+
+        return settingMapper.mapToGroupDTO(settingRepository.findAll(predicate));
+    }
+
+    /**
+     * Finds a setting that matches the given owner, key and group.
+     *
+     * @param owner the owner of the persisted setting
+     * @param key the key of the persisted setting
+     * @param group the group of the persisted setting
+     * @return the setting that is owned by the specific owner and has the specific key and group
+     */
+    public SettingDTO getSetting(String owner, String key, String group) {
+        Optional<Setting> setting = getOptionalSetting(owner, key, group);
+        log.info(MessageFormat.format("Retrieving setting with key: {0}, owned by: {1} and in group: {2} ", key, owner, group));
+
+        return settingMapper.map(setting.orElseThrow(
+            () -> new QDoesNotExistException(MessageFormat.format(
+                "Did not find a setting with key: {0}.", key))));
+    }
+
+    /**
+     * Finds all settings that match the given owner and group.
+     *
+     * @param owner the owner of the persisted settings
+     * @param group the group of the persisted settings
+     * @return a list of settings owned by specific owner and in specific group
+     */
+    public List<SettingDTO> getGroupSettings(String owner, String group) {
+        log.info(MessageFormat.format("Retrieving settings owned by: {0} and in group: {1} ", owner, group));
+        Predicate predicate = qsetting.owner.eq(owner).and(qsetting.group.eq(group));
+        return settingMapper.map(settingRepository.findAll(predicate));
+    }
+
+    /**
+     * Creates a setting from the given Setting DTO.
+     *
+     * @param dto a setting dto, used to create the persisted setting
+     */
+    public void createSetting(SettingDTO dto) {
+        String owner = dto.getOwner();
+        String key = dto.getKey();
+        String group = dto.getGroup();
+
+        log.info(MessageFormat.format("Creating setting with key: {0}, owned by: {1} and in group: {2} ", key, owner, group));
+        try {
+            getSetting(dto.getOwner(), key, group);
+            throw new QAlreadyExistsException(MessageFormat.format(
+                "A setting already exists with key: {0}.", key));
+        } catch (QDoesNotExistException e) {
+            Setting setting = settingMapper.mapToEntity(dto);
+
+            settingRepository.save(setting);
+        }
+    }
+
+    /**
+     * Sets the value of a setting that matches the given params.
+     *
+     * @param owner the owner of the persisted setting
+     * @param key the key of the persisted setting
+     * @param val the value that will be set to the persisted setting
+     * @param group the group of the persisted setting
+     */
+    public void setVal(String owner, String key, String val, String group) {
+        log.info(MessageFormat.format("Setting the value of setting with key: {0}, owned by: {1} and in group: {2} ", key, owner, group));
+        Setting setting = getOptionalSetting(owner, key, group).orElseThrow(
+            () -> new QDoesNotExistException(MessageFormat.format("Did not find a setting with key: {0}.", key)));
+        setting.setVal(val);
+    }
 
 
-  private Optional<Setting> getOptionalSetting(String owner, String key, String group) {
-    Predicate predicate = qsetting.owner.eq(owner)
-        .and(qsetting.key.eq(key))
-        .and(qsetting.group.eq(group));
-    return settingRepository.findOne(predicate);
-  }
+    /**
+     * Searches for a setting matching the params.
+     *
+     * @param owner the owner of the persisted setting
+     * @param key the key of the persisted setting
+     * @param group the group of the persisted setting
+     * @return a optional object containing the setting ,if found, empty otherwise
+     */
+    private Optional<Setting> getOptionalSetting(String owner, String key, String group) {
+        Predicate predicate = qsetting.owner.eq(owner)
+            .and(qsetting.key.eq(key))
+            .and(qsetting.group.eq(group));
+        return settingRepository.findOne(predicate);
+    }
 }

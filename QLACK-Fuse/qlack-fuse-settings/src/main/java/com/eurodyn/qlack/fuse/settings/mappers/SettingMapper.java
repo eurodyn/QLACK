@@ -10,16 +10,16 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface SettingMapper {
 
-  List<SettingDTO> map(List<Setting> o);
+    List<SettingDTO> map(List<Setting> o);
 
-  SettingDTO map(Setting o);
+    SettingDTO map(Setting o);
 
-  @Mapping(source = "group", target = "name")
-  GroupDTO mapToGroupDTO(Setting o);
+    @Mapping(source = "group", target = "name")
+    GroupDTO mapToGroupDTO(Setting o);
 
-  List<GroupDTO> mapToGroupDTO(List<Setting> o);
+    List<GroupDTO> mapToGroupDTO(List<Setting> o);
 
-  @Mapping(source = "id", target = "id", ignore = true)
-  Setting mapToEntity(SettingDTO dto);
+    @Mapping(source = "id", target = "id", ignore = true)
+    Setting mapToEntity(SettingDTO dto);
 
 }

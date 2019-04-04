@@ -10,47 +10,79 @@ import javax.persistence.Version;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * This entity is used to store the internal settings of the application
+ *
+ * @author European Dynamics SA
+ */
 @Entity
 @Table(name = "set_setting")
 @Getter
 @Setter
 public class Setting implements java.io.Serializable {
 
-  @Id
-  private String id;
+    /**
+     * The unique id of the setting
+     */
+    @Id
+    private String id;
 
-  @Version
-  private long dbversion;
+    /**
+     * The database version of the setting
+     */
+    @Version
+    private long dbversion;
 
-  private String owner;
+    /**
+     * The owner of the setting
+     */
+    private String owner;
 
-  @Column(name = "group_name")
-  private String group;
+    /**
+     * The name of the group, that this setting is part of
+     */
+    @Column(name = "group_name")
+    private String group;
 
-  @Column(name = "key_name")
-  private String key;
+    /**
+     * The key of the setting
+     */
+    @Column(name = "key_name")
+    private String key;
 
-  private String val;
+    /**
+     * The value of the setting
+     */
+    private String val;
 
-  @Column(name = "sensitivity")
-  private boolean sensitive;
+    /**
+     * Flag to determine if setting is sensitive
+     */
+    @Column(name = "sensitivity")
+    private boolean sensitive;
 
-  @Column(name = "psswrd")
-  private Boolean password;
+    /**
+     * Flag to define if setting is a password
+     */
+    @Column(name = "psswrd")
+    private Boolean password;
 
-  @Column(name = "created_on")
-  private long createdOn;
+    /**
+     * The date that the setting was created
+     */
+    @Column(name = "created_on")
+    private long createdOn;
 
-  public Setting() {
-    this.id = UUID.randomUUID().toString();
-    this.createdOn = Instant.now().toEpochMilli();
-  }
+    public Setting() {
+        this.id = UUID.randomUUID().toString();
+        this.createdOn = Instant.now().toEpochMilli();
+    }
 
-  @Override
-  public String toString() {
-    return "Setting [id=" + id + ", dbversion=" + dbversion + ", owner=" + owner + ", group="
-        + group + ", key="
-        + key + ", val=" + val + ", createdOn=" + createdOn + "]";
-  }
+    @Override
+    public String toString() {
+        return "Setting [id=" + id + ", dbversion=" + dbversion + ", owner=" + owner + ", group="
+            + group + ", key="
+            + key + ", val=" + val + ", createdOn=" + createdOn + "]";
+    }
 
 }
