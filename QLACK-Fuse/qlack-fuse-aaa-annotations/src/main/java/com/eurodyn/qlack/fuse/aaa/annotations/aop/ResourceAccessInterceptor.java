@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +27,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
@@ -159,8 +161,21 @@ public class ResourceAccessInterceptor {
      */
     @Before("annotation() && @annotation(resourceAccess)")
     public void authorize(JoinPoint joinPoint, ResourceAccess resourceAccess) throws AccessDeniedException, IllegalAccessException {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        //authorizeUserDetailsDTO method checks the fields of the com.eurodyn.qlack.fuse.aaa.dto.UserDetailsDTO
+        //if your security implementation adds another type of object in the spring security principal, a custom implementation must be added
+        if (principal instanceof UserDetailsDTO){
+            authorizeUserDetailsDTO((UserDetailsDTO) principal, joinPoint, resourceAccess);
+        } else{
+            log.severe("Contact the Qlack team.");
+            throw new AccessDeniedException("403 - Unauthorized Access. This user is not authorized for the specific operation.");
+        }
+    }
+
+    private void authorizeUserDetailsDTO(UserDetailsDTO user, JoinPoint joinPoint, ResourceAccess resourceAccess) throws AccessDeniedException, IllegalAccessException{
+
         boolean allowAccess;
-        UserDetailsDTO user = (UserDetailsDTO) userDetailsService.loadUserByUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
 
         // superadmin users are authorized
         if (user.isSuperadmin()) {
@@ -193,6 +208,5 @@ public class ResourceAccessInterceptor {
         if (!allowAccess) {
             throw new AccessDeniedException("403 - Unauthorized Access. This user is not authorized for the specific operation.");
         }
-
     }
 }
