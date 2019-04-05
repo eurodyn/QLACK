@@ -17,6 +17,7 @@
   <modules>
     <module>qlack-fuse-aaa</module>
     <module>qlack-fuse-aaa-annotations</module>
+    <module>qlack-fuse-acv</module>
     <module>qlack-fuse-audit</module>
     <module>qlack-fuse-crypto</module>
     <module>qlack-fuse-fileupload</module>
