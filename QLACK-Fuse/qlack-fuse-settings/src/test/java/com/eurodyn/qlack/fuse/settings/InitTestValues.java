@@ -1,5 +1,6 @@
 package com.eurodyn.qlack.fuse.settings;
 
+import com.eurodyn.qlack.fuse.settings.dto.GroupDTO;
 import com.eurodyn.qlack.fuse.settings.dto.SettingDTO;
 import com.eurodyn.qlack.fuse.settings.model.Setting;
 import java.util.ArrayList;
@@ -69,5 +70,22 @@ public class InitTestValues {
         settingsDTO.add(settingDTO2);
 
         return settingsDTO;
+    }
+
+    public GroupDTO createGroupDTO() {
+        GroupDTO groupDTO = new GroupDTO();
+        groupDTO.setName("Test Group");
+        return groupDTO;
+    }
+
+    public List<GroupDTO> createGroupsDTO() {
+        List<GroupDTO> groupsDTO = new ArrayList<>();
+        for (Setting setting : createSettings()) {
+            GroupDTO g = new GroupDTO();
+            g.setName(setting.getGroup());
+            groupsDTO.add(g);
+        }
+
+        return groupsDTO;
     }
 }

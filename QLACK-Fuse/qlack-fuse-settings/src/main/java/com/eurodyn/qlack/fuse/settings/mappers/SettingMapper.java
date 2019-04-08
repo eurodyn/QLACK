@@ -21,5 +21,4 @@ public interface SettingMapper {
 
     @Mapping(source = "id", target = "id", ignore = true)
     Setting mapToEntity(SettingDTO dto);
-
 }
