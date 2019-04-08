@@ -11,15 +11,21 @@ import lombok.Setter;
 @Table(name = "al_audit_trace")
 @Getter
 @Setter
-public class AuditTrace extends AuditBaseEntity{
-  @Column(name = "trace_data")
-  private String traceData;
+public class AuditTrace extends AuditBaseEntity {
 
-  @OneToOne(mappedBy = "trace")
-  private Audit audit;
+    /**
+     * The data of the trace
+     */
+    @Column(name = "trace_data")
+    private String traceData;
 
-  public AuditTrace() {
-    setId(java.util.UUID.randomUUID().toString());
-  }
+    /**
+     * The Audit, which is referenced by this trace
+     */
+    @OneToOne(mappedBy = "trace")
+    private Audit audit;
 
+    public AuditTrace() {
+        setId(java.util.UUID.randomUUID().toString());
+    }
 }

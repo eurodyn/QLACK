@@ -7,11 +7,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AuditTraceDTO extends AuditBaseDTO{
+public class AuditTraceDTO extends AuditBaseDTO {
 
-  private String traceData;
+    private String traceData;
 
-  public AuditTraceDTO(String traceData){
-    setTraceData(traceData);
-  }
+    public AuditTraceDTO(String traceData) {
+        setTraceData(traceData);
+    }
 }

@@ -12,22 +12,41 @@ import lombok.Setter;
 @Table(name = "al_audit_level")
 @Getter
 @Setter
-public class AuditLevel extends AuditBaseEntity{
+public class AuditLevel extends AuditBaseEntity {
 
-  private static Cache<String, String> cache = CacheBuilder.newBuilder().build();
-  private String name;
-  private String description;
-  @Column(name = "prin_session_id")
-  private String prinSessionId;
-  @Column(name = "created_on")
-  private Long createdOn;
+    /**
+     * The cache of the Audit level
+     */
+    private static Cache<String, String> cache = CacheBuilder.newBuilder().build();
 
-  public AuditLevel() {
-    setId(java.util.UUID.randomUUID().toString());
-  }
+    /**
+     * The name of the Audit level
+     */
+    private String name;
 
-  public static void clearCache() {
-    cache.invalidateAll();
-  }
+    /**
+     * A description of the Audit level
+     */
+    private String description;
 
+    /**
+     * The id of the web session
+     */
+
+    @Column(name = "prin_session_id")
+    private String prinSessionId;
+
+    /**
+     * A number representing the date the Audit level was created
+     */
+    @Column(name = "created_on")
+    private Long createdOn;
+
+    public AuditLevel() {
+        setId(java.util.UUID.randomUUID().toString());
+    }
+
+    public static void clearCache() {
+        cache.invalidateAll();
+    }
 }

@@ -68,34 +68,34 @@ public class AuditServiceTest {
     }
 
     @Test
-    public void testAuditWith6Parameters(){
+    public void testAuditWith6Parameters() {
         when(auditMapper.mapToEntity(any(AuditDTO.class))).thenReturn(audit);
         auditService.audit(auditDTO.getLevel(), auditDTO.getEvent(), auditDTO.getGroupName(),
-                auditDTO.getShortDescription(), auditDTO.getPrinSessionId(), auditDTO.getTrace());
+            auditDTO.getShortDescription(), auditDTO.getPrinSessionId(), auditDTO.getTrace());
 
         verify(auditRepository, times(1)).save(audit);
     }
 
     @Test
-    public void testAuditWith7Parameters(){
+    public void testAuditWith7Parameters() {
         when(auditMapper.mapToEntity(any(AuditDTO.class))).thenReturn(audit);
         auditService.audit(auditDTO.getLevel(), auditDTO.getEvent(), auditDTO.getGroupName(),
-                auditDTO.getShortDescription(), auditDTO.getPrinSessionId(), auditDTO.getTrace(), audit.getReferenceId());
+            auditDTO.getShortDescription(), auditDTO.getPrinSessionId(), auditDTO.getTrace(), audit.getReferenceId());
 
         verify(auditRepository, times(1)).save(audit);
     }
 
     @Test
-    public void testAuditWithTraceDataAsString(){
+    public void testAuditWithTraceDataAsString() {
         when(auditMapper.mapToEntity(any(AuditDTO.class))).thenReturn(audit);
         auditService.audit(auditDTO.getLevel(), auditDTO.getEvent(), auditDTO.getGroupName(),
-                auditDTO.getShortDescription(), auditDTO.getPrinSessionId(), auditDTO.getTrace().getTraceData());
+            auditDTO.getShortDescription(), auditDTO.getPrinSessionId(), auditDTO.getTrace().getTraceData());
 
         verify(auditRepository, times(1)).save(audit);
     }
 
     @Test
-    public void testAuditWithSingleArgument(){
+    public void testAuditWithSingleArgument() {
         when(auditMapper.mapToEntity(auditDTO)).thenReturn(audit);
         auditService.audit(auditDTO);
 
@@ -189,8 +189,8 @@ public class AuditServiceTest {
 
     @Test
     public void testGetAuditLogs() {
-        Page<AuditDTO> auditPagesDTO = new PageImpl<AuditDTO>(initTestValues.createAuditsDTO());
-        Page<Audit> auditPages = new PageImpl<Audit>(initTestValues.createAudits());
+        Page<AuditDTO> auditPagesDTO = new PageImpl<>(initTestValues.createAuditsDTO());
+        Page<Audit> auditPages = new PageImpl<>(initTestValues.createAudits());
         String expression = "%Params%";
         Predicate event = qAudit.event.like(expression);
         Pageable firstTen = PageRequest.of(0, 10);

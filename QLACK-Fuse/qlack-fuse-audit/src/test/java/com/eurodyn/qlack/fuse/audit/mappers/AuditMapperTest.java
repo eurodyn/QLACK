@@ -17,7 +17,6 @@ import org.mockito.junit.MockitoJUnitRunner;
  * @author European Dynamics
  */
 
-
 @RunWith(MockitoJUnitRunner.class)
 public class AuditMapperTest {
 

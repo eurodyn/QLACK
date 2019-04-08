@@ -12,8 +12,11 @@ import org.hibernate.annotations.GenericGenerator;
 @Setter
 public abstract class AuditBaseEntity {
 
-  @Id
-  @GeneratedValue(generator = "uuid")
-  @GenericGenerator(name = "uuid", strategy = "uuid2")
-  private String id;
+    /**
+     * The id of all Audit based entities (Audit, Audit level and Audit trace)
+     */
+    @Id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    private String id;
 }

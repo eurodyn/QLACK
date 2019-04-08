@@ -8,6 +8,5 @@ import lombok.Setter;
 @Setter
 public class AuditBaseDTO implements Serializable {
 
-  private String id;
-
+    private String id;
 }

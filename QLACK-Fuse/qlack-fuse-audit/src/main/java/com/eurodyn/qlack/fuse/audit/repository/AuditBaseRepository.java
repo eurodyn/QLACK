@@ -15,22 +15,22 @@ import org.springframework.lang.NonNull;
 public interface AuditBaseRepository<E extends AuditBaseEntity, I extends Serializable> extends
     JpaRepository<E, I>, QuerydslPredicateExecutor<E> {
 
-  @Override
-  @NonNull
-  List<E> findAll(@NonNull Predicate predicate);
+    @Override
+    @NonNull
+    List<E> findAll(@NonNull Predicate predicate);
 
-  @Override
-  @NonNull
-  List<E> findAll(@NonNull Predicate predicate, Sort sort);
+    @Override
+    @NonNull
+    List<E> findAll(@NonNull Predicate predicate, Sort sort);
 
-  default E fetchById(I id) {
-    if (id == null) {
-      throw new IllegalArgumentException("Null id");
+    default E fetchById(I id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Null id");
+        }
+        Optional<E> optional = findById(id);
+
+        return optional.orElseThrow(
+            () -> new QDoesNotExistException(MessageFormat
+                .format("Entity with Id {0} could not be found.", id)));
     }
-    Optional<E> optional = findById(id);
-
-    return optional.orElseThrow(
-        () -> new QDoesNotExistException(MessageFormat
-            .format("Entity with Id {0} could not be found.", id)));
-  }
 }

@@ -17,39 +17,33 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AuditRepository extends AuditBaseRepository<Audit, String>
-    , GenericQuerydslBinder<QAudit>{
+public interface AuditRepository extends AuditBaseRepository<Audit, String>, GenericQuerydslBinder<QAudit> {
 
-  void deleteByCreatedOnBefore(Long date);
+    void deleteByCreatedOnBefore(Long date);
 
-  @Override
-  default void customize(@NonNull QuerydslBindings bindings, @NonNull QAudit audit) {
-    // Add generic bindings.
-    GenericQuerydslBinder.super.addGenericBindings(bindings);
+    @Override
+    default void customize(@NonNull QuerydslBindings bindings, @NonNull QAudit audit) {
+        // Add generic bindings.
+        GenericQuerydslBinder.super.addGenericBindings(bindings);
 
-    // Add specific bindings.
-    bindings.bind(audit.createdOn)
-        .all((final NumberPath<Long> path, final Collection<? extends Long> values) -> {
-          final List<? extends Long> dates = new ArrayList<>(values);
-          Collections.sort(dates);
-          if (dates.size() == 2) {
-            return Optional.of(path.between(dates.get(0), dates.get(1)));
-          } else {
-            return Optional.of(path.eq(dates.get(0)));
-          }
+        // Add specific bindings.
+        bindings.bind(audit.createdOn).all((final NumberPath<Long> path, final Collection<? extends Long> values) -> {
+            final List<? extends Long> dates = new ArrayList<>(values);
+            Collections.sort(dates);
+            return dates.size() == 2 ? Optional.of(path.between(dates.get(0), dates.get(1))) : Optional.of(path.eq(dates.get(0)));
         });
 
-    // Exclude fields from filter.
-    bindings.excluding(audit.shortDescription);
-  }
+        // Exclude fields from filter.
+        bindings.excluding(audit.shortDescription);
+    }
 
-  default List<String> findDistinctEventsByReferenceId(String referenceId) {
-    QAudit qAudit = QAudit.audit;
+    default List<String> findDistinctEventsByReferenceId(String referenceId) {
+        QAudit qAudit = QAudit.audit;
 
-    Predicate predicate = qAudit.referenceId.eq(referenceId);
+        Predicate predicate = qAudit.referenceId.eq(referenceId);
 
-    return findAll(predicate, Sort.by("event").ascending()).stream()
-        .map(Audit::getEvent)
-        .collect(Collectors.toList());
-  }
+        return findAll(predicate, Sort.by("event").ascending()).stream()
+            .map(Audit::getEvent)
+            .collect(Collectors.toList());
+    }
 }
