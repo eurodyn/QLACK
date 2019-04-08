@@ -23,6 +23,7 @@
     <module>qlack-fuse-imaging</module>
     <module>qlack-fuse-lexicon</module>
     <module>qlack-fuse-mailing</module>
+    <module>qlack-fuse-rules</module>
     <module>qlack-fuse-scheduler</module>
     <module>qlack-fuse-search</module>
     <module>qlack-fuse-security</module>

@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.fuse.rules.config;
+package com.eurodyn.qlack.fuse.rules.configuration;
 
 import java.io.IOException;
 import org.kie.api.KieBase;
@@ -17,8 +17,13 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
+/**
+ * The spring configuration of the Drools library that is need for rules execution.
+ *
+ * @author European Dynamics SA
+ */
 @Configuration
-public class DroolsAutoConfiguration {
+public class DroolsConfiguration {
 
     private static final String RULES_PATH = "rules/";
 
@@ -47,7 +52,9 @@ public class DroolsAutoConfiguration {
         KieBuilder kieBuilder = getKieServices().newKieBuilder(kieFileSystem());
         kieBuilder.buildAll();
 
-        return getKieServices().newKieContainer(kieRepository.getDefaultReleaseId());
+        KieContainer kieContainer = getKieServices().newKieContainer(kieRepository.getDefaultReleaseId());
+
+        return kieContainer;
     }
 
     private KieServices getKieServices() {
@@ -66,11 +73,6 @@ public class DroolsAutoConfiguration {
         return kieContainer().newKieSession();
     }
 
-    /*
-     *  As http://docs.jboss.org/drools/release/6.2.0.CR1/drools-docs/html/ch.kie.spring.html
-     *  mentions: Without the org.kie.spring.KModuleBeanFactoryPostProcessor bean definition,
-     *  the kie-spring integration will not work
-     */
     @Bean
     @ConditionalOnMissingBean(KModuleBeanFactoryPostProcessor.class)
     public KModuleBeanFactoryPostProcessor kiePostProcessor() {
