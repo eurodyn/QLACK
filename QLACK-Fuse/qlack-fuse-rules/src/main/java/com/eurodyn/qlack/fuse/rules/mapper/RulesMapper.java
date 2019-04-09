@@ -1,9 +1,9 @@
 package com.eurodyn.qlack.fuse.rules.mapper;
 
-import com.eurodyn.qlack.fuse.rules.model.RulesModel;
+import com.eurodyn.qlack.common.model.QlackBaseModel;
 import java.util.List;
 
-public interface RulesMapper<E extends RulesModel, D> {
+public interface RulesMapper<E extends QlackBaseModel, D> {
 
     /**
      * Maps an entity to a DTO.

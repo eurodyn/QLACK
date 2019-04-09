@@ -1,4 +1,4 @@
-package com.eurodyn.qlack.fuse.rules.model;
+package com.eurodyn.qlack.common.model;
 
 import java.io.Serializable;
 import javax.persistence.GeneratedValue;
@@ -9,14 +9,14 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
- * Superclass that contains fields used by the same entities.
+ * Superclass that contains common fields for the Qlack entities.
  *
  * @author European Dynamics SA
  */
 @MappedSuperclass
 @Getter
 @Setter
-public class RulesModel implements Serializable {
+public class QlackBaseModel implements Serializable {
 
     /**
      * the auto-generated uuid of the entity

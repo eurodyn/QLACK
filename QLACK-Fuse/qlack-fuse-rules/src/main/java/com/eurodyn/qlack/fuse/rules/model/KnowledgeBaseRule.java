@@ -1,5 +1,6 @@
 package com.eurodyn.qlack.fuse.rules.model;
 
+import com.eurodyn.qlack.common.model.QlackBaseModel;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -18,7 +19,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class KnowledgeBaseRule extends RulesModel {
+public class KnowledgeBaseRule extends QlackBaseModel {
 
     /**
      * the .drl rule of the Knowledge Base

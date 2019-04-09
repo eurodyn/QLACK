@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -245,7 +244,7 @@ public class LanguageService {
 				}
 				keyService.updateTranslationsForLanguageByKeyName(languageId, groupId, translations);
 			}
-		} catch (IOException | InvalidFormatException ex) {
+		} catch (IOException ex) {
 			// Convert to a runtime exception in order to roll back transaction
 			LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
 			throw new LanguageProcessingException("Error reading Excel file for language " + languageId);

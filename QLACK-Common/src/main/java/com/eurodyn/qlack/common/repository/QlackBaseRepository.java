@@ -1,7 +1,8 @@
-package com.eurodyn.qlack.fuse.rules.repository;
+package com.eurodyn.qlack.common.repository;
 
 import com.eurodyn.qlack.common.exception.QDoesNotExistException;
-import com.eurodyn.qlack.fuse.rules.model.RulesModel;
+import com.eurodyn.qlack.common.exception.QValueIsRequiredException;
+import com.eurodyn.qlack.common.model.QlackBaseModel;
 import com.querydsl.core.types.Predicate;
 import java.io.Serializable;
 import java.text.MessageFormat;
@@ -13,9 +14,13 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.lang.NonNull;
 
 /**
- * @author European Dynamics
+ * The base Repository interface that includes some common JPA methods.
+ *
+ * @param <T> the entity class
+ * @param <I> the class type of the identifier
+ * @author European Dynamics SA
  */
-public interface RulesRepository<T extends RulesModel, I extends Serializable>
+public interface QlackBaseRepository<T extends QlackBaseModel, I extends Serializable>
     extends JpaRepository<T, I>, QuerydslPredicateExecutor<T> {
 
     @NonNull
@@ -26,12 +31,12 @@ public interface RulesRepository<T extends RulesModel, I extends Serializable>
 
     default T fetchById(I id) {
         if (id == null) {
-            throw new IllegalArgumentException("Null id");
+            throw new QValueIsRequiredException("Id is required to fetch an entity.");
         }
         Optional<T> optional = findById(id);
 
         return optional.orElseThrow(
             () -> new QDoesNotExistException(MessageFormat
-                .format("Entity with Id {0} could not be found.", id)));
+                .format("Entity with id {0} could not be found.", id)));
     }
 }

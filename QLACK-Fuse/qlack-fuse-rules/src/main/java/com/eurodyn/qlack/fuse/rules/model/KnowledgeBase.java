@@ -1,5 +1,6 @@
 package com.eurodyn.qlack.fuse.rules.model;
 
+import com.eurodyn.qlack.common.model.QlackBaseModel;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -20,7 +21,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class KnowledgeBase extends RulesModel {
+public class KnowledgeBase extends QlackBaseModel {
 
     /**
      * the serialized KieBase

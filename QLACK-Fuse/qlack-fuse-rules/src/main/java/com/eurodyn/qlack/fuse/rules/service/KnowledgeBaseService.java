@@ -1,5 +1,6 @@
 package com.eurodyn.qlack.fuse.rules.service;
 
+import com.eurodyn.qlack.common.exception.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.rules.dto.KnowledgeBaseDTO;
 import com.eurodyn.qlack.fuse.rules.exception.QRulesException;
 import com.eurodyn.qlack.fuse.rules.mapper.KnowledgeBaseMapper;
@@ -52,7 +53,7 @@ public class KnowledgeBaseService {
             String errorMessage = "Cannot find Knowledge Base with id " + knowledgeBaseId;
 
             log.severe(errorMessage);
-            throw new QRulesException(errorMessage);
+            throw new QDoesNotExistException(errorMessage);
         }
 
         return base;
