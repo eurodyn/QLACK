@@ -8,6 +8,11 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * The Audit Level entity, that holds all information about the level of an Audit.
+ *
+ * @author European Dynamics SA
+ */
 @Entity
 @Table(name = "al_audit_level")
 @Getter

@@ -55,7 +55,7 @@ public class Audit extends AuditBaseEntity {
     private String event;
 
     /**
-     * A number representing the date the Audit was created
+     * a number representing the date the Audit was created
      */
     @Column(name = "created_on")
     private Long createdOn;
