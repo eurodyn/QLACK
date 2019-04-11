@@ -7,13 +7,18 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
+/**
+ * The Audit Base entity, that holds the id of all Audit based entities.
+ *
+ * @author European Dynamics SA
+ */
 @MappedSuperclass
 @Getter
 @Setter
 public abstract class AuditBaseEntity {
 
     /**
-     * The id of all Audit based entities (Audit, Audit level and Audit trace)
+     * the id of all Audit based entities (Audit, Audit level and Audit trace)
      */
     @Id
     @GeneratedValue(generator = "uuid")

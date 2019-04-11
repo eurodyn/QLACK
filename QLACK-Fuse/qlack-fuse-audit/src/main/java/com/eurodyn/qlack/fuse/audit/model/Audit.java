@@ -11,6 +11,11 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * The Audit entity, that holds the data of an Audit.
+ *
+ * @author European Dynamics SA
+ */
 @Entity
 @Table(name = "al_audit")
 @Getter
@@ -18,21 +23,21 @@ import lombok.Setter;
 public class Audit extends AuditBaseEntity {
 
     /**
-     * The id of the Audit level, this Audit belongs to
+     * the id of the Audit level, this Audit belongs to
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "level_id")
     private AuditLevel levelId;
 
     /**
-     * The id of the Audit trace of this Audit
+     * the id of the Audit trace of this Audit
      */
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "trace_id")
     private AuditTrace trace;
 
     /**
-     * The id of the web session, the Audit occurred
+     * the id of the web session
      */
     @Column(name = "prin_session_id")
     private String prinSessionId;
@@ -44,7 +49,7 @@ public class Audit extends AuditBaseEntity {
     private String shortDescription;
 
     /**
-     * The actual Audit event
+     * the actual Audit event
      */
     @Column(name = "event")
     private String event;
@@ -56,35 +61,37 @@ public class Audit extends AuditBaseEntity {
     private Long createdOn;
 
     /**
-     * The reference id of the Audit
+     * the reference id of the Audit
      */
     @Column(name = "reference_id")
     private String referenceId;
 
     /**
-     * The name of the group the Audit belongs to
+     * the name of the group the Audit belongs to
      */
     @Column(name = "group_name")
     private String groupName;
 
     /**
-     * The id used to correlate the Audit with other Audits
+     * the id used to correlate the Audit with other Audits
      */
     @Column(name = "correlation_id")
     private String correlationId;
 
     /**
-     * Optional field to store app-specific info
+     * optional field to store app-specific info
      */
     @Column(name = "opt1")
     private String opt1;
+
     /**
-     * Optional field to store app-specific info
+     * optional field to store app-specific info
      */
     @Column(name = "opt2")
     private String opt2;
+
     /**
-     * Optional field to store app-specific info
+     * optional field to store app-specific info
      */
     @Column(name = "opt3")
     private String opt3;

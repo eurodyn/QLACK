@@ -15,29 +15,29 @@ import lombok.Setter;
 public class AuditLevel extends AuditBaseEntity {
 
     /**
-     * The cache of the Audit level
+     * the cache of the Audit level
      */
     private static Cache<String, String> cache = CacheBuilder.newBuilder().build();
 
     /**
-     * The name of the Audit level
+     * the name of the Audit level
      */
     private String name;
 
     /**
-     * A description of the Audit level
+     * the description of the Audit level
      */
     private String description;
 
     /**
-     * The id of the web session
+     * the id of the web session
      */
 
     @Column(name = "prin_session_id")
     private String prinSessionId;
 
     /**
-     * A number representing the date the Audit level was created
+     * a number representing the date the Audit level was created
      */
     @Column(name = "created_on")
     private Long createdOn;

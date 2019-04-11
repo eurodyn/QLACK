@@ -22,53 +22,53 @@ import lombok.Setter;
 public class Setting implements java.io.Serializable {
 
     /**
-     * The unique id of the setting
+     * the unique id of the setting
      */
     @Id
     private String id;
 
     /**
-     * The database version of the setting
+     * the database version of the setting
      */
     @Version
     private long dbversion;
 
     /**
-     * The owner of the setting
+     * the owner of the setting
      */
     private String owner;
 
     /**
-     * The name of the group, that this setting is part of
+     * the name of the group, that this setting is part of
      */
     @Column(name = "group_name")
     private String group;
 
     /**
-     * The key of the setting
+     * the key of the setting
      */
     @Column(name = "key_name")
     private String key;
 
     /**
-     * The value of the setting
+     * the value of the setting
      */
     private String val;
 
     /**
-     * Flag to determine if setting is sensitive
+     * the flag to define if setting is sensitive
      */
     @Column(name = "sensitivity")
     private boolean sensitive;
 
     /**
-     * Flag to define if setting is a password
+     * the flag to define if setting is a password
      */
     @Column(name = "psswrd")
     private Boolean password;
 
     /**
-     * The date that the setting was created
+     * the date that the setting was created
      */
     @Column(name = "created_on")
     private long createdOn;

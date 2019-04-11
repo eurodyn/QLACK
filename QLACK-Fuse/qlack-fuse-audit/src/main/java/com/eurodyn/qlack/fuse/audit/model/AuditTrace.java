@@ -14,13 +14,13 @@ import lombok.Setter;
 public class AuditTrace extends AuditBaseEntity {
 
     /**
-     * The data of the trace
+     * the data of the trace
      */
     @Column(name = "trace_data")
     private String traceData;
 
     /**
-     * The Audit, which is referenced by this trace
+     * the Audit, which is referenced by this trace
      */
     @OneToOne(mappedBy = "trace")
     private Audit audit;
