@@ -53,4 +53,15 @@ public class ReturnOptional {
   public static <T> T r(Optional<T> arg, Iterable<Object> params) {
     return rMsg(arg, Iterables.toString(params));
   }
+
+  /**
+   * Returns the wrapped value or throws an exception if such value does not exist. Usage of this
+   * method is discouraged over the alternative versions requesting an object identifier (this is to
+   * avoid generic error messages which complicate debugging).
+   *
+   * @param arg The optional value.
+   */
+  public static <T> T r(Optional<T> arg) {
+    return rMsg(arg, null);
+  }
 }
