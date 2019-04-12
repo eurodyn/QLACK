@@ -21,22 +21,19 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler
   protected ResponseEntity<Object> handle(RuntimeException ex, WebRequest request) {
-    logger.fatal(ex.getMessage(), ex);
-
-    // Define a default error reply.
-    ErrorReplyDTO errorReply = new ErrorReplyDTO();
+    String errorMessage;
 
     // If this is a known wrapped exception use the message it already carries, otherwise use a
     // generic message.
     if (ex instanceof QExceptionWrapper) {
-      errorReply.setMessage(ex.getMessage());
+      errorMessage = ex.getMessage();
     } else {
-      errorReply.setMessage("There was a problem with this request, please try again later.");
+      errorMessage = "There was a problem with this request, please try again later.";
     }
 
     // Return the wrapped exception and custom HTTP status code.
-    return handleExceptionInternal(ex, errorReply, new HttpHeaders(), HttpStatus.BAD_REQUEST,
-        request);
+    return handleExceptionInternal(ex, errorMessage, new HttpHeaders(), HttpStatus.BAD_REQUEST,
+      request);
   }
 
 }
