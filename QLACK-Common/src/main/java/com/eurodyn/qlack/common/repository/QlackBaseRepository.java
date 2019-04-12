@@ -4,14 +4,16 @@ import com.eurodyn.qlack.common.exception.QDoesNotExistException;
 import com.eurodyn.qlack.common.exception.QValueIsRequiredException;
 import com.eurodyn.qlack.common.model.QlackBaseModel;
 import com.querydsl.core.types.Predicate;
-import java.io.Serializable;
-import java.text.MessageFormat;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Repository;
+
+import java.io.Serializable;
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * The base Repository interface that includes some common JPA methods.
@@ -20,6 +22,7 @@ import org.springframework.lang.NonNull;
  * @param <I> the class type of the identifier
  * @author European Dynamics SA
  */
+@Repository
 public interface QlackBaseRepository<T extends QlackBaseModel, I extends Serializable>
     extends JpaRepository<T, I>, QuerydslPredicateExecutor<T> {
 
