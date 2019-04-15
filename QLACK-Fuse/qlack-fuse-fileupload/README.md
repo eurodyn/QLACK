@@ -1,6 +1,7 @@
 # QLACK fileupload module
 
-This module provides file upload functionality. It is designed to use
+This module provides file upload functionality. It is design to use flow.js as the chunks 
+generation and file upload mechanism but could be integrated with other libraries.
 
 ## Integration
 
@@ -53,8 +54,11 @@ qlack.fuse.fileupload.cleanupInterval=300000
     "com.eurodyn.qlack.fuse.fileupload.service.impl"
 })
 ```
+
 `@EnableScheduling` is required for the proper execution of the scheduled files cleanup 
 functionality 
+
+### Extend FileUploadRestTemplate class and define your custom endpoints and implementation
 
 ### Example
 ```java
@@ -136,7 +140,7 @@ app.config(["flowFactoryProvider",
             chunkRetryInterval: 5000,
             simultaneousUploads: 4,
             generateUniqueIdentifier: function() {
-              return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+              return "xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
                 var r, v;
                 r = Math.random() * 16 | 0;
                 v = (c === "x" ? r : r & 0x3 | 0x8);
