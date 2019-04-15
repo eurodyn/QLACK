@@ -4,14 +4,17 @@ import com.eurodyn.qlack.fuse.fileupload.model.DBFile;
 import com.eurodyn.qlack.fuse.fileupload.model.DBFilePK;
 import com.eurodyn.qlack.fuse.fileupload.model.QDBFile;
 import com.querydsl.core.types.Predicate;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.lang.NonNull;
 
-public interface DBFileRepository extends JpaRepository<DBFile, DBFilePK>, QuerydslPredicateExecutor<DBFile> {
+import java.util.List;
+import java.util.Optional;
+
+public interface DBFileRepository extends JpaRepository<DBFile, DBFilePK>,
+  QuerydslPredicateExecutor<DBFile> {
+
 
   @Override
   @NonNull
@@ -19,20 +22,36 @@ public interface DBFileRepository extends JpaRepository<DBFile, DBFilePK>, Query
 
   @Override
   @NonNull
-  List<DBFile> findAll(@NonNull Predicate predicate,@NonNull Sort sort);
+  List<DBFile> findAll(@NonNull Predicate predicate, @NonNull Sort sort);
 
-  default DBFile getChunk(String id, Long chunkOrder){
-    Optional<DBFile> optional = findById(new DBFilePK(id, chunkOrder));
-
+  /**
+   * Retrieves a chunk from the database
+   *
+   * @param id The file/chunk id
+   * @param chunkOrder The chunk order number
+   * @return the file
+   */
+  default DBFile getChunk(String id, Long chunkOrder) {
+    QDBFile qdbFile = QDBFile.dBFile;
+    Predicate predicate = qdbFile.dbFilePK.id.eq(id)
+      .and(qdbFile.dbFilePK.chunkOrder.eq(chunkOrder));
+    Optional<DBFile> optional = findOne(predicate);
     return optional.orElse(null);
   }
 
-  default long deleteById(String id){
+  /**
+   * Deletes a file (including all of its chunks) from the database
+   *
+   * @param id The file id
+   * @return the number of the deleted objects
+   */
+  default long deleteById(String id) {
     QDBFile qdbFile = QDBFile.dBFile;
-    Predicate predicate = qdbFile.id.id.eq(id);
+    Predicate predicate = qdbFile.dbFilePK.id.eq(id);
 
     return findAll(predicate).stream()
-        .peek(this::delete)
-        .count();
+      .peek(this::delete)
+      .count();
   }
+
 }

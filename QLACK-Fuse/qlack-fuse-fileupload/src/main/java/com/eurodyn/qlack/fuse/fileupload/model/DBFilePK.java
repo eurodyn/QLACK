@@ -1,21 +1,28 @@
 package com.eurodyn.qlack.fuse.fileupload.model;
 
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Embeddable
+import java.io.Serializable;
+
 @Getter
 @Setter
+@Embeddable
 @NoArgsConstructor
 public class DBFilePK implements Serializable {
 
   private static final long serialVersionUID = 1L;
+  /**
+   * Uploaded file id
+   */
   @Column
   private String id;
+  /**
+   * Current chunk order number
+   */
   @Column(name = "chunk_order")
   private long chunkOrder;
 
@@ -35,7 +42,6 @@ public class DBFilePK implements Serializable {
   }
 
   @Override
-
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -51,13 +57,10 @@ public class DBFilePK implements Serializable {
       return false;
     }
     if (id == null) {
-      if (other.id != null) {
-        return false;
-      }
-    } else if (!id.equals(other.id)) {
-      return false;
+      return other.id == null;
+    } else {
+      return id.equals(other.id);
     }
-    return true;
   }
 
 }

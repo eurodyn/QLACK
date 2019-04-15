@@ -54,5 +54,5 @@ databaseChangeLog:
             tableName: flu_file
             indexName: idx_flu_file1
             columns:
-                - column:
-                    name: id
+              - column:
+                  name: id
