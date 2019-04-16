@@ -20,7 +20,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "set_setting")
-public class Setting extends QlackBaseModel implements java.io.Serializable {
+public class Setting extends QlackBaseModel {
 
   /**
    * the database version of the setting
