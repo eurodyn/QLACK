@@ -17,17 +17,16 @@ import com.eurodyn.qlack.fuse.settings.model.Setting;
 import com.eurodyn.qlack.fuse.settings.repository.SettingRepository;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * @author European Dynamics
@@ -65,15 +64,15 @@ public class SettingsServiceTest {
     settingsDTO = initTestValues.createSettingsDTO();
 
     ownerKeyGroupPredicate = qSetting.owner.eq(setting.getOwner())
-        .and(qSetting.key.eq(setting.getKey()))
-        .and(qSetting.group.eq(setting.getGroup()));
+      .and(qSetting.key.eq(setting.getKey()))
+      .and(qSetting.group.eq(setting.getGroup()));
   }
 
   @Test
   public void testGetSettings() {
 
     when(settingRepository.findAll(qSetting.owner.endsWith(settingDTO.getOwner())))
-        .thenReturn(settings);
+      .thenReturn(settings);
     when(settingMapper.map(settings)).thenReturn(settingsDTO);
 
     List<SettingDTO> foundSettings = settingsService.getSettings(setting.getOwner(), true);
@@ -84,9 +83,9 @@ public class SettingsServiceTest {
   public void testGetSettingsExcludingSensitive() {
 
     List<Setting> notSensitiveSettings = settings.stream().filter(s -> !s.isSensitive())
-        .collect(Collectors.toList());
+      .collect(Collectors.toList());
     List<SettingDTO> notSensitiveSettingsDTO = settingsDTO.stream().filter(s -> !s.isSensitive())
-        .collect(Collectors.toList());
+      .collect(Collectors.toList());
     Predicate predicate = qSetting.owner.endsWith(settingDTO.getOwner());
     predicate = ((BooleanExpression) predicate).and(qSetting.sensitive.ne(true));
 
@@ -122,37 +121,37 @@ public class SettingsServiceTest {
     when(settingRepository.findOne(ownerKeyGroupPredicate)).thenReturn(optionalSetting);
     when(settingMapper.map(optionalSetting.get())).thenReturn(settingDTO);
     SettingDTO foundSetting = settingsService
-        .getSetting(setting.getOwner(), setting.getKey(), setting.getGroup());
+      .getSetting(setting.getOwner(), setting.getKey(), setting.getGroup());
     assertEquals(settingDTO, foundSetting);
   }
 
   @Test(expected = QDoesNotExistException.class)
   public void testGetSettingException() {
     SettingDTO foundSetting = settingsService
-        .getSetting(setting.getOwner(), setting.getKey(), setting.getGroup());
+      .getSetting(setting.getOwner(), setting.getKey(), setting.getGroup());
     assertEquals(settingDTO, foundSetting);
   }
 
   @Test
   public void testGetGroupSettings() {
     List<Setting> expectedSettings = settings.stream()
-        .filter(
-            s -> setting.getOwner().equals(s.getOwner()) && setting.getGroup().equals(s.getGroup()))
-        .collect(Collectors.toList());
+      .filter(
+        s -> setting.getOwner().equals(s.getOwner()) && setting.getGroup().equals(s.getGroup()))
+      .collect(Collectors.toList());
 
     List<SettingDTO> expectedSettingsDTO = settingsDTO.stream()
-        .filter(dto -> setting.getOwner().equals(dto.getOwner()) && setting.getGroup()
-            .equals(dto.getGroup()))
-        .collect(Collectors.toList());
+      .filter(dto -> setting.getOwner().equals(dto.getOwner()) && setting.getGroup()
+        .equals(dto.getGroup()))
+      .collect(Collectors.toList());
 
     Predicate predicate = qSetting.owner.eq(setting.getOwner())
-        .and(qSetting.group.eq(setting.getGroup()));
+      .and(qSetting.group.eq(setting.getGroup()));
 
     when(settingRepository.findAll(predicate)).thenReturn(expectedSettings);
     when(settingMapper.map(expectedSettings)).thenReturn(expectedSettingsDTO);
 
     List<SettingDTO> foundGroupSettings = settingsService
-        .getGroupSettings(setting.getOwner(), setting.getGroup());
+      .getGroupSettings(setting.getOwner(), setting.getGroup());
     assertEquals(expectedSettingsDTO, foundGroupSettings);
   }
 

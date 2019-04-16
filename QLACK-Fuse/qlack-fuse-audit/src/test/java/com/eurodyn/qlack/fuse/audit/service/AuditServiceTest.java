@@ -38,177 +38,177 @@ import org.springframework.data.domain.Pageable;
 @RunWith(MockitoJUnitRunner.class)
 public class AuditServiceTest {
 
-    @InjectMocks
-    private AuditService auditService;
+  @InjectMocks
+  private AuditService auditService;
 
-    private AuditRepository auditRepository = mock(AuditRepository.class);
-    private AuditLevelRepository auditLevelRepository = mock(AuditLevelRepository.class);
-    private AuditProperties auditProperties = mock(AuditProperties.class);
+  private AuditRepository auditRepository = mock(AuditRepository.class);
+  private AuditLevelRepository auditLevelRepository = mock(AuditLevelRepository.class);
+  private AuditProperties auditProperties = mock(AuditProperties.class);
 
-    @Spy
-    private AuditMapper auditMapper;
+  @Spy
+  private AuditMapper auditMapper;
 
-    private InitTestValues initTestValues;
-    private QAudit qAudit;
+  private InitTestValues initTestValues;
+  private QAudit qAudit;
 
-    private Audit audit;
-    private AuditDTO auditDTO;
-    private List<AuditDTO> auditsDTO;
-    private List<Audit> audits;
+  private Audit audit;
+  private AuditDTO auditDTO;
+  private List<AuditDTO> auditsDTO;
+  private List<Audit> audits;
 
-    @Before
-    public void init() {
-        auditService = new AuditService(auditProperties, auditRepository, auditMapper, auditLevelRepository);
-        initTestValues = new InitTestValues();
-        audit = initTestValues.createAudit();
-        auditDTO = initTestValues.createAuditDTO();
-        auditsDTO = initTestValues.createAuditsDTO();
-        audits = initTestValues.createAudits();
-        qAudit = new QAudit("audit");
+  @Before
+  public void init() {
+    auditService = new AuditService(auditProperties, auditRepository, auditMapper, auditLevelRepository);
+    initTestValues = new InitTestValues();
+    audit = initTestValues.createAudit();
+    auditDTO = initTestValues.createAuditDTO();
+    auditsDTO = initTestValues.createAuditsDTO();
+    audits = initTestValues.createAudits();
+    qAudit = new QAudit("audit");
+  }
+
+  @Test
+  public void testAuditWith6Parameters() {
+    when(auditMapper.mapToEntity(any(AuditDTO.class))).thenReturn(audit);
+    auditService.audit(auditDTO.getLevel(), auditDTO.getEvent(), auditDTO.getGroupName(),
+      auditDTO.getShortDescription(), auditDTO.getPrinSessionId(), auditDTO.getTrace());
+
+    verify(auditRepository, times(1)).save(audit);
+  }
+
+  @Test
+  public void testAuditWith7Parameters() {
+    when(auditMapper.mapToEntity(any(AuditDTO.class))).thenReturn(audit);
+    auditService.audit(auditDTO.getLevel(), auditDTO.getEvent(), auditDTO.getGroupName(),
+      auditDTO.getShortDescription(), auditDTO.getPrinSessionId(), auditDTO.getTrace(), audit.getReferenceId());
+
+    verify(auditRepository, times(1)).save(audit);
+  }
+
+  @Test
+  public void testAuditWithTraceDataAsString() {
+    when(auditMapper.mapToEntity(any(AuditDTO.class))).thenReturn(audit);
+    auditService.audit(auditDTO.getLevel(), auditDTO.getEvent(), auditDTO.getGroupName(),
+      auditDTO.getShortDescription(), auditDTO.getPrinSessionId(), auditDTO.getTrace().getTraceData());
+
+    verify(auditRepository, times(1)).save(audit);
+  }
+
+  @Test
+  public void testAuditWithSingleArgument() {
+    when(auditMapper.mapToEntity(auditDTO)).thenReturn(audit);
+    auditService.audit(auditDTO);
+
+    verify(auditRepository, times(1)).save(audit);
+  }
+
+  @Test
+  public void testAudit() {
+    auditDTO.setTrace(null);
+    audit.setTrace(null);
+    when(auditMapper.mapToEntity(auditDTO)).thenReturn(audit);
+    String auditId = auditService.audit(auditDTO);
+
+    assertEquals(auditDTO.getId(), auditId);
+    verify(auditRepository, times(1)).save(audit);
+  }
+
+  @Test
+  public void testAuditWithTraceData() {
+    when(auditMapper.mapToEntity(auditDTO)).thenReturn(audit);
+    String auditId = auditService.audit(auditDTO);
+
+    assertEquals(auditDTO.getId(), auditId);
+    verify(auditRepository, times(1)).save(audit);
+  }
+
+  @Test
+  public void testAuditCorellatedDTOList() {
+    Collection<String> auditIds = new ArrayList<>();
+    for (int i = 0; i < auditsDTO.size(); i++) {
+      auditsDTO.get(i).setTrace(null);
+      audits.get(i).setTrace(null);
+      when(auditMapper.mapToEntity(auditsDTO.get(i))).thenReturn(audits.get(i));
+      auditIds.add(auditsDTO.get(i).getId());
     }
 
-    @Test
-    public void testAuditWith6Parameters() {
-        when(auditMapper.mapToEntity(any(AuditDTO.class))).thenReturn(audit);
-        auditService.audit(auditDTO.getLevel(), auditDTO.getEvent(), auditDTO.getGroupName(),
-            auditDTO.getShortDescription(), auditDTO.getPrinSessionId(), auditDTO.getTrace());
+    List<String> createdAuditIDs = auditService.audits(auditsDTO, initTestValues.getCorrelationId());
+    assertEquals(auditIds, createdAuditIDs);
+  }
 
-        verify(auditRepository, times(1)).save(audit);
+  @Test
+  public void testAuditCorellatedDTOListWithTraceData() {
+    Collection<String> auditIds = new ArrayList<>();
+    for (int i = 0; i < auditsDTO.size(); i++) {
+      when(auditMapper.mapToEntity(auditsDTO.get(i))).thenReturn(audits.get(i));
+      auditIds.add(auditsDTO.get(i).getId());
     }
 
-    @Test
-    public void testAuditWith7Parameters() {
-        when(auditMapper.mapToEntity(any(AuditDTO.class))).thenReturn(audit);
-        auditService.audit(auditDTO.getLevel(), auditDTO.getEvent(), auditDTO.getGroupName(),
-            auditDTO.getShortDescription(), auditDTO.getPrinSessionId(), auditDTO.getTrace(), audit.getReferenceId());
+    List<String> createdAuditIDs = auditService.audits(auditsDTO, initTestValues.getCorrelationId());
+    assertEquals(auditIds, createdAuditIDs);
+  }
 
-        verify(auditRepository, times(1)).save(audit);
-    }
+  @Test
+  public void testDeleteAudit() {
+    Audit audit2 = initTestValues.createAudit();
+    when(auditRepository.fetchById(audit.getId())).thenReturn(audit2);
+    auditService.deleteAudit(audit.getId());
 
-    @Test
-    public void testAuditWithTraceDataAsString() {
-        when(auditMapper.mapToEntity(any(AuditDTO.class))).thenReturn(audit);
-        auditService.audit(auditDTO.getLevel(), auditDTO.getEvent(), auditDTO.getGroupName(),
-            auditDTO.getShortDescription(), auditDTO.getPrinSessionId(), auditDTO.getTrace().getTraceData());
+    verify(auditRepository, times(1)).delete(audit2);
+  }
 
-        verify(auditRepository, times(1)).save(audit);
-    }
+  @Test
+  public void testTruncateAudits() {
+    auditService.truncateAudits();
+    verify(auditRepository, times(1)).deleteAll();
+  }
 
-    @Test
-    public void testAuditWithSingleArgument() {
-        when(auditMapper.mapToEntity(auditDTO)).thenReturn(audit);
-        auditService.audit(auditDTO);
+  @Test
+  public void testTruncateAuditsCreatedBeforeDate() {
+    Date date = Calendar.getInstance().getTime();
+    auditService.truncateAudits(date);
+    verify(auditRepository, times(1)).deleteByCreatedOnBefore(date.toInstant().toEpochMilli());
+  }
 
-        verify(auditRepository, times(1)).save(audit);
-    }
+  @Test
+  public void testTruncateAuditsRetentionPeriod() {
+    Long retentionPeriod = 2629743L;
+    auditService.truncateAudits(retentionPeriod);
 
-    @Test
-    public void testAudit() {
-        auditDTO.setTrace(null);
-        audit.setTrace(null);
-        when(auditMapper.mapToEntity(auditDTO)).thenReturn(audit);
-        String auditId = auditService.audit(auditDTO);
+    verify(auditRepository, times(1)).deleteByCreatedOnBefore(any());
+  }
 
-        assertEquals(auditDTO.getId(), auditId);
-        verify(auditRepository, times(1)).save(audit);
-    }
+  @Test
+  public void tetsGetAuditById() {
+    when(auditRepository.fetchById(auditDTO.getId())).thenReturn(audit);
+    when(auditMapper.mapToDTO(audit)).thenReturn(auditDTO);
+    AuditDTO foundAudit = auditService.getAuditById(auditDTO.getId());
 
-    @Test
-    public void testAuditWithTraceData() {
-        when(auditMapper.mapToEntity(auditDTO)).thenReturn(audit);
-        String auditId = auditService.audit(auditDTO);
+    assertEquals(auditDTO, foundAudit);
+  }
 
-        assertEquals(auditDTO.getId(), auditId);
-        verify(auditRepository, times(1)).save(audit);
-    }
+  @Test
+  public void testGetAuditLogs() {
+    Page<AuditDTO> auditPagesDTO = new PageImpl<>(initTestValues.createAuditsDTO());
+    Page<Audit> auditPages = new PageImpl<>(initTestValues.createAudits());
+    String expression = "%Params%";
+    Predicate event = qAudit.event.like(expression);
+    Pageable firstTen = PageRequest.of(0, 10);
 
-    @Test
-    public void testAuditCorellatedDTOList() {
-        Collection<String> auditIds = new ArrayList<>();
-        for (int i = 0; i < auditsDTO.size(); i++) {
-            auditsDTO.get(i).setTrace(null);
-            audits.get(i).setTrace(null);
-            when(auditMapper.mapToEntity(auditsDTO.get(i))).thenReturn(audits.get(i));
-            auditIds.add(auditsDTO.get(i).getId());
-        }
+    when(auditRepository.findAll(event, firstTen)).thenReturn(auditPages);
+    when(auditMapper.toAuditDTO(auditPages)).thenReturn(auditPagesDTO);
+    Page<AuditDTO> foundAudits = auditService.getAuditLogs(firstTen, event);
 
-        List<String> createdAuditIDs = auditService.audits(auditsDTO, initTestValues.getCorrelationId());
-        assertEquals(auditIds, createdAuditIDs);
-    }
+    assertEquals(auditPagesDTO, foundAudits);
+  }
 
-    @Test
-    public void testAuditCorellatedDTOListWithTraceData() {
-        Collection<String> auditIds = new ArrayList<>();
-        for (int i = 0; i < auditsDTO.size(); i++) {
-            when(auditMapper.mapToEntity(auditsDTO.get(i))).thenReturn(audits.get(i));
-            auditIds.add(auditsDTO.get(i).getId());
-        }
+  @Test
+  public void testGetDistinctEventsForReferenceId() {
+    List<String> expectedEvents = new ArrayList<>();
+    expectedEvents.add("Front End Event");
+    expectedEvents.add("Back End Event");
 
-        List<String> createdAuditIDs = auditService.audits(auditsDTO, initTestValues.getCorrelationId());
-        assertEquals(auditIds, createdAuditIDs);
-    }
-
-    @Test
-    public void testDeleteAudit() {
-        Audit audit2 = initTestValues.createAudit();
-        when(auditRepository.fetchById(audit.getId())).thenReturn(audit2);
-        auditService.deleteAudit(audit.getId());
-
-        verify(auditRepository, times(1)).delete(audit2);
-    }
-
-    @Test
-    public void testTruncateAudits() {
-        auditService.truncateAudits();
-        verify(auditRepository, times(1)).deleteAll();
-    }
-
-    @Test
-    public void testTruncateAuditsCreatedBeforeDate() {
-        Date date = Calendar.getInstance().getTime();
-        auditService.truncateAudits(date);
-        verify(auditRepository, times(1)).deleteByCreatedOnBefore(date.toInstant().toEpochMilli());
-    }
-
-    @Test
-    public void testTruncateAuditsRetentionPeriod() {
-        Long retentionPeriod = 2629743L;
-        auditService.truncateAudits(retentionPeriod);
-
-        verify(auditRepository, times(1)).deleteByCreatedOnBefore(any());
-    }
-
-    @Test
-    public void tetsGetAuditById() {
-        when(auditRepository.fetchById(auditDTO.getId())).thenReturn(audit);
-        when(auditMapper.mapToDTO(audit)).thenReturn(auditDTO);
-        AuditDTO foundAudit = auditService.getAuditById(auditDTO.getId());
-
-        assertEquals(auditDTO, foundAudit);
-    }
-
-    @Test
-    public void testGetAuditLogs() {
-        Page<AuditDTO> auditPagesDTO = new PageImpl<>(initTestValues.createAuditsDTO());
-        Page<Audit> auditPages = new PageImpl<>(initTestValues.createAudits());
-        String expression = "%Params%";
-        Predicate event = qAudit.event.like(expression);
-        Pageable firstTen = PageRequest.of(0, 10);
-
-        when(auditRepository.findAll(event, firstTen)).thenReturn(auditPages);
-        when(auditMapper.toAuditDTO(auditPages)).thenReturn(auditPagesDTO);
-        Page<AuditDTO> foundAudits = auditService.getAuditLogs(firstTen, event);
-
-        assertEquals(auditPagesDTO, foundAudits);
-    }
-
-    @Test
-    public void testGetDistinctEventsForReferenceId() {
-        List<String> expectedEvents = new ArrayList<>();
-        expectedEvents.add("Front End Event");
-        expectedEvents.add("Back End Event");
-
-        when(auditRepository.findDistinctEventsByReferenceId(audit.getReferenceId())).thenReturn(expectedEvents);
+    when(auditRepository.findDistinctEventsByReferenceId(audit.getReferenceId())).thenReturn(expectedEvents);
 
         List<String> actualEvents = auditService.getDistinctEventsForReferenceId(audit.getReferenceId());
         assertEquals(expectedEvents, actualEvents);

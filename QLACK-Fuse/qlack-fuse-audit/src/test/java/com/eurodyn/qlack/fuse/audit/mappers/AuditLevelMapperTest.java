@@ -18,96 +18,96 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class AuditLevelMapperTest {
 
-    @InjectMocks
-    private AuditLevelMapperImpl auditLevelMapperImpl;
+  @InjectMocks
+  private AuditLevelMapperImpl auditLevelMapperImpl;
 
-    private InitTestValues initTestValues;
-    private AuditLevel auditLevel;
-    private AuditLevelDTO auditLevelDTO;
-    private List<AuditLevel> auditLevels;
-    private List<AuditLevelDTO> auditLevelsDTO;
+  private InitTestValues initTestValues;
+  private AuditLevel auditLevel;
+  private AuditLevelDTO auditLevelDTO;
+  private List<AuditLevel> auditLevels;
+  private List<AuditLevelDTO> auditLevelsDTO;
 
-    @Before
-    public void init() {
-        initTestValues = new InitTestValues();
+  @Before
+  public void init() {
+    initTestValues = new InitTestValues();
 
-        auditLevel = initTestValues.createAuditLevel();
-        auditLevelDTO = initTestValues.createAuditLevelDTO();
-        auditLevels = initTestValues.createAuditLevels();
-        auditLevelsDTO = initTestValues.createAuditLevelsDTO();
-    }
+    auditLevel = initTestValues.createAuditLevel();
+    auditLevelDTO = initTestValues.createAuditLevelDTO();
+    auditLevels = initTestValues.createAuditLevels();
+    auditLevelsDTO = initTestValues.createAuditLevelsDTO();
+  }
 
-    @Test
-    public void testMapToDTOId() {
-        auditLevelDTO = auditLevelMapperImpl.mapToDTO(auditLevel);
-        assertEquals(auditLevel.getId(), auditLevelDTO.getId());
-    }
+  @Test
+  public void testMapToDTOId() {
+    auditLevelDTO = auditLevelMapperImpl.mapToDTO(auditLevel);
+    assertEquals(auditLevel.getId(), auditLevelDTO.getId());
+  }
 
-    @Test
-    public void testMapToDTOName() {
-        auditLevelDTO = auditLevelMapperImpl.mapToDTO(auditLevel);
-        assertEquals(auditLevel.getName(), auditLevelDTO.getName());
-    }
+  @Test
+  public void testMapToDTOName() {
+    auditLevelDTO = auditLevelMapperImpl.mapToDTO(auditLevel);
+    assertEquals(auditLevel.getName(), auditLevelDTO.getName());
+  }
 
-    @Test
-    public void testMapToDTODescription() {
-        auditLevelDTO = auditLevelMapperImpl.mapToDTO(auditLevel);
-        assertEquals(auditLevel.getDescription(), auditLevelDTO.getDescription());
-    }
+  @Test
+  public void testMapToDTODescription() {
+    auditLevelDTO = auditLevelMapperImpl.mapToDTO(auditLevel);
+    assertEquals(auditLevel.getDescription(), auditLevelDTO.getDescription());
+  }
 
-    @Test
-    public void testMapToDTOPrinSessionId() {
-        auditLevelDTO = auditLevelMapperImpl.mapToDTO(auditLevel);
-        assertEquals(auditLevel.getPrinSessionId(), auditLevelDTO.getPrinSessionId());
-    }
+  @Test
+  public void testMapToDTOPrinSessionId() {
+    auditLevelDTO = auditLevelMapperImpl.mapToDTO(auditLevel);
+    assertEquals(auditLevel.getPrinSessionId(), auditLevelDTO.getPrinSessionId());
+  }
 
-    @Test
-    public void testMapToDTOCreatedOn() {
-        auditLevelDTO = auditLevelMapperImpl.mapToDTO(auditLevel);
-        assertEquals(auditLevel.getCreatedOn(), auditLevelDTO.getCreatedOn());
-    }
+  @Test
+  public void testMapToDTOCreatedOn() {
+    auditLevelDTO = auditLevelMapperImpl.mapToDTO(auditLevel);
+    assertEquals(auditLevel.getCreatedOn(), auditLevelDTO.getCreatedOn());
+  }
 
-    @Test
-    public void testMapToDTOList() {
-        auditLevelsDTO = auditLevelMapperImpl.mapToDTO(auditLevels);
-        assertEquals(auditLevelsDTO.size(), auditLevels.size());
-    }
+  @Test
+  public void testMapToDTOList() {
+    auditLevelsDTO = auditLevelMapperImpl.mapToDTO(auditLevels);
+    assertEquals(auditLevelsDTO.size(), auditLevels.size());
+  }
 
-    @Test
-    public void testMapToEntityId() {
-        auditLevelMapperImpl.mapToEntity(auditLevelDTO);
-        assertEquals(auditLevelDTO.getId(), auditLevel.getId());
-    }
+  @Test
+  public void testMapToEntityId() {
+    auditLevelMapperImpl.mapToEntity(auditLevelDTO);
+    assertEquals(auditLevelDTO.getId(), auditLevel.getId());
+  }
 
-    @Test
-    public void testMapToEntityName() {
-        auditLevel = auditLevelMapperImpl.mapToEntity(auditLevelDTO);
-        assertEquals(auditLevelDTO.getName(), auditLevel.getName());
-    }
+  @Test
+  public void testMapToEntityName() {
+    auditLevel = auditLevelMapperImpl.mapToEntity(auditLevelDTO);
+    assertEquals(auditLevelDTO.getName(), auditLevel.getName());
+  }
 
-    @Test
-    public void testMapToEntityDescription() {
-        auditLevel = auditLevelMapperImpl.mapToEntity(auditLevelDTO);
-        assertEquals(auditLevelDTO.getDescription(), auditLevel.getDescription());
-    }
+  @Test
+  public void testMapToEntityDescription() {
+    auditLevel = auditLevelMapperImpl.mapToEntity(auditLevelDTO);
+    assertEquals(auditLevelDTO.getDescription(), auditLevel.getDescription());
+  }
 
-    @Test
-    public void testMapToEntityPrinSessionId() {
-        auditLevel = auditLevelMapperImpl.mapToEntity(auditLevelDTO);
-        assertEquals(auditLevelDTO.getPrinSessionId(), auditLevel.getPrinSessionId());
-    }
+  @Test
+  public void testMapToEntityPrinSessionId() {
+    auditLevel = auditLevelMapperImpl.mapToEntity(auditLevelDTO);
+    assertEquals(auditLevelDTO.getPrinSessionId(), auditLevel.getPrinSessionId());
+  }
 
-    @Test
-    public void testMapToEntityCreatedOn() {
-        auditLevel = auditLevelMapperImpl.mapToEntity(auditLevelDTO);
-        assertEquals(auditLevelDTO.getCreatedOn(), auditLevel.getCreatedOn());
-    }
+  @Test
+  public void testMapToEntityCreatedOn() {
+    auditLevel = auditLevelMapperImpl.mapToEntity(auditLevelDTO);
+    assertEquals(auditLevelDTO.getCreatedOn(), auditLevel.getCreatedOn());
+  }
 
-    @Test
-    public void testMapToEntityList() {
-        auditLevels = auditLevelMapperImpl.mapToEntity(auditLevelsDTO);
-        assertEquals(auditLevels.size(), auditLevelsDTO.size());
-    }
+  @Test
+  public void testMapToEntityList() {
+    auditLevels = auditLevelMapperImpl.mapToEntity(auditLevelsDTO);
+    assertEquals(auditLevels.size(), auditLevelsDTO.size());
+  }
 
     @Test
     public void testMapToExistingEntity() {

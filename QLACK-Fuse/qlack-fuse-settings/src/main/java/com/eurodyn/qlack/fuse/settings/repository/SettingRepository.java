@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SettingRepository extends QlackBaseRepository<Setting, String> {
 
-    @Override
-    @NonNull
-    List<Setting> findAll(@NonNull Predicate predicate);
+  @Override
+  @NonNull
+  List<Setting> findAll(@NonNull Predicate predicate);
 }
