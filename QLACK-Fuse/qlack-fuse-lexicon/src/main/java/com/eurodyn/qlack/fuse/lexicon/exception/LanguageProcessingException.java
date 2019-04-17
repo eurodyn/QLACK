@@ -18,10 +18,10 @@ import com.eurodyn.qlack.common.exception.QException;
 
 public class LanguageProcessingException extends QException {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	public LanguageProcessingException(String msg) {
-		super(msg);
-	}
+  public LanguageProcessingException(String msg) {
+    super(msg);
+  }
 
 }

@@ -1,10 +1,9 @@
 package com.eurodyn.qlack.fuse.lexicon.criteria;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 
 @Getter
@@ -50,7 +49,7 @@ public class KeySearchCriteria {
     }
 
     public KeySearchCriteriaBuilder setPageSizeWithPageNum(int pageSize, int page) {
-    	  pageable = PageRequest.of(page, pageSize);
+      pageable = PageRequest.of(page, pageSize);
       return this;
     }
 

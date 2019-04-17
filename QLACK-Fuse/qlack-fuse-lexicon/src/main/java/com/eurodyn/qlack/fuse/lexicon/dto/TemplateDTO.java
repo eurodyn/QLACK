@@ -8,10 +8,10 @@ import lombok.Setter;
 @Setter
 public class TemplateDTO implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	private String id;
-	private String name;
-	private String languageId;
-	private String content;
+  private static final long serialVersionUID = 1L;
+  private String id;
+  private String name;
+  private String languageId;
+  private String content;
 
 }

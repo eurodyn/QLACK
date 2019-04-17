@@ -19,7 +19,7 @@ import lombok.ToString;
 @ToString
 public class JobDTO implements Serializable {
 
-    private String jobName;
-    private String jobGroup;
-    private Date nextFireTime;
+  private String jobName;
+  private String jobGroup;
+  private Date nextFireTime;
 }

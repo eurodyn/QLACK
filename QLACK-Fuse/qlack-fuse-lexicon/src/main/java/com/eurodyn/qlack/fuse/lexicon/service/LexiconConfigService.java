@@ -6,6 +6,7 @@ import com.eurodyn.qlack.fuse.lexicon.dto.LanguageDTO;
 import com.eurodyn.qlack.fuse.lexicon.exception.LexiconYMLProcessingException;
 import java.io.IOException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -13,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,56 +26,63 @@ import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 @Service
 @Validated
 @Transactional
+@Log
 public class LexiconConfigService {
 
-  private static final Logger LOGGER = Logger.getLogger(LexiconConfigService.class.getName());
-
+  //private static final Logger LOGGER = Logger.getLogger(LexiconConfigService.class.getName());
+  //Holds groupId + key pairs of translations with forceDelete
+  private static List<Map<String, String>> deletedGroupKeys = new ArrayList<>();
+  private static List<Map<String, String>> skippedGroupKeys = new ArrayList<>();
   // Service references.
   private GroupService groupService;
   private LanguageService languageService;
   private KeyService keyService;
 
-  //Holds groupId + key pairs of translations with forceDelete
-  private static List<Map<String, String>> deletedGroupKeys = new ArrayList<>();
-  private static List<Map<String, String>> skippedGroupKeys = new ArrayList<>();
-
   @Autowired
   public LexiconConfigService(GroupService groupService,
-      LanguageService languageService, KeyService keyService) {
+    LanguageService languageService, KeyService keyService) {
     this.groupService = groupService;
     this.languageService = languageService;
     this.keyService = keyService;
   }
+
   @PostConstruct
   public void init() {
     try {
-      Enumeration<URL> entries = this.getClass().getClassLoader()
-          .getResources("qlack-lexicon-config.yaml");
+      Enumeration<URL> entries = this.getClass().getClassLoader().getResources("qlack-lexicon-config.yaml");
       if (entries != null) {
         while (entries.hasMoreElements()) {
           updateTranslations(entries.nextElement());
         }
       }
     } catch (IOException e) {
-      LOGGER.log(Level.SEVERE, "Could not search QLACK Lexicon configuration files.", e);
+      log.log(Level.SEVERE, "Could not search QLACK Lexicon configuration files.", e);
     }
   }
 
+  /**
+   * Processes a yaml file, that contains the QLACK lexicon configuration, and then persists all lexicon components (languages, groups and
+   * translations).
+   *
+   * @param yamlUrl the URL of the yaml file
+   */
   public void updateTranslations(URL yamlUrl) {
     try {
+      log.info("Processing yaml with QLACK lexicon configuration");
       Yaml yaml = new Yaml(new CustomClassLoaderConstructor(getClass().getClassLoader()));
 
       @SuppressWarnings("unchecked")
-      Map<String, Object> contents = (Map<String, Object>) yaml.load(yamlUrl.openStream());
+      Map<String, Object> contents = yaml.load(yamlUrl.openStream());
 
       // Process translation groups
       @SuppressWarnings("unchecked")
       List<Map<String, Object>> groups = (List<Map<String, Object>>) contents.get("groups");
       if (groups != null) {
+        log.info("Processing configuration of lexicon groups");
         for (Map<String, Object> group : groups) {
           String groupName = (String) group.get("name");
           String groupDescription = (String) group.get("description");
-          GroupDTO groupDTO = groupService.getGroupByName(groupName);
+          GroupDTO groupDTO = groupService.getGroupByTitle(groupName);
           // If a group with this name does not exist create it.
           if (groupDTO == null) {
             groupDTO = new GroupDTO();
@@ -83,8 +91,7 @@ public class LexiconConfigService {
             groupService.createGroup(groupDTO);
           }
           // Else check the value of the forceUpdate flag
-          else if ((group.get("forceUpdate") != null) && ((Boolean) group.get("forceUpdate")
-              == true)) {
+          else if ((group.get("forceUpdate") != null) && ((Boolean) group.get("forceUpdate") == true)) {
             groupDTO.setDescription(groupDescription);
             groupService.updateGroup(groupDTO);
           }
@@ -95,6 +102,7 @@ public class LexiconConfigService {
       @SuppressWarnings("unchecked")
       List<Map<String, Object>> languages = (List<Map<String, Object>>) contents.get("languages");
       if (languages != null) {
+        log.info("Processing configuration of lexicon languages");
         for (Map<String, Object> language : languages) {
           String languageName = (String) language.get("name");
           String locale = (String) language.get("locale");
@@ -108,8 +116,7 @@ public class LexiconConfigService {
             languageService.createLanguage(languageDTO, null);
           }
           // Else check the value of the forceUpdate flag
-          else if ((language.get("forceUpdate") != null) && ((Boolean) language.get("forceUpdate")
-              == true)) {
+          else if ((language.get("forceUpdate") != null) && ((Boolean) language.get("forceUpdate") == true)) {
             languageDTO.setName(languageName);
             languageService.updateLanguage(languageDTO);
           }
@@ -118,9 +125,9 @@ public class LexiconConfigService {
 
       // Process translations
       @SuppressWarnings("unchecked")
-      List<Map<String, Object>> translationContents = (List<Map<String, Object>>) contents
-          .get("translations");
+      List<Map<String, Object>> translationContents = (List<Map<String, Object>>) contents.get("translations");
       if (translationContents != null) {
+        log.info("Processing configuration of lexicon translations");
         for (Map<String, Object> translationContent : translationContents) {
           @SuppressWarnings("unchecked")
           List<String> excludedGroupName = (List<String>) translationContent.get("not_in_group");
@@ -128,7 +135,7 @@ public class LexiconConfigService {
           String languageId = languageService.getLanguageByLocale(locale).getId();
           @SuppressWarnings("unchecked")
           List<Map<String, Object>> translations = (List<Map<String, Object>>) translationContent
-              .get("keys");
+            .get("keys");
 
           // Process not_in_group
           if (excludedGroupName != null) {
@@ -138,20 +145,26 @@ public class LexiconConfigService {
             }
           } else { // Process group
             String groupName = (String) translationContent.get("group");
-              String groupId = groupName != null ? groupService.getGroupByName(groupName).getId() : null;
+            String groupId = groupName != null ? groupService.getGroupByTitle(groupName).getId() : null;
             updateKeys(translations, groupId, languageId);
           }
         }
       }
     } catch (IOException | SecurityException ex) {
-      LOGGER.log(Level.SEVERE, "Error handling lexicon YAML file", ex);
+      log.log(Level.SEVERE, "Error handling lexicon YAML file", ex);
       throw new LexiconYMLProcessingException("Error handling lexicon YAML file");
     }
-
   }
 
-  private void updateKeys(List<Map<String, Object>> translations, String groupId,
-      String languageId) {
+  /**
+   * Updating translations of QLACK lexicon
+   *
+   * @param translations a map containing the translations
+   * @param groupId the id of the group that the translations key are part of
+   * @param languageId the id of the translation language
+   */
+  private void updateKeys(List<Map<String, Object>> translations, String groupId, String languageId) {
+    log.info(MessageFormat.format("Updating translations of group with id {0} for language with id {1}", groupId, languageId));
     for (Map<String, Object> translation : translations) {
       String translationKey = translation.keySet().iterator().next();
       String translationValue = (String) translation.get(translationKey);
@@ -165,8 +178,8 @@ public class LexiconConfigService {
       if (keyDTO == null) {
         if (shouldDelete || deletedGroupKeys.contains(candidate) || skippedGroupKeys.contains(candidate)) {
           skippedGroupKeys.add(candidate);
-          LOGGER.log(Level.WARNING, "Skipped key: " + translationKey +
-              " because it was deleted recently. QLACK Lexicon configuration file should be updated manually.");
+          log.log(Level.WARNING, "Skipped key: " + translationKey + " because it was deleted recently. "
+            + "QLACK Lexicon configuration file should be updated manually.");
         } else {
           keyDTO = new KeyDTO();
           keyDTO.setGroupId(groupId);
@@ -187,12 +200,11 @@ public class LexiconConfigService {
       // updated. Otherwise only update the key if the forceUpdate
       // flag is set to true.
       else if ((keyDTO.getTranslations().get(languageId) == null)
-          || (keyDTO.getTranslations().get(languageId).equals(translationKey))
-          || ((translation.get("forceUpdate") != null)
-          && ((Boolean) translation.get("forceUpdate") == true))) {
+        || (keyDTO.getTranslations().get(languageId).equals(translationKey))
+        || ((translation.get("forceUpdate") != null)
+        && ((Boolean) translation.get("forceUpdate") == true))) {
         keyService.updateTranslation(keyDTO.getId(), languageId, translationValue);
       }
     }
   }
-
 }

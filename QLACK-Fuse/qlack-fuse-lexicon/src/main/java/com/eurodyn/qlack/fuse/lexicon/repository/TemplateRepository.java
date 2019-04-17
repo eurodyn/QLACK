@@ -1,14 +1,16 @@
 package com.eurodyn.qlack.fuse.lexicon.repository;
 
-import java.util.List;
-
+import com.eurodyn.qlack.common.repository.QlackBaseRepository;
 import com.eurodyn.qlack.fuse.lexicon.model.Template;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 
-public interface TemplateRepository extends LexiconRepository<Template, String> {
+@Repository
+public interface TemplateRepository extends QlackBaseRepository<Template, String> {
 
-	List<Template> findByName(String name);
-	
-	Template findByNameAndLanguageLocale(String templateName, String locale);
-	
-	Template findByNameAndLanguageId(String templateName, String languageId);
+  List<Template> findByName(String name);
+
+  Template findByNameAndLanguageLocale(String templateName, String locale);
+
+  Template findByNameAndLanguageId(String templateName, String languageId);
 }
