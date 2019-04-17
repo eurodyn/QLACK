@@ -200,10 +200,10 @@ public class AuditMapperTest {
     assertEquals(audits.size(), auditsDTO.size());
   }
 
-    @Test
-    public void testMapToExistingEntity() {
-        auditDTO.setEvent("New event");
-        auditMapperImpl.mapToExistingEntity(auditDTO, audit);
-        assertEquals(auditDTO.getEvent(), audit.getEvent());
-    }
+  @Test
+  public void testMapToExistingEntity() {
+    auditDTO.setEvent("New event");
+    auditMapperImpl.mapToExistingEntity(auditDTO, audit);
+    assertEquals(auditDTO.getEvent(), audit.getEvent());
+  }
 }

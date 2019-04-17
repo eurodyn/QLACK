@@ -10,11 +10,11 @@ import org.springframework.data.domain.Page;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = AuditTraceMapper.class)
 public interface AuditMapper extends AuditBaseMapper<Audit, AuditDTO> {
 
-    default Page<AuditDTO> toAuditDTO(Page<Audit> audits) {
-        return audits.map(this::mapToDTO);
-    }
+  default Page<AuditDTO> toAuditDTO(Page<Audit> audits) {
+    return audits.map(this::mapToDTO);
+  }
 
-    @Override
-    @Mapping(target = "level", source = "levelId.name")
-    AuditDTO mapToDTO(Audit audit);
+  @Override
+  @Mapping(target = "level", source = "levelId.name")
+  AuditDTO mapToDTO(Audit audit);
 }

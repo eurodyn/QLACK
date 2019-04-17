@@ -109,10 +109,10 @@ public class AuditLevelMapperTest {
     assertEquals(auditLevels.size(), auditLevelsDTO.size());
   }
 
-    @Test
-    public void testMapToExistingEntity() {
-        auditLevelDTO.setName("New name");
-        auditLevelMapperImpl.mapToExistingEntity(auditLevelDTO, auditLevel);
-        assertEquals(auditLevelDTO.getName(), auditLevel.getName());
-    }
+  @Test
+  public void testMapToExistingEntity() {
+    auditLevelDTO.setName("New name");
+    auditLevelMapperImpl.mapToExistingEntity(auditLevelDTO, auditLevel);
+    assertEquals(auditLevelDTO.getName(), auditLevel.getName());
+  }
 }

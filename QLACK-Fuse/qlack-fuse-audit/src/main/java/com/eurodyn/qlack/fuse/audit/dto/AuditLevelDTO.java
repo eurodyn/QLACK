@@ -9,23 +9,23 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AuditLevelDTO extends AuditBaseDTO {
 
-    private String name;
-    private String description;
-    private String prinSessionId;
-    private Long createdOn;
+  private String name;
+  private String description;
+  private String prinSessionId;
+  private Long createdOn;
 
-    /**
-     * parameterized Constructor
-     */
-    public AuditLevelDTO(String name) {
-        this.setName(name);
-    }
+  /**
+   * parameterized Constructor
+   */
+  public AuditLevelDTO(String name) {
+    this.setName(name);
+  }
 
-    /**
-     * parameterized Constructor
-     */
-    public AuditLevelDTO(String id, String name) {
-        this.setName(name);
-        this.setId(id);
-    }
+  /**
+   * parameterized Constructor
+   */
+  public AuditLevelDTO(String id, String name) {
+    this.setName(name);
+    this.setId(id);
+  }
 }

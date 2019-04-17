@@ -13,30 +13,30 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SettingDTO implements Serializable {
 
-    private static final long serialVersionUID = -1745622761507844077L;
-    private String id;
-    private String owner;
-    private String group;
-    private String key;
-    private String val;
-    private long createdOn;
-    private boolean sensitive;
-    private boolean password;
+  private static final long serialVersionUID = -1745622761507844077L;
+  private String id;
+  private String owner;
+  private String group;
+  private String key;
+  private String val;
+  private long createdOn;
+  private boolean sensitive;
+  private boolean password;
 
-    public SettingDTO(String key, String val) {
-        this.key = key;
-        this.val = val;
-    }
+  public SettingDTO(String key, String val) {
+    this.key = key;
+    this.val = val;
+  }
 
-    public int getValAsInt() {
-        return Integer.valueOf(val);
-    }
+  public int getValAsInt() {
+    return Integer.valueOf(val);
+  }
 
-    public long getValAsLong() {
-        return Long.valueOf(val);
-    }
+  public long getValAsLong() {
+    return Long.valueOf(val);
+  }
 
-    public boolean getValAsBoolean() {
-        return Boolean.valueOf(val);
-    }
+  public boolean getValAsBoolean() {
+    return Boolean.valueOf(val);
+  }
 }

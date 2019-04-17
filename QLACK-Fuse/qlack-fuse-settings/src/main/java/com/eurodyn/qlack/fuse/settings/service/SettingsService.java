@@ -11,17 +11,16 @@ import com.eurodyn.qlack.fuse.settings.model.Setting;
 import com.eurodyn.qlack.fuse.settings.repository.SettingRepository;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import javax.transaction.Transactional;
-import lombok.extern.java.Log;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import javax.transaction.Transactional;
+import lombok.extern.java.Log;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 @Log
 @Service
@@ -44,8 +43,7 @@ public class SettingsService {
    * Finds all the settings that are owned by the given owner.
    *
    * @param owner the owner of the persisted settings
-   * @param includeSensitive flag determines whether to include the sensitive settings in the
-   * results
+   * @param includeSensitive flag determines whether to include the sensitive settings in the results
    * @return a list of settings owned by the specific owner
    */
   public List<SettingDTO> getSettings(String owner, boolean includeSensitive) {

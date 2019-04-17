@@ -9,36 +9,36 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AuditDTO extends AuditBaseDTO {
 
-    private Long createdOn;
+  private Long createdOn;
 
-    private String prinSessionId;
+  private String prinSessionId;
 
-    private String shortDescription;
+  private String shortDescription;
 
-    private String event;
+  private String event;
 
-    private String groupName;
+  private String groupName;
 
-    private String correlationId;
+  private String correlationId;
 
-    private String referenceId;
+  private String referenceId;
 
-    private String opt1;
+  private String opt1;
 
-    private String opt2;
+  private String opt2;
 
-    private String opt3;
+  private String opt3;
 
-    private String level;
+  private String level;
 
-    private AuditTraceDTO trace;
+  private AuditTraceDTO trace;
 
-    public AuditDTO(String level, String event, String groupName,
-        String description, String sessionID) {
-        this.level = level;
-        this.event = event;
-        this.groupName = groupName;
-        this.shortDescription = description;
-        this.prinSessionId = sessionID;
-    }
+  public AuditDTO(String level, String event, String groupName,
+    String description, String sessionID) {
+    this.level = level;
+    this.event = event;
+    this.groupName = groupName;
+    this.shortDescription = description;
+    this.prinSessionId = sessionID;
+  }
 }

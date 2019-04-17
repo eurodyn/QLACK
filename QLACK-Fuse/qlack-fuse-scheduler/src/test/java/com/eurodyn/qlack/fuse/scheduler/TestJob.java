@@ -12,8 +12,8 @@ import org.quartz.JobExecutionException;
 @Log
 public class TestJob implements Job {
 
-    @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        log.info("Executing for testing purposes");
-    }
+  @Override
+  public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    log.info("Executing for testing purposes");
+  }
 }

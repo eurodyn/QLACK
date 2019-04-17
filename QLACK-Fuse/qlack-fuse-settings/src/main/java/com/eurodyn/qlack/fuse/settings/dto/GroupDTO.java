@@ -8,11 +8,11 @@ import lombok.Setter;
 @Setter
 public class GroupDTO implements Serializable {
 
-    private static final long serialVersionUID = -3330713494152798837L;
-    private String name;
+  private static final long serialVersionUID = -3330713494152798837L;
+  private String name;
 
-    @Override
-    public String toString() {
-        return "GroupDTO [name=" + name + "]";
-    }
+  @Override
+  public String toString() {
+    return "GroupDTO [name=" + name + "]";
+  }
 }

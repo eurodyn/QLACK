@@ -19,28 +19,28 @@ import org.springframework.validation.annotation.Validated;
 @Log
 public class AuditLevelService {
 
-    private final AuditLevelRepository auditLevelRepository;
+  private final AuditLevelRepository auditLevelRepository;
 
-    private final AuditLevelMapper mapper;
+  private final AuditLevelMapper mapper;
 
-    public AuditLevelService(AuditLevelRepository auditLevelRepository, AuditLevelMapper mapper) {
-        this.auditLevelRepository = auditLevelRepository;
-        this.mapper = mapper;
-    }
+  public AuditLevelService(AuditLevelRepository auditLevelRepository, AuditLevelMapper mapper) {
+    this.auditLevelRepository = auditLevelRepository;
+    this.mapper = mapper;
+  }
 
-    /**
-     * Adds a new Audit Level
-     *
-     * @param level DTO containing all information of the persisted level
-     * @return the id of the newly created Audit level
-     */
-    public String addLevel(AuditLevelDTO level) {
-        log.info(MessageFormat.format("Adding custom Audit level ''{0}''.", level));
-        AuditLevel alLevel = mapper.mapToEntity(level);
-        alLevel.setCreatedOn(System.currentTimeMillis());
-        auditLevelRepository.save(alLevel);
-        return alLevel.getId();
-    }
+  /**
+   * Adds a new Audit Level
+   *
+   * @param level DTO containing all information of the persisted level
+   * @return the id of the newly created Audit level
+   */
+  public String addLevel(AuditLevelDTO level) {
+    log.info(MessageFormat.format("Adding custom Audit level ''{0}''.", level));
+    AuditLevel alLevel = mapper.mapToEntity(level);
+    alLevel.setCreatedOn(System.currentTimeMillis());
+    auditLevelRepository.save(alLevel);
+    return alLevel.getId();
+  }
 
   public String addLevelIfNotExists(AuditLevelDTO level) throws QAlreadyExistsException {
     if (auditLevelRepository.findByName(level.getName()) == null) {
@@ -50,64 +50,64 @@ public class AuditLevelService {
     }
   }
 
-    /**
-     * Deletes Audit level with specific id
-     *
-     * @param levelId the id of the level to delete
-     */
-    public void deleteLevelById(String levelId) {
-        log.info(MessageFormat.format("Deleting Audit level with id ''{0}''.", levelId));
-        auditLevelRepository.delete(auditLevelRepository.fetchById(levelId));
-    }
+  /**
+   * Deletes Audit level with specific id
+   *
+   * @param levelId the id of the level to delete
+   */
+  public void deleteLevelById(String levelId) {
+    log.info(MessageFormat.format("Deleting Audit level with id ''{0}''.", levelId));
+    auditLevelRepository.delete(auditLevelRepository.fetchById(levelId));
+  }
 
-    /**
-     * Deletes Audit level with specific name
-     *
-     * @param levelName the name of the level to delete
-     */
-    public void deleteLevelByName(String levelName) {
-        log.info(MessageFormat.format("Deleting Audit level with name ''{0}''.", levelName));
-        auditLevelRepository.delete(auditLevelRepository.findByName(levelName));
-    }
+  /**
+   * Deletes Audit level with specific name
+   *
+   * @param levelName the name of the level to delete
+   */
+  public void deleteLevelByName(String levelName) {
+    log.info(MessageFormat.format("Deleting Audit level with name ''{0}''.", levelName));
+    auditLevelRepository.delete(auditLevelRepository.findByName(levelName));
+  }
 
-    /**
-     * Updates level with new data
-     *
-     * @param level DTO containing the updated information
-     */
-    public void updateLevel(AuditLevelDTO level) {
-        log.info(MessageFormat.format("Updating Audit level ''{0}'',", level));
-        AuditLevel lev = mapper.mapToEntity(level);
-        auditLevelRepository.save(lev);
-        clearAuditLevelCache();
-    }
+  /**
+   * Updates level with new data
+   *
+   * @param level DTO containing the updated information
+   */
+  public void updateLevel(AuditLevelDTO level) {
+    log.info(MessageFormat.format("Updating Audit level ''{0}'',", level));
+    AuditLevel lev = mapper.mapToEntity(level);
+    auditLevelRepository.save(lev);
+    clearAuditLevelCache();
+  }
 
-    /**
-     * Finds the persisted Audit level based on its name
-     *
-     * @param levelName the name of the persisted Audit level
-     * @return the persisted Audit Level
-     */
-    public AuditLevelDTO getAuditLevelByName(String levelName) {
-        log.info(MessageFormat.format("Searching Audit level by name ''{0}''.", levelName));
-        return mapper.mapToDTO(auditLevelRepository.findByName(levelName));
-    }
+  /**
+   * Finds the persisted Audit level based on its name
+   *
+   * @param levelName the name of the persisted Audit level
+   * @return the persisted Audit Level
+   */
+  public AuditLevelDTO getAuditLevelByName(String levelName) {
+    log.info(MessageFormat.format("Searching Audit level by name ''{0}''.", levelName));
+    return mapper.mapToDTO(auditLevelRepository.findByName(levelName));
+  }
 
-    /**
-     * Clears the cache of the Audit level
-     */
-    public void clearAuditLevelCache() {
-        log.info("Clearing Audit level cache");
-        AuditLevel.clearCache();
-    }
+  /**
+   * Clears the cache of the Audit level
+   */
+  public void clearAuditLevelCache() {
+    log.info("Clearing Audit level cache");
+    AuditLevel.clearCache();
+  }
 
-    /**
-     * Retrieves all persisted Audit levels
-     *
-     * @return a list containing all existing Audit levels
-     */
-    public List<AuditLevelDTO> listAuditLevels() {
-        log.info("Retrieving all audit levels");
-        return mapper.mapToDTO(auditLevelRepository.findAll());
-    }
+  /**
+   * Retrieves all persisted Audit levels
+   *
+   * @return a list containing all existing Audit levels
+   */
+  public List<AuditLevelDTO> listAuditLevels() {
+    log.info("Retrieving all audit levels");
+    return mapper.mapToDTO(auditLevelRepository.findAll());
+  }
 }

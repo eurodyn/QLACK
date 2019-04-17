@@ -210,7 +210,7 @@ public class AuditServiceTest {
 
     when(auditRepository.findDistinctEventsByReferenceId(audit.getReferenceId())).thenReturn(expectedEvents);
 
-        List<String> actualEvents = auditService.getDistinctEventsForReferenceId(audit.getReferenceId());
-        assertEquals(expectedEvents, actualEvents);
-    }
+    List<String> actualEvents = auditService.getDistinctEventsForReferenceId(audit.getReferenceId());
+    assertEquals(expectedEvents, actualEvents);
+  }
 }

@@ -114,6 +114,6 @@ public class AuditLevelServiceTest {
     when(auditLevelMapper.mapToDTO(auditLevels)).thenReturn(auditLevelsDTO);
     List<AuditLevelDTO> allAuditLevels = auditLevelService.listAuditLevels();
 
-        assertEquals(allAuditLevels, auditLevelsDTO);
-    }
+    assertEquals(allAuditLevels, auditLevelsDTO);
+  }
 }

@@ -11,5 +11,5 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 public class AuditProperties {
 
-    private boolean traceData;
+  private boolean traceData;
 }

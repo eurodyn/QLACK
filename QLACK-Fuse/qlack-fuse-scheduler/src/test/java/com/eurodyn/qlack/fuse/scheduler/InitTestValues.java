@@ -14,44 +14,44 @@ import org.quartz.TriggerBuilder;
 
 public class InitTestValues {
 
-    public <J extends Job> Trigger createTrigger(Class<J> clazz, String cronExpression) {
-        return TriggerBuilder
-            .newTrigger()
-            .forJob(clazz.getName())
-            .withIdentity(clazz.getName() + "_trigger")
-            .startNow()
-            .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
-            .build();
+  public <J extends Job> Trigger createTrigger(Class<J> clazz, String cronExpression) {
+    return TriggerBuilder
+      .newTrigger()
+      .forJob(clazz.getName())
+      .withIdentity(clazz.getName() + "_trigger")
+      .startNow()
+      .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
+      .build();
+  }
+
+  public JobDetail createJobDetail(boolean addData) {
+    JobDataMap jobDataMap = new JobDataMap();
+
+    if (addData) {
+      jobDataMap.putAll(createMap());
     }
 
-    public JobDetail createJobDetail(boolean addData) {
-        JobDataMap jobDataMap = new JobDataMap();
+    return JobBuilder
+      .newJob(TestJob.class)
+      .withIdentity(TestJob.class.getName())
+      .storeDurably()
+      .setJobData(jobDataMap)
+      .build();
+  }
 
-        if (addData) {
-            jobDataMap.putAll(createMap());
-        }
+  public Map<String, Object> createMap() {
+    Map<String, Object> map = new HashMap<>();
+    map.put("test", 1);
 
-        return JobBuilder
-            .newJob(TestJob.class)
-            .withIdentity(TestJob.class.getName())
-            .storeDurably()
-            .setJobData(jobDataMap)
-            .build();
-    }
+    return map;
+  }
 
-    public Map<String, Object> createMap() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("test", 1);
+  public JobDTO createJobDTO(String jobName, String groupName, Date nextFireTime) {
+    JobDTO jobDTO = new JobDTO();
+    jobDTO.setJobName(jobName);
+    jobDTO.setJobGroup(groupName);
+    jobDTO.setNextFireTime(nextFireTime);
 
-        return map;
-    }
-
-    public JobDTO createJobDTO(String jobName, String groupName, Date nextFireTime) {
-        JobDTO jobDTO = new JobDTO();
-        jobDTO.setJobName(jobName);
-        jobDTO.setJobGroup(groupName);
-        jobDTO.setNextFireTime(nextFireTime);
-
-        return jobDTO;
-    }
+    return jobDTO;
+  }
 }

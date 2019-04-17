@@ -447,7 +447,6 @@ public class SchedulerServiceTest {
 
     List<JobDTO> actualJobInfo = schedulerService.getJobInfo();
 
-        assertEquals(expectedInfo.size(), actualJobInfo.size());
-    }
+    assertEquals(expectedInfo.size(), actualJobInfo.size());
+  }
 }
-
