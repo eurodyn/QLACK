@@ -1,5 +1,9 @@
 package com.eurodyn.qlack.fuse.crypto;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.crypto.encrypt.Encryptors;
@@ -8,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Symmetric encryption/decryption utility methods.
@@ -77,5 +82,25 @@ public class CryptoSymmetricService {
 
     return textEncryptor.decrypt(ciphertext);
   }
+
+  /**
+   * Generates an AES key for symmetric encryption.
+   * @param keyLength The length of the key.
+   * @return Returns a Base64 encoded string of the key.
+   */
+  public String generateKey(int keyLength) throws NoSuchAlgorithmException {
+    KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+    keyGen.init(keyLength);
+    return Base64.encodeBase64String(keyGen.generateKey().getEncoded());
+  }
+
+  /**
+   * Generates a {@link SecretKey} from a Base64 encoded string.
+   * @param key The Base64 encoded version of the key.
+   */
+  public SecretKey keyFromString(String key) {
+    return new SecretKeySpec(Base64.decodeBase64(key), 0, key.length(), "AES");
+  }
+
 
 }
