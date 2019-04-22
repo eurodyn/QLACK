@@ -292,7 +292,7 @@ public class KeyService {
   }
 
   /**
-   * Updating a translation based on it's key name, language and group ids.
+   * Updates a translation based on it's key name, language and group ids.
    *
    * @param keyName the name of the Key that will be updated
    * @param groupId the id of the group the Key is part of
@@ -306,7 +306,7 @@ public class KeyService {
   }
 
   /**
-   * Updating a translation based on it's key name and language id.
+   * Updates a translation based on it's key name and language id.
    *
    * @param keyName the name of the Key that will be updated
    * @param groupId the id of the group the Key is part of

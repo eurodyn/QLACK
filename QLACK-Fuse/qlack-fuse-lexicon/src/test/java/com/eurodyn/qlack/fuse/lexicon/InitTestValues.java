@@ -239,6 +239,20 @@ public class InitTestValues {
     return templates;
   }
 
+  public List<TemplateDTO> createTemplatesDTO() {
+    List<TemplateDTO> templatesDTO = new ArrayList<>();
+    templatesDTO.add(createTemplateDTO());
+
+    TemplateDTO templateDTO2 = createTemplateDTO();
+    templateDTO2.setId("60dffc2f-f54f-4645-8e0d-678f7b859e29");
+    templateDTO2.setName("Test template");
+    templateDTO2.setLanguageId(createPortugueseLanguage().getId());
+    templateDTO2.setContent(templateContent);
+    templatesDTO.add(templateDTO2);
+
+    return templatesDTO;
+  }
+
   public Map<String, String> createTranslations() {
     Map<String, String> translations = new HashMap<>();
     translations.put(createKey().getName(), createData().getValue());

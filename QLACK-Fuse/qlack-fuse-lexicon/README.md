@@ -95,6 +95,7 @@ private KeyDTO createKeyDTO() {
 ### Example 2
 
 Automated addition/update of translations is enabled by adding file "qlack-lexicon-config.yaml", in <project_path>/resources.
+Each time your application is being deployed, the module checks for changes in the .yaml file. If changes are found, the file is being processed in the following ways.
 Newly created groups, languages and keys will be added to the system while existing ones will be ignored.
 
 Useful tags:
