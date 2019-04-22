@@ -4,9 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * A query performing a match against ES. The default match query is of type
- * boolean. The value provided is analyzed and the analysis process constructs a
- * boolean query from the provided text using boolean OR. Example:
+ * A query performing a match against ES. The default match query is of type boolean. The value provided is analyzed and the analysis
+ * process constructs a boolean query from the provided text using boolean OR. Example:
  *
  * <pre>
  * new QueryMatch()
@@ -18,8 +17,7 @@ import lombok.Setter;
  * 		.setExplain(false);
  * </pre>
  *
- * See also:<br>
- * https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-match-query.html
+ * See also:<br> https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-match-query.html
  */
 @Getter
 @Setter

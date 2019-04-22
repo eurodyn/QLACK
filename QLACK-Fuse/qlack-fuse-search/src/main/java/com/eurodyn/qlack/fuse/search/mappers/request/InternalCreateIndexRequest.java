@@ -12,51 +12,51 @@ import lombok.Setter;
 @Setter
 public class InternalCreateIndexRequest {
 
-    private Settings settings;
+  private Settings settings;
 
-    @JsonInclude(Include.NON_NULL)
-    @JsonRawValue
-    private String mappings;
+  @JsonInclude(Include.NON_NULL)
+  @JsonRawValue
+  private String mappings;
+
+  @Getter
+  @Setter
+  public static class Settings {
+
+    private Index index;
+    private Analysis analysis;
 
     @Getter
     @Setter
-    public static class Settings {
+    public static class Index {
 
-        private Index index;
-        private Analysis analysis;
-
-        @Getter
-        @Setter
-        public static class Index {
-
-            @JsonProperty("number_of_shards")
-            private String numberOfShards;
-            @JsonProperty("number_of_replicas")
-            private String numberOfReplicas;
-        }
-
-        @Getter
-        @Setter
-        public static class Analysis {
-
-            private Filter filter;
-
-            @Getter
-            @Setter
-            public static class Filter {
-
-                @JsonProperty("my_stop")
-                private MyStop myStop;
-
-                @Getter
-                @Setter
-                public static class MyStop {
-
-                    private String type = "stop";
-                    private List<String> stopwords;
-
-                }
-            }
-        }
+      @JsonProperty("number_of_shards")
+      private String numberOfShards;
+      @JsonProperty("number_of_replicas")
+      private String numberOfReplicas;
     }
+
+    @Getter
+    @Setter
+    public static class Analysis {
+
+      private Filter filter;
+
+      @Getter
+      @Setter
+      public static class Filter {
+
+        @JsonProperty("my_stop")
+        private MyStop myStop;
+
+        @Getter
+        @Setter
+        public static class MyStop {
+
+          private String type = "stop";
+          private List<String> stopwords;
+
+        }
+      }
+    }
+  }
 }

@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Represents a specific hit within a set of hits held by {@link SearchResultDTO}. 23/01/2018 The
- * Adding the innerHits for the nested Objects in the Search Hit DTO
+ * Represents a specific hit within a set of hits held by {@link SearchResultDTO}. 23/01/2018 The Adding the innerHits for the nested
+ * Objects in the Search Hit DTO
  */
 @Getter
 @Setter
@@ -13,7 +13,7 @@ public class SearchHitDTO {
 
   // The source representation of this hit as a JSON object. This property
   // holds the properties and values of the original document that was
-  // indexed, therefore it is a good candidate to be deserialised to get a
+  // indexed, therefore it is a good candidate to be deserialized to get a
   // a concrete objects out of a search result hit.
   private String source;
 

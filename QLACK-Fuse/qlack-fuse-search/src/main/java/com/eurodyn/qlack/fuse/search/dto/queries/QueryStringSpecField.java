@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * A query performing a query string against ES. A query that uses a query parser in order to parse its content
- * Multiple fields can be specified
+ * A query performing a query string against ES. A query that uses a query parser in order to parse its content Multiple fields can be
+ * specified
  *
  * <pre>
  * new QueryStringSpecField()
@@ -17,8 +17,7 @@ import lombok.Setter;
  * 		.setExplain(false);
  * </pre>
  *
- * See also:<br>
- * https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-match-query.html
+ * See also:<br> https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-match-query.html
  */
 @Getter
 @Setter

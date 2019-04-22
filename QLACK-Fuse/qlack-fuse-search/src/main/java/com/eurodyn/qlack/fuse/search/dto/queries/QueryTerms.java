@@ -3,8 +3,7 @@ package com.eurodyn.qlack.fuse.search.dto.queries;
 import lombok.Getter;
 
 /**
- * The term query finds documents that contain the exact terms specified in the
- * inverted index. Example:
+ * The term query finds documents that contain the exact terms specified in the inverted index. Example:
  *
  * <pre>
  * new QueryTerms()
@@ -16,8 +15,7 @@ import lombok.Getter;
  * 		.setExplain(false);
  * </pre>
  *
- * See also:<br>
- * https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-term-query.html
+ * See also:<br> https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-term-query.html
  */
 @Getter
 public class QueryTerms extends QuerySpec {

@@ -3,8 +3,7 @@ package com.eurodyn.qlack.fuse.search.dto.queries;
 import lombok.Getter;
 
 /**
- * Similar to {@link QueryMatch}, a query performing a match against ES but on
- * multiple fields. Example:
+ * Similar to {@link QueryMatch}, a query performing a match against ES but on multiple fields. Example:
  *
  * <pre>
  * new QueryMultiMatch()
@@ -16,8 +15,7 @@ import lombok.Getter;
  * 		.setExplain(false);
  * </pre>
  *
- * See also:<br>
- * https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-multi-match-query.html
+ * See also:<br> https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-multi-match-query.html
  */
 @Getter
 public class QueryMultiMatch extends QuerySpec {

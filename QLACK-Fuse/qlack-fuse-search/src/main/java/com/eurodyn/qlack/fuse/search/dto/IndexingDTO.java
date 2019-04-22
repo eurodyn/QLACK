@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Holds a document to be indexed. The source object to be indexed is specified
- * on the <i>sourceObject</i> property and can be internally converted to a JSON
- * string by the underling methods of {@link IndexingService} when convertToJSON
- * is true.
+ * Holds a document to be indexed. The source object to be indexed is specified on the <i>sourceObject</i> property and can be internally
+ * converted to a JSON string by the underling methods of {@link IndexingService} when convertToJSON is true.
  */
 @Getter
 @Setter
@@ -18,12 +16,12 @@ import lombok.Setter;
 public class IndexingDTO extends ESDocumentIdentifierDTO implements Serializable {
 
   /**
-   * The source object to be indexed.
+   * the source object to be indexed.
    */
   private Object sourceObject;
 
   /**
-   * Whether to convert sourceObject to JSON or not
+   * whether to convert sourceObject to JSON or not
    */
   private boolean convertToJSON = true;
 

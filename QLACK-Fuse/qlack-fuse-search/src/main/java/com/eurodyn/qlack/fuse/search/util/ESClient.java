@@ -23,11 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * A client to communicate with ES. This client is using the {@link RestClient} implementation of
- * the ES Java client.
+ * A client to communicate with ES. This client is using the {@link RestClient} implementation of the ES Java client.
  *
- * //TODO support credentials as well as SSL:
- * https://qbox.io/blog/rest-calls-new-java-elasticsearch-client-tutorial
+ * //TODO support credentials as well as SSL: https://qbox.io/blog/rest-calls-new-java-elasticsearch-client-tutorial
  */
 @Service
 @Validated
@@ -54,39 +52,40 @@ public class ESClient {
     /** Process Http hosts for ES */
 
     final HttpHost[] httpHosts = Arrays.stream(properties.getEsHosts().split(","))
-        .map(host -> new HttpHost(host.split(":")[1], Integer.parseInt(host.split(":")[2]),
-            host.split(":")[0]))
-        .collect(Collectors.toList())
-        .toArray(new HttpHost[properties.getEsHosts().split(",").length]);
+      .map(host -> new HttpHost(host.split(":")[1], Integer.parseInt(host.split(":")[2]),
+        host.split(":")[0]))
+      .collect(Collectors.toList())
+      .toArray(new HttpHost[properties.getEsHosts().split(",").length]);
 
-    rhClient = new RestHighLevelClient(RestClient.builder(httpHosts).setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
+    rhClient = new RestHighLevelClient(
+      RestClient.builder(httpHosts).setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
 
-      @Override
-      public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
+        @Override
+        public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
           if (StringUtils.isNotEmpty(properties.getEsUsername())
-                  && StringUtils.isNotEmpty(properties.getEsPassword())) {
-              final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-              credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(
-                      properties.getEsUsername(), properties.getEsPassword()));
+            && StringUtils.isNotEmpty(properties.getEsPassword())) {
+            final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(
+              properties.getEsUsername(), properties.getEsPassword()));
 
-              httpClientBuilder = httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+            httpClientBuilder = httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
           }
 
           if ("false".equals(properties.isVerifyHostname())) {
-              httpClientBuilder = httpClientBuilder.setSSLHostnameVerifier(new HostnameVerifier() {
+            httpClientBuilder = httpClientBuilder.setSSLHostnameVerifier(new HostnameVerifier() {
 
-                  @Override
-                  public boolean verify(String hostname, SSLSession session) {
-                      return true;
-                  }
-              });
+              @Override
+              public boolean verify(String hostname, SSLSession session) {
+                return true;
+              }
+            });
           }
 
           return httpClientBuilder;
-      }
-    }));
+        }
+      }));
   }
-    
+
   /**
    * Default shutdown hook.
    *

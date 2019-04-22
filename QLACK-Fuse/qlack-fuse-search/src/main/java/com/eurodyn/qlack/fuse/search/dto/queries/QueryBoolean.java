@@ -4,9 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A query applying boolean logic on its terms. This query is constructed by
- * setting individual {@link QuerySpec} objects as terms while specifying one of
- * the three default boolean operators of ES. Example:
+ * A query applying boolean logic on its terms. This query is constructed by setting individual {@link QuerySpec} objects as terms while
+ * specifying one of the three default boolean operators of ES. Example:
  *
  * <pre>
  * new QueryBoolean()
@@ -25,8 +24,7 @@ import java.util.Map;
  * .setExplain(false);
  * </pre>
  *
- * See also:<br>
- * https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-bool-query.html
+ * See also:<br> https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-bool-query.html
  */
 public class QueryBoolean extends QuerySpec {
 
@@ -59,7 +57,7 @@ public class QueryBoolean extends QuerySpec {
   }
 
   // The available boolean operators.
-  public static enum BooleanType {
+  public enum BooleanType {
     // Boolean AND-equivalent
     MUST,
     // Boolean NOT-equivalent
