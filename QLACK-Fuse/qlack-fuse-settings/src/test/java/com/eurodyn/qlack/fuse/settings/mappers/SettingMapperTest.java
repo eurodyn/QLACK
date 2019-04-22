@@ -45,48 +45,6 @@ public class SettingMapperTest {
   }
 
   @Test
-  public void testMapToEntityOwner() {
-    setting = settingMapperImpl.mapToEntity(settingDTO);
-    assertEquals(settingDTO.getOwner(), setting.getOwner());
-  }
-
-  @Test
-  public void testMapToEntityGroup() {
-    Setting setting = settingMapperImpl.mapToEntity(settingDTO);
-    assertEquals(settingDTO.getGroup(), setting.getGroup());
-  }
-
-  @Test
-  public void testMapToEntityKey() {
-    Setting setting = settingMapperImpl.mapToEntity(settingDTO);
-    assertEquals(settingDTO.getKey(), setting.getKey());
-  }
-
-  @Test
-  public void testMapToEntitySensitive() {
-    setting = settingMapperImpl.mapToEntity(settingDTO);
-    assertEquals(settingDTO.isSensitive(), setting.isSensitive());
-  }
-
-  @Test
-  public void testMapToEntityPassword() {
-    Setting setting = settingMapperImpl.mapToEntity(settingDTO);
-    assertEquals(settingDTO.isPassword(), setting.getPassword());
-  }
-
-  @Test
-  public void testMapToEntityCreatedOn() {
-    setting = settingMapperImpl.mapToEntity(settingDTO);
-    assertEquals(settingDTO.getCreatedOn(), setting.getCreatedOn());
-  }
-
-  @Test
-  public void testMapToEntityVal() {
-    setting = settingMapperImpl.mapToEntity(settingDTO);
-    assertEquals(settingDTO.getVal(), setting.getVal());
-  }
-
-  @Test
   public void testMapToDTOList() {
     settingsDTO = settingMapperImpl.map(settings);
     assertEquals(settings.size(), settingsDTO.size());
@@ -150,5 +108,47 @@ public class SettingMapperTest {
   public void testMapToGroupDTO() {
     GroupDTO g = settingMapperImpl.mapToGroupDTO(setting);
     assertEquals(groupDTO.getName(), g.getName());
+  }
+
+  @Test
+  public void testMapToEntityOwner() {
+    setting = settingMapperImpl.mapToEntity(settingDTO);
+    assertEquals(settingDTO.getOwner(), setting.getOwner());
+  }
+
+  @Test
+  public void testMapToEntityGroup() {
+    Setting setting = settingMapperImpl.mapToEntity(settingDTO);
+    assertEquals(settingDTO.getGroup(), setting.getGroup());
+  }
+
+  @Test
+  public void testMapToEntityKey() {
+    Setting setting = settingMapperImpl.mapToEntity(settingDTO);
+    assertEquals(settingDTO.getKey(), setting.getKey());
+  }
+
+  @Test
+  public void testMapToEntitySensitive() {
+    setting = settingMapperImpl.mapToEntity(settingDTO);
+    assertEquals(settingDTO.isSensitive(), setting.isSensitive());
+  }
+
+  @Test
+  public void testMapToEntityPassword() {
+    Setting setting = settingMapperImpl.mapToEntity(settingDTO);
+    assertEquals(settingDTO.isPassword(), setting.getPassword());
+  }
+
+  @Test
+  public void testMapToEntityCreatedOn() {
+    setting = settingMapperImpl.mapToEntity(settingDTO);
+    assertEquals(settingDTO.getCreatedOn(), setting.getCreatedOn());
+  }
+
+  @Test
+  public void testMapToEntityVal() {
+    setting = settingMapperImpl.mapToEntity(settingDTO);
+    assertEquals(settingDTO.getVal(), setting.getVal());
   }
 }
