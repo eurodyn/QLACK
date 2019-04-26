@@ -2,6 +2,7 @@ package com.eurodyn.qlack.fuse.audit.service;
 
 import com.eurodyn.qlack.fuse.audit.dto.AuditDTO;
 import com.eurodyn.qlack.fuse.audit.dto.AuditTraceDTO;
+import com.eurodyn.qlack.fuse.audit.exception.QAuditException;
 import com.eurodyn.qlack.fuse.audit.mappers.AuditMapper;
 import com.eurodyn.qlack.fuse.audit.model.Audit;
 import com.eurodyn.qlack.fuse.audit.repository.AuditLevelRepository;
@@ -15,17 +16,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.transaction.Transactional;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 @Service
 @Transactional
 @Validated
-@Log
+@Slf4j
 public class AuditService {
 
   private static final ObjectMapper mapper = new ObjectMapper();
@@ -46,15 +48,12 @@ public class AuditService {
   }
 
   private String createTraceDataStr(Object traceData) {
-    String traceDataStr = "";
-    if (traceData != null) {
-      try {
-        traceDataStr = mapper.writeValueAsString(traceData);
-      } catch (Exception e) {
-        traceDataStr = e.getLocalizedMessage();
-      }
+    try {
+      return mapper.writeValueAsString(traceData);
+    } catch (Exception e) {
+      log.error(e.getLocalizedMessage());
+      throw new QAuditException(e.getLocalizedMessage());
     }
-    return traceDataStr;
   }
 
   /**
@@ -69,7 +68,7 @@ public class AuditService {
    */
   public void audit(String level, String event, String groupName, String description, String sessionID, Object traceData) {
     log.info("Adding audit from params and trace data as an object ");
-    audit(level, event, groupName, description, sessionID, createTraceDataStr(traceData), null);
+    audit(level, event, groupName, description, sessionID, traceData, null);
   }
 
   /**
@@ -105,7 +104,7 @@ public class AuditService {
       log.info(MessageFormat.format("Adding audit with referenceId: {0} ", referenceId));
       dto.setReferenceId(referenceId);
     }
-    if (auditProperties.isTraceData()) {
+    if (auditProperties.isTraceData() && !StringUtils.isEmpty(traceData)) {
       dto.setTrace(new AuditTraceDTO(createTraceDataStr(traceData)));
     }
     return audit(dto);
