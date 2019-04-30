@@ -32,6 +32,9 @@ public class CryptoSignService {
    * Signs a key, providing a certificate, with another key.
    *
    * @param signDTO The details of the signing to take place.
+   * @return X509CertificateHolder
+   * @throws OperatorCreationException OperatorCreationException
+   * @throws CertIOException CertIOException
    */
   public X509CertificateHolder signKey(SignDTO signDTO) throws OperatorCreationException, CertIOException {
 

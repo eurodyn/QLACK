@@ -40,6 +40,13 @@ public class CryptoCAService {
    * information.
    *
    * @param createCADTO The details of the CA to be created.
+   *
+   * @return CPPPemHolderDTO
+   * @throws NoSuchProviderException NoSuchProviderException
+   * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+   * @throws InvalidKeySpecException InvalidKeySpecException
+   * @throws OperatorCreationException OperatorCreationException
+   * @throws IOException IOException
    */
   public CPPPemHolderDTO createCA(CreateCADTO createCADTO)
       throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException, OperatorCreationException, IOException {

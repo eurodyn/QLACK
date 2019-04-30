@@ -46,6 +46,8 @@ public class CryptoConversionService {
    * Converts a {@link Key} to its primary encoding format as Base64 string.
    *
    * @param key The key to convert.
+   *
+   * @return the string value of the key
    */
   public String keyToString(Key key) {
     return Base64.getEncoder().encodeToString(key.getEncoded());
@@ -56,6 +58,8 @@ public class CryptoConversionService {
    *
    * @param key The key to convert.
    * @param keyAlgorithm The algorithm with which this key was created.
+   *
+   * @return the key
    */
   public Key stringToKey(String key, String keyAlgorithm) {
     byte[] decodedKey = Base64.getDecoder().decode(key);
@@ -81,6 +85,9 @@ public class CryptoConversionService {
    * Converts a public key to string in PEM format.
    *
    * @param keyPair The keypair containing the public key to convert.
+   *
+   * @return the PEM representation of the
+   * @throws IOException IOException
    */
   public String publicKeyToPEM(KeyPair keyPair) throws IOException {
     return convertKeyToPEM(keyPair, RSA_PUBLIC_KEY);
@@ -90,6 +97,9 @@ public class CryptoConversionService {
    * Converts a private key to string in PEM format.
    *
    * @param keyPair The keypair containing the private key to convert.
+   *
+   * @return the PEM representation of the key
+   * @throws IOException IOException
    */
   public String privateKeyToPEM(KeyPair keyPair) throws IOException {
     return convertKeyToPEM(keyPair, RSA_PRIVATE_KEY);
@@ -110,6 +120,12 @@ public class CryptoConversionService {
    * Converts a text-based public key (in PEM format) to {@link PublicKey}.
    *
    * @param publicKey The public key in PEM format to convert.
+   *
+   * @return PublicKey
+   * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+   * @throws NoSuchProviderException NoSuchProviderException
+   * @throws InvalidKeySpecException InvalidKeySpecException
+   * @throws IOException IOException
    */
   private PublicKey pemToPublicKey(String publicKey)
       throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, IOException {
@@ -122,6 +138,11 @@ public class CryptoConversionService {
    * @param publicKey The public key in PEM format to convert.
    * @param provider The security provider with which this key was generated.
    * @param algorithm The security algorithm with which this key was generated.
+   *
+   * @return PublicKey
+   * @throws NoSuchProviderException NoSuchProviderException
+   * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+   * @throws InvalidKeySpecException InvalidKeySpecException
    */
   private PublicKey pemToPublicKey(String publicKey, String provider, String algorithm)
       throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
@@ -148,6 +169,11 @@ public class CryptoConversionService {
    * @param privateKey The private key in PEM format to convert.
    * @param provider The security provider with which this key was generated.
    * @param algorithm The security algorithm with which this key was generated.
+   *
+   * @return PrivateKey
+   * @throws NoSuchProviderException NoSuchProviderException
+   * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+   * @throws InvalidKeySpecException InvalidKeySpecException
    */
   public PrivateKey pemToPrivateKey(String privateKey, String provider, String algorithm)
       throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
@@ -172,6 +198,9 @@ public class CryptoConversionService {
    * Parses a certificate in PEM format encoded as X.509.
    *
    * @param cert The certificate in PEM format.
+   *
+   * @return X509Certificate
+   * @throws CertificateException CertificateException
    */
   public X509Certificate pemToCertificate(String cert) throws CertificateException {
     CertificateFactory fact = CertificateFactory.getInstance("X.509");

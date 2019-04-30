@@ -16,6 +16,8 @@ public class AuditLevelDTO extends AuditBaseDTO {
 
   /**
    * parameterized Constructor
+   *
+   * @param name the name of the level
    */
   public AuditLevelDTO(String name) {
     this.setName(name);
@@ -23,6 +25,9 @@ public class AuditLevelDTO extends AuditBaseDTO {
 
   /**
    * parameterized Constructor
+   *
+   * @param id the id of the level
+   * @param name the name of the level
    */
   public AuditLevelDTO(String id, String name) {
     this.setName(name);

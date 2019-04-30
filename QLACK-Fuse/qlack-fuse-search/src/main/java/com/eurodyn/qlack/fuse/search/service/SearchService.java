@@ -159,7 +159,7 @@ public class SearchService {
 
       searchResponse = esClient.getClient().search(searchRequest, RequestOptions.DEFAULT);
       String scrollId = searchResponse.getScrollId();
-      scrollRequest.setScroll(1); //how long it should keep the “search context” alive
+      scrollRequest.setScroll(1); //how long it should keep the 'search context' alive
       scrollRequest.setScrollId(scrollId);
 
     } catch (IOException e) {

@@ -32,6 +32,14 @@ public class CryptoKeystoreService {
    * @param keyPassword The key's password.
    * @param keystoreType The type of the keystore.
    * @param keystoreProvider The security provider generated the keystore.
+   *
+   * @return CPPHolderDTO
+   * @throws KeyStoreException KeyStoreException
+   * @throws IOException IOException
+   * @throws CertificateException CertificateException
+   * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+   * @throws UnrecoverableKeyException UnrecoverableKeyException
+   * @throws NoSuchProviderException NoSuchProviderException
    */
   public CPPHolderDTO readKeyFromKeystore(InputStream keystore, String keystorePassword, String keyName,
       String keyPassword, String keystoreType, String keystoreProvider)
@@ -58,6 +66,13 @@ public class CryptoKeystoreService {
    * @param keystorePassword The keystore password.
    * @param keyName The name of the key to read.
    * @param keyPassword The key's password.
+   * @return CPPHolderDTO
+   * @throws KeyStoreException KeyStoreException
+   * @throws IOException IOException
+   * @throws CertificateException CertificateException
+   * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+   * @throws UnrecoverableKeyException UnrecoverableKeyException
+   * @throws NoSuchProviderException NoSuchProviderException
    */
   public CPPHolderDTO readKeyFromKeystore(InputStream keystore, String keystorePassword, String keyName,
       String keyPassword)

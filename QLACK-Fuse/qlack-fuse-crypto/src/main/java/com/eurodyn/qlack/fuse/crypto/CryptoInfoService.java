@@ -24,6 +24,8 @@ public class CryptoInfoService {
 
   /**
    * Returns the security providers available in the runtime.
+   *
+   * @return a list containing the security providers
    */
   public List<SecurityProviderDTO> getSecurityProviders() {
     return Arrays.stream(Security.getProviders())
@@ -36,6 +38,8 @@ public class CryptoInfoService {
    * Returns the security services provided by a specific provider available in the runtime.
    *
    * @param providerName The provider to inquiry for available services.
+   *
+   * @return a list containing the security providers
    */
   public List<SecurityServiceDTO> getSecurityServices(String providerName) {
     return getSecurityProviders().stream()
@@ -51,6 +55,8 @@ public class CryptoInfoService {
    * Returns the security services providing a specific security algorithm.
    *
    * @param algorithmType The algorithm type to find services providing it.
+   *
+   * @return a list containing the security providers
    */
   public List<SecurityServiceDTO> getSecurityServicesForAlgorithmType(String algorithmType) {
     return getSecurityProviders().stream()
@@ -62,6 +68,8 @@ public class CryptoInfoService {
 
   /**
    * Returns all available security algorithms available in the runtime.
+   *
+   * @return a list containing the types
    */
   public List<String> getAlgorithmTypes() {
     return getSecurityProviders().stream()
@@ -76,6 +84,8 @@ public class CryptoInfoService {
    * Pretty prints a list of services.
    *
    * @param services The list of services to prety print.
+   *
+   * @return the string buffer
    */
   public String prettyPrint(List<SecurityServiceDTO> services) {
     StringBuffer s = new StringBuffer();
@@ -90,8 +100,11 @@ public class CryptoInfoService {
   /**
    * Checks if unlimited strength cryptography is available. The check is taking place by comparing the maximum size
    * available of an AES key. If this method returns false, you can enable unlimited strength cryptography by
-   * downloading https://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html (or in JDK > 8 by
+   * downloading https://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html (or in JDK greater than 8 by
    * setting Security.setProperty("crypto.policy", "unlimited")).
+   *
+   * return the boolean value
+   * @throws NoSuchAlgorithmException NoSuchAlgorithmException
    */
   public boolean isUnlimitedStrengthActive() throws NoSuchAlgorithmException {
     return Cipher.getMaxAllowedKeyLength(AES) > AES_WEAK_LENGTH;

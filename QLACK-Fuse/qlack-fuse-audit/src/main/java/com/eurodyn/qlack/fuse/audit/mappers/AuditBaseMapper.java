@@ -36,6 +36,7 @@ public interface AuditBaseMapper<E extends QlackBaseModel, D extends AuditBaseDT
    * Maps a DTO to an existing entity.
    *
    * @param dto the source DTO
+   * @param entity the origin entity
    */
   void mapToExistingEntity(D dto, @MappingTarget E entity);
 
@@ -49,6 +50,9 @@ public interface AuditBaseMapper<E extends QlackBaseModel, D extends AuditBaseDT
 
   /**
    * Maps a Spring {@link Page} of entities to a Spring {@link Page} of DTOs.
+   *
+   * @param all source object
+   * @return the mapped object
    */
   default Page<D> map(Page<E> all) {
     return all.map(this::mapToDTO);

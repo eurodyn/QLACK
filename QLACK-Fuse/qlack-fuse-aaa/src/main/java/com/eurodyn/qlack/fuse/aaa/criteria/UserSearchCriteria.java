@@ -80,6 +80,10 @@ public class UserSearchCriteria {
 
     /**
      * Specify a collection of IDs in which the IDs of the retrieved users should be contained.
+     *
+     * @param ids the ids of the users
+     *
+     * @return UserSearchCriteriaBuilder
      */
     public UserSearchCriteriaBuilder withIdIn(Collection<String> ids) {
       criteria.setIncludeIds(ids);
@@ -88,6 +92,10 @@ public class UserSearchCriteria {
 
     /**
      * Specify a collection of IDs in which the IDs of the retrieved users should not be contained.
+     *
+     * @param ids the ids of the users
+     *
+     * @return UserSearchCriteriaBuilder
      */
     public UserSearchCriteriaBuilder withIdNotIn(Collection<String> ids) {
       criteria.setExcludeIds(ids);
@@ -97,6 +105,10 @@ public class UserSearchCriteria {
     /**
      * Specify a collection of IDs in which the IDs of the retrieved users userGroups should be
      * contained.
+     *
+     * @param ids the ids of the user groups
+     *
+     * @return UserSearchCriteriaBuilder
      */
     public UserSearchCriteriaBuilder withGroupIdIn(Collection<String> ids) {
       criteria.setIncludeGroupIds(ids);
@@ -106,6 +118,10 @@ public class UserSearchCriteria {
     /**
      * Specify a collection of IDs in which the IDs of the retrieved users userGroups should not be
      * contained.
+     *
+     * @param ids the ids of the user groups
+     *
+     * @return UserSearchCriteriaBuilder
      */
     public UserSearchCriteriaBuilder withGroupIdNotIn(Collection<String> ids) {
       criteria.setExcludeGroupIds(ids);
@@ -117,6 +133,8 @@ public class UserSearchCriteria {
      * contained.
      *
      * @param statuses The list of statuses.
+     *
+     * @return UserSearchCriteriaBuilder
      */
     public UserSearchCriteriaBuilder withStatusIn(Collection<Byte> statuses) {
       criteria.setIncludeStatuses(statuses);
@@ -128,6 +146,8 @@ public class UserSearchCriteria {
      * contained.
      *
      * @param statuses The list of statuses.
+     *
+     * @return UserSearchCriteriaBuilder
      */
     public UserSearchCriteriaBuilder withStatusNotIn(Collection<Byte> statuses) {
       criteria.setExcludeStatuses(statuses);
@@ -136,6 +156,10 @@ public class UserSearchCriteria {
 
     /**
      * Spacify a username for which to check
+     *
+     * @param username the username of the user
+     *
+     * @return UserSearchCriteriaBuilder
      */
     public UserSearchCriteriaBuilder withUsernameLike(String username) {
       criteria.setUsername(username);
@@ -147,6 +171,10 @@ public class UserSearchCriteria {
      * in conjuction with the and and or static methods which are used to specify the relationship
      * between the different criteria, for example: UserSearchCriteriaBuilder.createCriteria().withAttributes(and(and(att1,
      * att2, att3), or (att4, att5), or(att6, att7)))
+     *
+     * @param attCriteria attributes
+     *
+     * @return UserSearchCriteriaBuilder
      */
     public UserSearchCriteriaBuilder withAttributes(UserAttributeCriteria attCriteria) {
       criteria.setAttributeCriteria(attCriteria);

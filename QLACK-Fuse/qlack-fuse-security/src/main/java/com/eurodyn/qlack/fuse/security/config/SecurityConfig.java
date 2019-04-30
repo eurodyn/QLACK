@@ -57,6 +57,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
      * Enable JWT authentication.
+     *
+     * @return JwtTokenAuthenticationFilter
      */
     @Bean
     public JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter() {
@@ -65,6 +67,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
      * Configures AAA operations to be evaluated as spring permissions.
+     *
+     * @return DefaultWebSecurityExpressionHandler
      */
     @Bean
     public DefaultWebSecurityExpressionHandler webExpressionHandler() {
@@ -76,6 +80,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     /**
      * Configures AAA authentication provider with a user service and a password encoder.
      * The AAA user service should be used.
+     *
+     * @return AAAUsernamePasswordProvider
      */
     @Bean
     public AAAUsernamePasswordProvider authenticationProvider() {
@@ -87,6 +93,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
      * Sets bcrypt as the password encoding practice.
+     *
+     * @return BCryptPasswordEncoder
      */
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {

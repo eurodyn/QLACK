@@ -220,7 +220,7 @@ public class FileUploadImpl implements FileUpload {
   /**
    * Cleans up file-chunks which have been uploaded but never reclaimed/deleted. This method uses
    * the {@link Scheduled} annotation and user defined properties to configure the method execution,
-   * the execution interval and the EPOCH before which all files get deleted (default: >5 minutes =
+   * the execution interval and the EPOCH before which all files get deleted (default: greater than 5 minutes =
    * 300000 ms)
    */
   @Transactional

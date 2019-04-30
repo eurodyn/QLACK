@@ -35,7 +35,9 @@ public interface FileUpload {
    *
    * @param fileID the ID of the file from which a chunk will be retrieved
    * @param chunkNbr The number of the chunk
+   *
    * @return ChunkGetResponse The response which will contain the retrieved chunk
+   * @throws FileNotFoundException FileNotFoundException
    */
   DBFileDTO getByIDAndChunk(String fileID, long chunkNbr) throws FileNotFoundException;
 

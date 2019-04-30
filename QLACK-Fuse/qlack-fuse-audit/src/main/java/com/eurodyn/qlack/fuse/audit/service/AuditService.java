@@ -96,6 +96,8 @@ public class AuditService {
    * @param sessionID the id of the session that the audit occurred
    * @param traceData an object containing the trace of the audit
    * @param referenceId the reference id of the audit
+   *
+   * @return the id of the created audit
    */
   public String audit(String level, String event, String groupName, String description, String sessionID, Object traceData,
     String referenceId) {
@@ -114,6 +116,8 @@ public class AuditService {
    * Adds an audit of an event that occurred in the application
    *
    * @param audit a DTO containing all information of the audit to persist
+   *
+   * @return the id of the created audit
    */
   public String audit(AuditDTO audit) {
     log.info(MessageFormat.format("Adding audit ''{0}''.", audit));
@@ -131,6 +135,8 @@ public class AuditService {
    *
    * @param auditList a list of the audits to persist
    * @param correlationId the unique id to correlate the audits
+   *
+   * @return a list containing the ids of the created audits
    */
   public List<String> audits(List<AuditDTO> auditList, String correlationId) {
     log.info(MessageFormat.format("Adding audits ''{0}''.", auditList));

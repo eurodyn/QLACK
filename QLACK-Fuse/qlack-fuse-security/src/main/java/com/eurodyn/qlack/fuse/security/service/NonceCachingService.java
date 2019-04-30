@@ -49,7 +49,7 @@ public class NonceCachingService {
     }
 
     /**
-     * Puts a new pair <nonce, value> to a user cache.
+     * Puts a new pair nonce, value to a user cache.
      *
      * Creates the user cache if it doesn't exist.
      *

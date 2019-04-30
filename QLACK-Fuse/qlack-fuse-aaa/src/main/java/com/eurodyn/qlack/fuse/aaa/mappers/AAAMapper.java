@@ -2,10 +2,9 @@ package com.eurodyn.qlack.fuse.aaa.mappers;
 
 import com.eurodyn.qlack.fuse.aaa.dto.BaseDTO;
 import com.eurodyn.qlack.fuse.aaa.model.AAAModel;
+import java.util.List;
 import org.mapstruct.MappingTarget;
 import org.springframework.data.domain.Page;
-
-import java.util.List;
 
 public interface AAAMapper<E extends AAAModel, D extends BaseDTO> {
 
@@ -37,7 +36,7 @@ public interface AAAMapper<E extends AAAModel, D extends BaseDTO> {
    * Maps a DTO to an existing entity.
    *
    * @param dto the source DTO
-   * @return the mapped entity
+   * @param entity the origin entity
    */
   void mapToExistingEntity(D dto, @MappingTarget E entity);
 
@@ -51,8 +50,9 @@ public interface AAAMapper<E extends AAAModel, D extends BaseDTO> {
 
   /**
    * Maps a Spring {@link Page} of entities to a Spring {@link Page} of DTOs.
-   * @param all
-   * @return
+   *
+   * @param all source object
+   * @return the mapped object
    */
   default Page<D> map(Page<E> all) {
     return all.map(this::mapToDTO);

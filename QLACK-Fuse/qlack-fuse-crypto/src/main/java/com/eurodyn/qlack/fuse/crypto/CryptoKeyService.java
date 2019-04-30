@@ -27,6 +27,10 @@ public class CryptoKeyService {
    * @param bits The bits of the key.
    * @param provider The security provider of the key.
    * @param algorithm The security algorithm to use to generate the key.
+   *
+   * @return the key
+   * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+   * @throws NoSuchProviderException NoSuchProviderException
    */
   public Key generateKey(int bits, String provider, String algorithm)
       throws NoSuchAlgorithmException, NoSuchProviderException {
@@ -47,6 +51,11 @@ public class CryptoKeyService {
    * @param bits The bits of the key.
    * @param algorithm The security algorithm to use. The first security provider providing this algorithm will be
    * automatically picked.
+   *
+   * @return the key
+   * @throws IOException IOException
+   * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+   * @throws NoSuchProviderException NoSuchProviderException
    */
   public Key generateKey(int bits, String algorithm)
       throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
@@ -56,6 +65,10 @@ public class CryptoKeyService {
   /**
    * Generates a new keypair consisting of a public key, a private key, and a certificate.
    * @param createKeyPairRequest The details of the keypair to create.
+   *
+   * @return the key pair
+   * @throws NoSuchProviderException NoSuchProviderException
+   * @throws NoSuchAlgorithmException NoSuchAlgorithmException
    */
   public KeyPair createKeyPair(CreateKeyPairDTO createKeyPairRequest)
       throws NoSuchProviderException, NoSuchAlgorithmException {
