@@ -60,7 +60,7 @@ public class KnowledgeBaseService {
     }
 
     /**
-     * Creates a new Κnowledge Βase and its linked Knowledge Base Libraries with given libraries and rules.
+     * Creates a new Knowledge Base and its linked Knowledge Base Libraries with given libraries and rules.
      *
      * @param libraries the libraries of the base
      * @param rules the rules of the base
