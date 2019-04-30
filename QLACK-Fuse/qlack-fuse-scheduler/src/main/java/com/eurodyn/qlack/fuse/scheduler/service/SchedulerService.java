@@ -279,7 +279,7 @@ public class SchedulerService {
   /**
    * Triggers the execution of a job
    *
-   * @param jobClass a class implementing the Job interfacε
+   * @param jobClass a class implementing the Job interface
    */
   public <J extends Job> void triggerJob(Class<J> jobClass) throws QSchedulerException {
     triggerJob(jobClass, null);
