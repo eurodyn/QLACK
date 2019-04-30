@@ -9,6 +9,36 @@
   <version>3.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <licenses>
+    <license>
+      <name>European Union Public Licence (EUPL v.1.1)</name>
+      <url>
+        https://joinup.ec.europa.eu/community/eupl/og_page/european-union-public-licence-eupl-v11
+      </url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>European Dynamics</name>
+      <email>info@eurodyn.com</email>
+      <organization>European Dynamics</organization>
+      <organizationUrl>http://www.eurodyn.com</organizationUrl>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:git@github.com:eurodyn/Qlack.git</connection>
+    <developerConnection>scm:git:git@github.com:eurodyn/Qlack.git
+    </developerConnection>
+    <url>https://github.com/eurodyn/Qlack</url>
+    <tag>3.0.0</tag>
+  </scm>
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
   <modules>
     <module>QLACK-Common</module>
     <module>QLACK-Util</module>
