@@ -24,10 +24,10 @@
     </developer>
   </developers>
   <scm>
-    <connection>scm:git:git@github.com:eurodyn/Qlack.git</connection>
-    <developerConnection>scm:git:git@github.com:eurodyn/Qlack.git
+    <connection>scm:git:git@github.com:eurodyn/QLACK.git</connection>
+    <developerConnection>scm:git:git@github.com:eurodyn/QLACK.git
     </developerConnection>
-    <url>https://github.com/eurodyn/Qlack</url>
+    <url>https://github.com/eurodyn/QLACK</url>
     <tag>3.0.0</tag>
   </scm>
   <distributionManagement>
