@@ -26,6 +26,14 @@ import java.security.SecureRandom;
 public class CryptoSymmetricService {
 
   /**
+   * Trim an IV to 128 bits.
+   * @param iv The IV to trim.
+   */
+  private byte[] trimIV(byte[] iv) {
+    return iv.length > 16 ? ArrayUtils.subarray(iv, 0, 16) : iv;
+  }
+
+  /**
    * Generates a symmetric key.
    *
    * @param keyLength The length of the key.
@@ -97,6 +105,7 @@ public class CryptoSymmetricService {
          InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
     final Cipher cipher = Cipher.getInstance(cipherInstance);
     final SecretKeySpec keySpec = new SecretKeySpec(key.getEncoded(), keyAlgorithm);
+    iv = trimIV(iv);
     final IvParameterSpec ivSpec = new IvParameterSpec(iv);
     cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
 
@@ -134,12 +143,13 @@ public class CryptoSymmetricService {
    * @param keyAlgorithm The algorithm for the secret key, e.g. "AES".
    * @param iv The IV to use.
    */
-  public byte[] decrypt(final byte[] ciphertext, final SecretKey key, final byte[] iv,
+  public byte[] decrypt(final byte[] ciphertext, final SecretKey key, byte[] iv,
     final String cipherInstance, final String keyAlgorithm)
   throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
          InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
     final Cipher cipher = Cipher.getInstance(cipherInstance);
     final SecretKeySpec keySpec = new SecretKeySpec(key.getEncoded(), keyAlgorithm);
+    iv = trimIV(iv);
     final IvParameterSpec ivSpec = new IvParameterSpec(iv);
     cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
 
