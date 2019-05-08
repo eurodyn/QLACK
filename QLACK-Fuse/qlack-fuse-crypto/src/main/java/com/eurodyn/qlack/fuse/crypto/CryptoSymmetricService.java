@@ -90,7 +90,7 @@ public class CryptoSymmetricService {
   }
 
   /**
-   * Encrypts a plaintext.
+   * Encrypts a plaintext with a given IV.
    *
    * @param plaintext The plaintext to encrypt.
    * @param key The key to use for encryption.
@@ -98,6 +98,8 @@ public class CryptoSymmetricService {
    * @param cipherInstance The cipher instance to use, e.g. "AES/CBC/PKCS5Padding".
    * @param keyAlgorithm The algorithm for the secret key, e.g. "AES".
    * @param prefixIv Whether to prefix the IV on the return value or not.
+   *
+   * @return The ciphertext optionally prefixed with the IV.
    */
   public byte[] encrypt(final byte[] plaintext, final SecretKey key, byte[] iv,
     final String cipherInstance, final String keyAlgorithm, final boolean prefixIv)
@@ -119,7 +121,24 @@ public class CryptoSymmetricService {
   }
 
   /**
-   * Decrypts an encrypted message prefixed with an IV.
+   * Encrypts a plaintext with an internally generated IV.
+   *
+   * @param plaintext The plaintext to encrypt.
+   * @param key The key to use for encryption.
+   * @param cipherInstance The cipher instance to use, e.g. "AES/CBC/PKCS5Padding".
+   * @param keyAlgorithm The algorithm for the secret key, e.g. "AES".
+   *
+   * @return The ciphertext prefixed with the IV.
+   */
+  public byte[] encrypt(final byte[] plaintext, final SecretKey key, final String cipherInstance,
+    final String keyAlgorithm)
+  throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException,
+         IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+    return encrypt(plaintext,  key, generateIV(), cipherInstance, keyAlgorithm, true);
+  }
+
+  /**
+   * Decrypts an encrypted message prefixed with a 16 bytes IV.
    *
    * @param ciphertext The encrypted message to decrypt.
    * @param key The key to decrypt with.
