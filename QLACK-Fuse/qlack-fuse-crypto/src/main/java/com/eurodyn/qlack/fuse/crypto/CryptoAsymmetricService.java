@@ -11,7 +11,9 @@ import org.bouncycastle.util.io.pem.PemObject;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -160,6 +162,31 @@ public class CryptoAsymmetricService {
   }
 
   /**
+   * Signs a message using an {@link InputStream}.
+   *
+   * @param privateKeyPEM The private key to sign with in PEM format.
+   * @param payload The data to sign.
+   * @param signatureAlgorithm The signature algorithm to use, e.g. SHA256withRSA.
+   * @param keyAlgorithm The algorithm with which the private key was generated, e.g. RSA.
+   */
+  public byte[] sign(final String privateKeyPEM, final InputStream payload,
+    final String signatureAlgorithm, String keyAlgorithm)
+  throws IOException, NoSuchAlgorithmException, SignatureException, InvalidKeySpecException,
+         InvalidKeyException {
+    final Signature signatureInstance = Signature.getInstance(signatureAlgorithm);
+    signatureInstance.initSign(pemToPrivateKey(privateKeyPEM, keyAlgorithm));
+    try (BufferedInputStream bufin = new BufferedInputStream(payload)) {
+      byte[] buffer = new byte[8192];
+      int len;
+      while ((len = bufin.read(buffer)) >= 0) {
+        signatureInstance.update(buffer, 0, len);
+      }
+    }
+
+    return signatureInstance.sign();
+  }
+
+  /**
    * Verifies a signature.
    *
    * @param publicKeyPEM The public key to verify the signature with.
@@ -178,6 +205,33 @@ public class CryptoAsymmetricService {
     sign.update(payload);
 
     return sign.verify(Base64.decodeBase64(signature));
+  }
+
+  /**
+   * Verifies a signature using an {@link InputStream}.
+   *
+   * @param publicKeyPEM The public key to verify the signature with.
+   * @param payload The signed content.
+   * @param signature The signature to verify in Base64 format.
+   * @param signatureAlgorithm The algorithm with which the signature was created, e.g.
+   * SHA256withRSA.
+   * @param keyAlgorithm The algorithm with which the key was generated, e.g. RSA.
+   */
+  public boolean verifySignature(final String publicKeyPEM, final InputStream payload,
+    final String signature, final String signatureAlgorithm, final String keyAlgorithm)
+  throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException,
+         SignatureException, IOException {
+    final Signature signatureInstance = Signature.getInstance(signatureAlgorithm);
+    signatureInstance.initVerify(pemToPublicKey(publicKeyPEM, keyAlgorithm));
+    try (BufferedInputStream bufin = new BufferedInputStream(payload)) {
+      byte[] buffer = new byte[8192];
+      int len;
+      while ((len = bufin.read(buffer)) >= 0) {
+        signatureInstance.update(buffer, 0, len);
+      }
+    }
+
+    return signatureInstance.verify(Base64.decodeBase64(signature));
   }
 
   /**
