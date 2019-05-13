@@ -35,7 +35,7 @@
         <dependency>
             <groupId>com.github.bohnman</groupId>
             <artifactId>squiggly-filter-jackson</artifactId>
-            <version>${bohnman.jackson.version}</version>
+            <version>${squiggly-filter-jackson}</version>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
