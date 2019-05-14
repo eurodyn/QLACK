@@ -1,9 +1,7 @@
 package com.eurodyn.qlack.fuse.crypto;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
@@ -14,10 +12,15 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -120,19 +123,15 @@ public class CryptoSymmetricService {
   public byte[] encrypt(final byte[] plaintext, final SecretKey key, byte[] iv,
     final String cipherInstance, final String keyAlgorithm, final boolean prefixIv)
   throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
-         InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-    final Cipher cipher = Cipher.getInstance(cipherInstance);
-    final SecretKeySpec keySpec = new SecretKeySpec(key.getEncoded(), keyAlgorithm);
-    iv = trimIV(iv);
-    final IvParameterSpec ivSpec = new IvParameterSpec(iv);
-    cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
-
-    final byte[] ciphertext = cipher.doFinal(plaintext);
-
-    if (prefixIv) {
-      return ArrayUtils.addAll(iv, ciphertext);
-    } else {
-      return ciphertext;
+         InvalidKeyException, IOException {
+    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+      encrypt(new BufferedInputStream(new ByteArrayInputStream(plaintext)),
+        baos,
+        key, iv,
+        cipherInstance,
+        keyAlgorithm,
+        prefixIv);
+      return baos.toByteArray();
     }
   }
 
@@ -148,7 +147,7 @@ public class CryptoSymmetricService {
   public byte[] encrypt(final byte[] plaintext, final SecretKey key, final String cipherInstance,
     final String keyAlgorithm)
   throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException,
-         IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+         InvalidAlgorithmParameterException, IOException {
     return encrypt(plaintext, key, generateIV(), cipherInstance, keyAlgorithm, true);
   }
 
@@ -183,6 +182,29 @@ public class CryptoSymmetricService {
     final String cipherInstance, final String keyAlgorithm, final boolean prefixIv)
   throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
          InvalidKeyException, IOException {
+    try (final FileInputStream fileInputStream = new FileInputStream(sourceFile)) {
+      try (final FileOutputStream fileOutputStream = new FileOutputStream(targetFile)) {
+        encrypt(fileInputStream, fileOutputStream, key, iv, cipherInstance, keyAlgorithm, prefixIv);
+      }
+    }
+  }
+
+  /**
+   * Encrypts a stream producing an encrypted stream with optionally appending the IV.
+   *
+   * @param sourceStream The source stream to encrypt.
+   * @param targetStream The target, encrypted stream to populate.
+   * @param key The key to use for encryption.
+   * @param iv The IV to use.
+   * @param cipherInstance The cipher instance to use, e.g. "AES/CBC/PKCS5Padding".
+   * @param keyAlgorithm The algorithm for the secret key, e.g. "AES".
+   * @param prefixIv Whether to prefix the IV on the return value or not.
+   */
+  public void encrypt(InputStream sourceStream, OutputStream targetStream, final SecretKey key,
+    byte[] iv,
+    final String cipherInstance, final String keyAlgorithm, final boolean prefixIv)
+  throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
+         InvalidKeyException, IOException {
     final Cipher cipher = Cipher.getInstance(cipherInstance);
     final SecretKeySpec keySpec = new SecretKeySpec(key.getEncoded(), keyAlgorithm);
     iv = trimIV(iv);
@@ -191,17 +213,13 @@ public class CryptoSymmetricService {
 
     byte[] buffer = new byte[8192];
     int count;
-    try (final FileInputStream sourceStream = new FileInputStream(sourceFile)) {
-      try (final FileOutputStream targetStream = new FileOutputStream(targetFile)) {
-        if (prefixIv) {
-          targetStream.write(iv);
-        }
-        try (final CipherOutputStream cipherOutputStream = new CipherOutputStream(targetStream,
-          cipher)) {
-          while ((count = sourceStream.read(buffer)) > 0) {
-            cipherOutputStream.write(buffer, 0, count);
-          }
-        }
+    if (prefixIv) {
+      targetStream.write(iv);
+    }
+    try (final CipherOutputStream cipherOutputStream = new CipherOutputStream(targetStream,
+      cipher)) {
+      while ((count = sourceStream.read(buffer)) > 0) {
+        cipherOutputStream.write(buffer, 0, count);
       }
     }
   }
@@ -218,8 +236,7 @@ public class CryptoSymmetricService {
   public void decrypt(final File encryptedFile, final File plainFile, final SecretKey key,
     final String cipherInstance, final String keyAlgorithm)
   throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
-         InvalidKeyException, BadPaddingException, IllegalBlockSizeException,
-         IOException {
+         InvalidKeyException, IOException {
     decrypt(encryptedFile, plainFile, key, null, cipherInstance, keyAlgorithm);
   }
 
@@ -237,26 +254,40 @@ public class CryptoSymmetricService {
   public void decrypt(final File encryptedFile, final File plainFile, final SecretKey key,
     byte[] iv, final String cipherInstance, final String keyAlgorithm)
   throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
-         InvalidKeyException, BadPaddingException, IllegalBlockSizeException,
-         IOException {
+         InvalidKeyException, IOException {
+    decrypt(new FileInputStream(encryptedFile), new FileOutputStream(plainFile), key, iv,
+      cipherInstance, keyAlgorithm);
+  }
+
+  /**
+   * Decrypts a file, optionally decoding an appended IV.
+   *
+   * @param sourceStream The encrypted stream to decrypt.
+   * @param targetStream The decrypted stream to populate.
+   * @param key The key to use for decryption.
+   * @param iv The IV with which this file was encrypted. If left null, the IV will be decoded from
+   * the 16 first bytes of `encryptedFile`.
+   * @param cipherInstance The cipher instance to use, e.g. "AES/CBC/PKCS5Padding".
+   * @param keyAlgorithm The algorithm for the secret key, e.g. "AES".
+   */
+  public void decrypt(final InputStream sourceStream, final OutputStream targetStream,
+    final SecretKey key, byte[] iv, final String cipherInstance, final String keyAlgorithm)
+  throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
+         InvalidKeyException, IOException {
     final Cipher cipher = Cipher.getInstance(cipherInstance);
     final SecretKeySpec keySpec = new SecretKeySpec(key.getEncoded(), keyAlgorithm);
     byte[] buffer = new byte[8192];
     int count;
-    try (final FileInputStream sourceStream = new FileInputStream(encryptedFile)) {
-      if (iv == null) {
-        iv = new byte[16];
-        sourceStream.read(iv, 0, 16);
-      }
-      final IvParameterSpec ivSpec = new IvParameterSpec(iv);
-      cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-      try (final FileOutputStream targetStream = new FileOutputStream(plainFile)) {
-        try (final CipherOutputStream cipherOutputStream = new CipherOutputStream(targetStream,
-          cipher)) {
-          while ((count = sourceStream.read(buffer)) > 0) {
-            cipherOutputStream.write(buffer, 0, count);
-          }
-        }
+    if (iv == null) {
+      iv = new byte[16];
+      sourceStream.read(iv, 0, 16);
+    }
+    final IvParameterSpec ivSpec = new IvParameterSpec(iv);
+    cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+    try (final CipherOutputStream cipherOutputStream = new CipherOutputStream(targetStream,
+      cipher)) {
+      while ((count = sourceStream.read(buffer)) > 0) {
+        cipherOutputStream.write(buffer, 0, count);
       }
     }
   }
@@ -272,7 +303,7 @@ public class CryptoSymmetricService {
   public byte[] decrypt(final byte[] ciphertext, final SecretKey key,
     final String cipherInstance, final String keyAlgorithm)
   throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException,
-         IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+         InvalidAlgorithmParameterException, IOException {
     return decrypt(ArrayUtils.subarray(ciphertext, 16, ciphertext.length), key,
       ArrayUtils.subarray(ciphertext, 0, 16), cipherInstance, keyAlgorithm);
   }
@@ -289,13 +320,14 @@ public class CryptoSymmetricService {
   public byte[] decrypt(final byte[] ciphertext, final SecretKey key, byte[] iv,
     final String cipherInstance, final String keyAlgorithm)
   throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
-         InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-    final Cipher cipher = Cipher.getInstance(cipherInstance);
-    final SecretKeySpec keySpec = new SecretKeySpec(key.getEncoded(), keyAlgorithm);
-    iv = trimIV(iv);
-    final IvParameterSpec ivSpec = new IvParameterSpec(iv);
-    cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-
-    return cipher.doFinal(ciphertext);
+         InvalidKeyException, IOException {
+    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+      decrypt(new BufferedInputStream(new ByteArrayInputStream(ciphertext)),
+        baos,
+        key, iv,
+        cipherInstance,
+        keyAlgorithm);
+      return baos.toByteArray();
+    }
   }
 }

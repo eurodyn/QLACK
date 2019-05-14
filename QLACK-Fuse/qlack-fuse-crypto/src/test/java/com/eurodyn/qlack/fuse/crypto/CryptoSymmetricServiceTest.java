@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import org.apache.commons.codec.binary.Base64;
@@ -55,8 +53,8 @@ public class CryptoSymmetricServiceTest {
 
   @Test
   public void encryptDecrypt()
-  throws NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException,
-         BadPaddingException, InvalidAlgorithmParameterException, NoSuchPaddingException {
+  throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException,
+         NoSuchPaddingException, IOException {
     String plaintext = "Hello world!";
     final String aes = Base64.encodeBase64String(cryptoSymmetricService.generateKey(128, "AES"));
     final SecretKey aesKey = cryptoSymmetricService.keyFromString(aes, "AES");
@@ -71,6 +69,7 @@ public class CryptoSymmetricServiceTest {
       .decrypt(ciphertext, aesKey, iv, "AES/CBC/PKCS5Padding", "AES");
     assertEquals(plaintext, new String(plaintextDecrypted, StandardCharsets.UTF_8));
 
+
     // IV-append test.
     ciphertext = cryptoSymmetricService
       .encrypt(plaintext.getBytes(StandardCharsets.UTF_8), aesKey, iv, "AES/CBC/PKCS5Padding",
@@ -84,8 +83,7 @@ public class CryptoSymmetricServiceTest {
   @Test
   public void encryptDecryptFile()
   throws IOException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
-         InvalidKeyException, NoSuchPaddingException, BadPaddingException,
-         IllegalBlockSizeException {
+         InvalidKeyException, NoSuchPaddingException {
     String execDir = Paths.get("").toAbsolutePath().toString();
     final String aes = Base64.encodeBase64String(cryptoSymmetricService.generateKey(128, "AES"));
     final SecretKey aesKey = cryptoSymmetricService.keyFromString(aes, "AES");
@@ -99,7 +97,7 @@ public class CryptoSymmetricServiceTest {
     final byte[] iv = cryptoSymmetricService.generateIV();
     cryptoSymmetricService.encrypt(plainFile, encryptedFile, aesKey, iv, "AES/CBC/PKCS5Padding",
       "AES", false);
-    cryptoSymmetricService.decrypt(encryptedFile, decryptedFile, aesKey,  iv, "AES/CBC/PKCS5Padding",
+    cryptoSymmetricService.decrypt(encryptedFile, decryptedFile, aesKey, iv, "AES/CBC/PKCS5Padding",
       "AES");
     assertTrue(FileUtils.contentEquals(plainFile, decryptedFile));
 
