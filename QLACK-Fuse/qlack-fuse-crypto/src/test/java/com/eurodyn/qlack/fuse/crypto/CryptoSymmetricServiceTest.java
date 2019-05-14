@@ -2,15 +2,20 @@ package com.eurodyn.qlack.fuse.crypto;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -57,7 +62,7 @@ public class CryptoSymmetricServiceTest {
     final SecretKey aesKey = cryptoSymmetricService.keyFromString(aes, "AES");
     final byte[] iv = cryptoSymmetricService.generateIV();
 
-    // No IV-prefix test.
+    // No IV-append test.
     byte[] ciphertext = cryptoSymmetricService
       .encrypt(plaintext.getBytes(StandardCharsets.UTF_8), aesKey, iv, "AES/CBC/PKCS5Padding",
         "AES", false);
@@ -66,7 +71,7 @@ public class CryptoSymmetricServiceTest {
       .decrypt(ciphertext, aesKey, iv, "AES/CBC/PKCS5Padding", "AES");
     assertEquals(plaintext, new String(plaintextDecrypted, StandardCharsets.UTF_8));
 
-    // IV-prefix test.
+    // IV-append test.
     ciphertext = cryptoSymmetricService
       .encrypt(plaintext.getBytes(StandardCharsets.UTF_8), aesKey, iv, "AES/CBC/PKCS5Padding",
         "AES", true);
@@ -74,5 +79,39 @@ public class CryptoSymmetricServiceTest {
     plaintextDecrypted = cryptoSymmetricService
       .decrypt(ciphertext, aesKey, "AES/CBC/PKCS5Padding", "AES");
     assertEquals(plaintext, new String(plaintextDecrypted, StandardCharsets.UTF_8));
+  }
+
+  @Test
+  public void encryptDecryptFile()
+  throws IOException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
+         InvalidKeyException, NoSuchPaddingException, BadPaddingException,
+         IllegalBlockSizeException {
+    String execDir = Paths.get("").toAbsolutePath().toString();
+    final String aes = Base64.encodeBase64String(cryptoSymmetricService.generateKey(128, "AES"));
+    final SecretKey aesKey = cryptoSymmetricService.keyFromString(aes, "AES");
+
+    // No IV-append test.
+    File plainFile = Paths.get(execDir, "src", "test", "resources", "file-binary.jpg").toFile();
+    File encryptedFile = File.createTempFile("encrypted", ".bin");
+    System.out.println("Temporary encrypted file: " + encryptedFile.toString());
+    File decryptedFile = File.createTempFile("decrypted", ".jpg");
+    System.out.println("Temporary decrypted file: " + decryptedFile.toString());
+    final byte[] iv = cryptoSymmetricService.generateIV();
+    cryptoSymmetricService.encrypt(plainFile, encryptedFile, aesKey, iv, "AES/CBC/PKCS5Padding",
+      "AES", false);
+    cryptoSymmetricService.decrypt(encryptedFile, decryptedFile, aesKey,  iv, "AES/CBC/PKCS5Padding",
+      "AES");
+    assertTrue(FileUtils.contentEquals(plainFile, decryptedFile));
+
+    // IV-append test.
+    encryptedFile = File.createTempFile("encrypted", ".bin");
+    System.out.println("Temporary encrypted file: " + encryptedFile.toString());
+    decryptedFile = File.createTempFile("decrypted", ".jpg");
+    System.out.println("Temporary decrypted file: " + decryptedFile.toString());
+    cryptoSymmetricService.encrypt(plainFile, encryptedFile, aesKey, "AES/CBC/PKCS5Padding",
+      "AES");
+    cryptoSymmetricService.decrypt(encryptedFile, decryptedFile, aesKey, "AES/CBC/PKCS5Padding",
+      "AES");
+    assertTrue(FileUtils.contentEquals(plainFile, decryptedFile));
   }
 }

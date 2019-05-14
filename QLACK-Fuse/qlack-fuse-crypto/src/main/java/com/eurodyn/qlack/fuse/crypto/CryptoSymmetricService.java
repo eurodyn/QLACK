@@ -2,6 +2,7 @@ package com.eurodyn.qlack.fuse.crypto;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
@@ -13,10 +14,16 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Symmetric encryption/decryption utility methods.
@@ -25,12 +32,22 @@ import java.security.SecureRandom;
 @Validated
 public class CryptoSymmetricService {
 
+  // JUL reference.
+  private static final Logger LOGGER = Logger.getLogger(CryptoSymmetricService.class.getName());
+
   /**
    * Trim an IV to 128 bits.
+   *
    * @param iv The IV to trim.
    */
   private byte[] trimIV(byte[] iv) {
-    return iv.length > 16 ? ArrayUtils.subarray(iv, 0, 16) : iv;
+    if (iv.length > 16) {
+      LOGGER.log(Level.WARNING, "Provided IV is {0} bytes larger than 16 bytes and will be "
+        + "trimmed.", iv.length - 16);
+      return ArrayUtils.subarray(iv, 0, 16);
+    } else {
+      return iv;
+    }
   }
 
   /**
@@ -98,7 +115,6 @@ public class CryptoSymmetricService {
    * @param cipherInstance The cipher instance to use, e.g. "AES/CBC/PKCS5Padding".
    * @param keyAlgorithm The algorithm for the secret key, e.g. "AES".
    * @param prefixIv Whether to prefix the IV on the return value or not.
-   *
    * @return The ciphertext optionally prefixed with the IV.
    */
   public byte[] encrypt(final byte[] plaintext, final SecretKey key, byte[] iv,
@@ -127,14 +143,122 @@ public class CryptoSymmetricService {
    * @param key The key to use for encryption.
    * @param cipherInstance The cipher instance to use, e.g. "AES/CBC/PKCS5Padding".
    * @param keyAlgorithm The algorithm for the secret key, e.g. "AES".
-   *
    * @return The ciphertext prefixed with the IV.
    */
   public byte[] encrypt(final byte[] plaintext, final SecretKey key, final String cipherInstance,
     final String keyAlgorithm)
   throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException,
          IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
-    return encrypt(plaintext,  key, generateIV(), cipherInstance, keyAlgorithm, true);
+    return encrypt(plaintext, key, generateIV(), cipherInstance, keyAlgorithm, true);
+  }
+
+  /**
+   * Encrypts a file producing an encrypted file prefixed with the internally generated IV.
+   *
+   * @param sourceFile The source file to encrypt.
+   * @param targetFile The target, encrypted file to produce.
+   * @param key The key to use for encryption.
+   * @param cipherInstance The cipher instance to use, e.g. "AES/CBC/PKCS5Padding".
+   * @param keyAlgorithm The algorithm for the secret key, e.g. "AES".
+   */
+  public void encrypt(File sourceFile, File targetFile, final SecretKey key,
+    final String cipherInstance, final String keyAlgorithm)
+  throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
+         InvalidKeyException, IOException {
+    encrypt(sourceFile, targetFile, key, generateIV(), cipherInstance, keyAlgorithm, true);
+  }
+
+  /**
+   * Encrypts a file producing an encrypted file with optionally appending the IV.
+   *
+   * @param sourceFile The source file to encrypt.
+   * @param targetFile The target, encrypted file to produce.
+   * @param key The key to use for encryption.
+   * @param iv The IV to use.
+   * @param cipherInstance The cipher instance to use, e.g. "AES/CBC/PKCS5Padding".
+   * @param keyAlgorithm The algorithm for the secret key, e.g. "AES".
+   * @param prefixIv Whether to prefix the IV on the return value or not.
+   */
+  public void encrypt(File sourceFile, File targetFile, final SecretKey key, byte[] iv,
+    final String cipherInstance, final String keyAlgorithm, final boolean prefixIv)
+  throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
+         InvalidKeyException, IOException {
+    final Cipher cipher = Cipher.getInstance(cipherInstance);
+    final SecretKeySpec keySpec = new SecretKeySpec(key.getEncoded(), keyAlgorithm);
+    iv = trimIV(iv);
+    final IvParameterSpec ivSpec = new IvParameterSpec(iv);
+    cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
+
+    byte[] buffer = new byte[8192];
+    int count;
+    try (final FileInputStream sourceStream = new FileInputStream(sourceFile)) {
+      try (final FileOutputStream targetStream = new FileOutputStream(targetFile)) {
+        if (prefixIv) {
+          targetStream.write(iv);
+        }
+        try (final CipherOutputStream cipherOutputStream = new CipherOutputStream(targetStream,
+          cipher)) {
+          while ((count = sourceStream.read(buffer)) > 0) {
+            cipherOutputStream.write(buffer, 0, count);
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Decrypts a file also decoding an appended IV.
+   *
+   * @param encryptedFile The encrypted file to decrypt.
+   * @param plainFile The decrypted file to produce.
+   * @param key The key to use for decryption.
+   * @param cipherInstance The cipher instance to use, e.g. "AES/CBC/PKCS5Padding".
+   * @param keyAlgorithm The algorithm for the secret key, e.g. "AES".
+   */
+  public void decrypt(final File encryptedFile, final File plainFile, final SecretKey key,
+    final String cipherInstance, final String keyAlgorithm)
+  throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
+         InvalidKeyException, BadPaddingException, IllegalBlockSizeException,
+         IOException {
+    decrypt(encryptedFile, plainFile, key, null, cipherInstance, keyAlgorithm);
+  }
+
+  /**
+   * Decrypts a file, optionally decoding an appended IV.
+   *
+   * @param encryptedFile The encrypted file to decrypt.
+   * @param plainFile The decrypted file to produce.
+   * @param key The key to use for decryption.
+   * @param iv The IV with which this file was encrypted. If left null, the IV will be decoded from
+   * the 16 first bytes of `encryptedFile`.
+   * @param cipherInstance The cipher instance to use, e.g. "AES/CBC/PKCS5Padding".
+   * @param keyAlgorithm The algorithm for the secret key, e.g. "AES".
+   */
+  public void decrypt(final File encryptedFile, final File plainFile, final SecretKey key,
+    byte[] iv, final String cipherInstance, final String keyAlgorithm)
+  throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
+         InvalidKeyException, BadPaddingException, IllegalBlockSizeException,
+         IOException {
+    final Cipher cipher = Cipher.getInstance(cipherInstance);
+    final SecretKeySpec keySpec = new SecretKeySpec(key.getEncoded(), keyAlgorithm);
+    byte[] buffer = new byte[8192];
+    int count;
+    try (final FileInputStream sourceStream = new FileInputStream(encryptedFile)) {
+      if (iv == null) {
+        iv = new byte[16];
+        sourceStream.read(iv, 0, 16);
+      }
+      final IvParameterSpec ivSpec = new IvParameterSpec(iv);
+      cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+      try (final FileOutputStream targetStream = new FileOutputStream(plainFile)) {
+        try (final CipherOutputStream cipherOutputStream = new CipherOutputStream(targetStream,
+          cipher)) {
+          while ((count = sourceStream.read(buffer)) > 0) {
+            cipherOutputStream.write(buffer, 0, count);
+          }
+        }
+      }
+    }
   }
 
   /**
