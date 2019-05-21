@@ -7,6 +7,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -39,9 +41,22 @@ public class CryptoDigestService {
    * Calculates the MD5 of the given string.
    *
    * @param message The message to hash.
+   * @deprecated Prefer the SHA256 alternatives.
    */
+  @Deprecated
   public String md5(final String message) {
     return DigestUtils.md5Hex(message);
+  }
+
+  /**
+   * Calculates the MD5 of the given {@link InputStream}.
+   *
+   * @param inpustStream The input stream to hash.
+   * @deprecated Prefer the SHA256 alternatives.
+   */
+  @Deprecated
+  public String md5(final InputStream inpustStream) throws IOException {
+    return DigestUtils.md5Hex(inpustStream);
   }
 
   /**
@@ -51,5 +66,14 @@ public class CryptoDigestService {
    */
   public String sha256(final String message) {
     return DigestUtils.sha256Hex(message);
+  }
+
+  /**
+   * Calculates the SHA256 of the {@link InputStream}.
+   *
+   * @param inputStream The input stream to hash.
+   */
+  public String sha256(final InputStream inputStream) throws IOException {
+    return DigestUtils.sha256Hex(inputStream);
   }
 }

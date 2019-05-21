@@ -1,11 +1,13 @@
 package com.eurodyn.qlack.fuse.crypto;
 
+import com.eurodyn.qlack.common.exception.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.crypto.dto.CreateKeyPairDTO;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.springframework.stereotype.Service;
@@ -200,6 +202,9 @@ public class CryptoAsymmetricService {
     final String signature, final String signatureAlgorithm, final String keyAlgorithm)
   throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException,
          SignatureException {
+    if (StringUtils.isBlank(signature)) {
+      throw new QDoesNotExistException("The signature provided to validate is empty.");
+    }
     final Signature sign = Signature.getInstance(signatureAlgorithm);
     sign.initVerify(pemToPublicKey(publicKeyPEM, keyAlgorithm));
     sign.update(payload);
@@ -221,6 +226,9 @@ public class CryptoAsymmetricService {
     final String signature, final String signatureAlgorithm, final String keyAlgorithm)
   throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException,
          SignatureException, IOException {
+    if (StringUtils.isBlank(signature)) {
+      throw new QDoesNotExistException("The signature provided to validate is empty.");
+    }
     final Signature signatureInstance = Signature.getInstance(signatureAlgorithm);
     signatureInstance.initVerify(pemToPublicKey(publicKeyPEM, keyAlgorithm));
     try (BufferedInputStream bufin = new BufferedInputStream(payload)) {
