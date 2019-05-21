@@ -201,8 +201,7 @@ public class CryptoSymmetricService {
    * @param prefixIv Whether to prefix the IV on the return value or not.
    */
   public void encrypt(InputStream sourceStream, OutputStream targetStream, final SecretKey key,
-    byte[] iv,
-    final String cipherInstance, final String keyAlgorithm, final boolean prefixIv)
+    byte[] iv, final String cipherInstance, final String keyAlgorithm, final boolean prefixIv)
   throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
          InvalidKeyException, IOException {
     final Cipher cipher = Cipher.getInstance(cipherInstance);
@@ -257,6 +256,23 @@ public class CryptoSymmetricService {
          InvalidKeyException, IOException {
     decrypt(new FileInputStream(encryptedFile), new FileOutputStream(plainFile), key, iv,
       cipherInstance, keyAlgorithm);
+  }
+
+  /**
+   * Decrypts a file which is encrypted with a 16 byte IV prefixed.
+   *
+   * @param sourceStream The encrypted stream to decrypt.
+   * @param targetStream The decrypted stream to populate.
+   * @param key The key to use for decryption.
+   * the 16 first bytes of `encryptedFile`.
+   * @param cipherInstance The cipher instance to use, e.g. "AES/CBC/PKCS5Padding".
+   * @param keyAlgorithm The algorithm for the secret key, e.g. "AES".
+   */
+  public void decrypt(final InputStream sourceStream, final OutputStream targetStream,
+    final SecretKey key, final String cipherInstance, final String keyAlgorithm)
+  throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
+         InvalidKeyException, IOException {
+    decrypt(sourceStream, targetStream, key, null, cipherInstance, keyAlgorithm);
   }
 
   /**
