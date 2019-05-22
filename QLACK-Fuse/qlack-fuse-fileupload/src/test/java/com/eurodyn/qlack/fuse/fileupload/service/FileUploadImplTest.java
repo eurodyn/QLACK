@@ -10,10 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +25,6 @@ import com.eurodyn.qlack.fuse.fileupload.dto.DBFileDTO;
 import com.eurodyn.qlack.fuse.fileupload.exception.QFileNotCompletedException;
 import com.eurodyn.qlack.fuse.fileupload.exception.QFileNotFoundException;
 import com.eurodyn.qlack.fuse.fileupload.model.DBFile;
-import com.eurodyn.qlack.fuse.fileupload.model.QDBFile;
 import com.eurodyn.qlack.fuse.fileupload.repository.DBFileRepository;
 import com.eurodyn.qlack.fuse.fileupload.service.impl.FileUploadImpl;
 import com.querydsl.core.types.Predicate;
@@ -45,15 +41,9 @@ public class FileUploadImplTest {
   private DBFileRepository dbFileRepository = mock(DBFileRepository.class);
   private InitTestValues initTestValues;
   private DBFile chunk;
-  private DBFile dbFile;
   private DBFileDTO dbFileDTO;
   private List<DBFile> dbFiles;
-  private Set<DBFile> dbFilesSet;
-  private List<DBFile> dbFiles2;
-  private List<DBFileDTO> dbFileDTOs;
   private List<String> chunksIds;
-  private List<DBFile> chunks;
-  private QDBFile qdbFile = new QDBFile("qdbFile");
   private final String dbFileId = "ad1f5bb0-e1a9-4960-b0ca-1998fa5a1d6c";
   private final String chunkId = "499dcb76-c8b9-42a8-babe-bd5b917fbc4e";
   private final Long chunkNumber = 1L;
@@ -63,16 +53,10 @@ public class FileUploadImplTest {
   public void init() {
     fileUploadImpl = new FileUploadImpl(dbFileRepository);
     initTestValues = new InitTestValues();
-    dbFile = initTestValues.createDBFile();
     dbFileDTO = initTestValues.createDBFileDTO();
     dbFiles = initTestValues.createDBFiles();
-    dbFilesSet = new HashSet<>(initTestValues.createDBFiles());
-    dbFiles2 = initTestValues.createDBFiles2();
-    dbFileDTOs = initTestValues.createDBFileDTOs();
     chunk = initTestValues.createChunkNo1();
-    chunks = initTestValues.createChunks();
     chunksIds = initTestValues.createChunkIds();
-
   }
 
   @Test
@@ -199,9 +183,7 @@ public class FileUploadImplTest {
   @Test
   public void cleanupExpiredDeleteBeforeFilesNotEmpty() {
     ReflectionTestUtils.setField(fileUploadImpl, "cleanupEnabled", true);
-    when(dbFileRepository.findAll().stream()
-                         .filter(dbFile -> dbFile.getUploadedAt() < System.currentTimeMillis())
-                         .collect(Collectors.toList())).thenReturn(dbFiles);
+    when(dbFileRepository.findAll()).thenReturn(dbFiles);
     fileUploadImpl.cleanupExpired(System.currentTimeMillis());
     verify(dbFileRepository, times(1)).deleteAll(dbFiles);
   }
