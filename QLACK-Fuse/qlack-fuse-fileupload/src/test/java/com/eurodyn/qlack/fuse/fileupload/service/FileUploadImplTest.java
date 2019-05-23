@@ -166,14 +166,6 @@ public class FileUploadImplTest {
   }
 
   @Test
-  public void cleanupExpiredFilesNotEmpty() {
-    ReflectionTestUtils.setField(fileUploadImpl, "cleanupEnabled", true);
-    when(dbFileRepository.findAll()).thenReturn(dbFiles);
-    fileUploadImpl.cleanupExpired();
-    verify(dbFileRepository, times(1)).deleteAll(dbFiles);
-  }
-
-  @Test
   public void cleanupExpiredFilesEmpty() {
     ReflectionTestUtils.setField(fileUploadImpl, "cleanupEnabled", true);
     when(dbFileRepository.findAll()).thenReturn(new ArrayList<>());
