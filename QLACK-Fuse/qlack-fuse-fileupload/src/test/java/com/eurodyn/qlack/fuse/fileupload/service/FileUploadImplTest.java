@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.omg.CORBA.PRIVATE_MEMBER;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -27,6 +28,9 @@ import com.eurodyn.qlack.fuse.fileupload.exception.QFileNotFoundException;
 import com.eurodyn.qlack.fuse.fileupload.model.DBFile;
 import com.eurodyn.qlack.fuse.fileupload.repository.DBFileRepository;
 import com.eurodyn.qlack.fuse.fileupload.service.impl.FileUploadImpl;
+import com.eurodyn.qlack.util.clamav.dto.VirusScanDTO;
+import com.eurodyn.qlack.util.clamav.exception.VirusFoundException;
+import com.eurodyn.qlack.util.clamav.service.ClamAvService;
 import com.querydsl.core.types.Predicate;
 
 /**
@@ -39,6 +43,7 @@ public class FileUploadImplTest {
   private FileUploadImpl fileUploadImpl;
 
   private DBFileRepository dbFileRepository = mock(DBFileRepository.class);
+  private ClamAvService clamAvService = mock(ClamAvService.class);
   private InitTestValues initTestValues;
   private DBFile chunk;
   private DBFileDTO dbFileDTO;
@@ -48,15 +53,17 @@ public class FileUploadImplTest {
   private final String chunkId = "499dcb76-c8b9-42a8-babe-bd5b917fbc4e";
   private final Long chunkNumber = 1L;
   private final Long chunkIndex = 1L;
+  private VirusScanDTO virusScanDTO;
 
   @Before
   public void init() {
-    fileUploadImpl = new FileUploadImpl(dbFileRepository);
+    fileUploadImpl = new FileUploadImpl(dbFileRepository, clamAvService);
     initTestValues = new InitTestValues();
     dbFileDTO = initTestValues.createDBFileDTO();
     dbFiles = initTestValues.createDBFiles();
     chunk = initTestValues.createChunkNo1();
     chunksIds = initTestValues.createChunkIds();
+    virusScanDTO = initTestValues.createVirusScanVirusFreeDTO();
   }
 
   @Test
@@ -76,14 +83,26 @@ public class FileUploadImplTest {
   @Test
   public void testUpload() {
     when(dbFileRepository.getChunk("ad1f5bb0-e1a9-4960-b0ca-1998fa5a1d6c", 1L)).thenReturn(chunk);
+    when(clamAvService.virusScan(dbFileDTO.getFileData())).thenReturn(virusScanDTO);
     boolean b = fileUploadImpl.upload(dbFileDTO);
     verify(dbFileRepository, times(1)).save(any(DBFile.class));
     assertTrue(b);
   }
 
+  @Test(expected = VirusFoundException.class)
+  public void testUploadVirus() {
+    when(dbFileRepository.getChunk("ad1f5bb0-e1a9-4960-b0ca-1998fa5a1d6c", 1L)).thenReturn(chunk);
+    virusScanDTO.setVirusFree(false);
+    virusScanDTO.setVirusScanDescription("Threat Found");
+    when(clamAvService.virusScan(dbFileDTO.getFileData())).thenReturn(virusScanDTO);
+    boolean b = fileUploadImpl.upload(dbFileDTO);
+    verify(dbFileRepository, times(0)).save(any(DBFile.class));
+  }
+
   @Test
   public void testUploadTotalSizeZero() {
     when(dbFileRepository.getChunk("ad1f5bb0-e1a9-4960-b0ca-1998fa5a1d6c", 1L)).thenReturn(chunk);
+    when(clamAvService.virusScan(dbFileDTO.getFileData())).thenReturn(virusScanDTO);
     dbFileDTO.setTotalSize(0L);
     boolean b = fileUploadImpl.upload(dbFileDTO);
     verify(dbFileRepository, times(1)).save(any(DBFile.class));
@@ -93,6 +112,7 @@ public class FileUploadImplTest {
   @Test
   public void testUploadFileIsNull() {
     when(dbFileRepository.getChunk("ad1f5bb0-e1a9-4960-b0ca-1998fa5a1d6c", 1L)).thenReturn(null);
+    when(clamAvService.virusScan(dbFileDTO.getFileData())).thenReturn(virusScanDTO);
     dbFileDTO.setTotalSize(0L);
     boolean b = fileUploadImpl.upload(dbFileDTO);
     verify(dbFileRepository, times(1)).save(any(DBFile.class));
