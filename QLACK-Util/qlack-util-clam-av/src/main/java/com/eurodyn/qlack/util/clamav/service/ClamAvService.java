@@ -3,6 +3,8 @@ package com.eurodyn.qlack.util.clamav.service;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.util.Objects;
 import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,14 +41,24 @@ public class ClamAvService {
    *
    * @return {@link com.eurodyn.qlack.util.clamav.dto.VirusScanDTO} the scanning result
    */
-  public VirusScanDTO virusScan(byte[] data) {
+  public VirusScanDTO virusScan(byte[] data) throws ClamAVException {
+    Objects.requireNonNull(properties.getClamAvHost(), "The hostname can't be null. Please provide a valid antivirus "
+      + "server hostname.");
+
+    // Check antivirus server instance is running
+    if (!hostIsAvailable(properties.getClamAvHost(), properties.getClamAvPort())) {
+      throw new ClamAVException("Could not connect to Clam AV instance");
+    }
+
     VirusScanDTO vsDTO = new VirusScanDTO();
     InetSocketAddress clamAVAddress = new InetSocketAddress(properties.getClamAvHost(), properties.getClamAvPort());
 
     log.log(Level.FINE, "Contacting ClamAV at: {0}.", clamAVAddress);
     ClamAV clamAV = new ClamAV(clamAVAddress, properties.getClamAvSocketTimeout());
     String scanResult;
+
     try (ByteArrayInputStream bis = new ByteArrayInputStream(data)) {
+      log.log(Level.INFO, "Scanning file for viruses..");
       scanResult = clamAV.scan(bis);
     } catch (IOException | ClamAVException e) {
       log.log(Level.SEVERE, "Could not check file for virus", e);
@@ -57,5 +69,15 @@ public class ClamAvService {
     vsDTO.setVirusScanDescription(scanResult);
 
     return vsDTO;
+  }
+
+  public static boolean hostIsAvailable(String clamAvHost, int clamAvPort) {
+    log.log(Level.INFO, "Checking for AntiVirus server availability..");
+    try (Socket s = new Socket(clamAvHost, clamAvPort)) {
+      log.log(Level.INFO, "AntiVirus server is up and running.");
+      return true;
+    } catch (IOException ex) {
+      return false;
+    }
   }
 }

@@ -31,6 +31,7 @@ import com.eurodyn.qlack.util.clamav.exception.VirusFoundException;
 import com.eurodyn.qlack.util.clamav.service.ClamAvService;
 import com.querydsl.core.types.Predicate;
 
+import io.sensesecure.clamav4j.ClamAVException;
 import lombok.extern.java.Log;
 
 @Log
@@ -41,13 +42,15 @@ public class FileUploadImpl implements FileUpload {
   private QDBFile qdbFile = QDBFile.dBFile;
   @Value("${qlack.fuse.fileupload.cleanupEnabled:false}")
   private boolean cleanupEnabled;
+  @Value("${qlack.fuse.fileupload.virusScanEnabled:false}")
+  private boolean isVirusScanEnabled;
   @Value("${qlack.fuse.fileupload.cleanupThreshold:300000}")
   private long cleanupThreshold;
 
   private ClamAvService clamAvService;
 
-  private final String SECURITY_RISK_MESSAGE = "The file you are trying to upload imposes a security risk. Please "
-    + "review the file.";
+  private final String SECURITY_RISK_MESSAGE = "The file you are trying to upload was flagged as malicious. "
+    + "Please review the file.";
 
   @Autowired
   public FileUploadImpl(DBFileRepository dbFileRepository, ClamAvService clamAvService) {
@@ -196,14 +199,26 @@ public class FileUploadImpl implements FileUpload {
     file.setUploadedAt(System.currentTimeMillis());
     file.setUploadedBy(dbFileDTO.getUploadedBy());
 
-    VirusScanDTO result = clamAvService.virusScan(dbFileDTO.getFileData());
+    if (isVirusScanEnabled) {
+      log.log(Level.INFO, "File virus scanning is enabled. ");
+      VirusScanDTO result = null;
+      try {
+        result = clamAvService.virusScan(dbFileDTO.getFileData());
+      } catch (ClamAVException e) {
+        log.log(Level.WARNING, e.getMessage());
+      }
 
-    if (!result.isVirusFree()) {
-      throw new VirusFoundException(SECURITY_RISK_MESSAGE);
+      if (result != null && !result.isVirusFree()) {
+        throw new VirusFoundException(SECURITY_RISK_MESSAGE);
+      } else {
+        file.setChunkData(dbFileDTO.getFileData());
+        file.setChunkSize(dbFileDTO.getFileData().length);
+
+        dbFileRepository.save(file);
+      }
     } else {
       file.setChunkData(dbFileDTO.getFileData());
       file.setChunkSize(dbFileDTO.getFileData().length);
-
       dbFileRepository.save(file);
     }
     return chunkExists;
