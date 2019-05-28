@@ -11,26 +11,24 @@ import com.eurodyn.qlack.fuse.aaa.mappers.UserAttributeMapper;
 import com.eurodyn.qlack.fuse.aaa.mappers.UserDetailsMapper;
 import com.eurodyn.qlack.fuse.aaa.mappers.UserGroupHasOperationMapper;
 import com.eurodyn.qlack.fuse.aaa.mappers.UserMapper;
-import com.eurodyn.qlack.fuse.aaa.model.UserGroup;
 import com.eurodyn.qlack.fuse.aaa.model.QSession;
 import com.eurodyn.qlack.fuse.aaa.model.QUser;
 import com.eurodyn.qlack.fuse.aaa.model.QUserAttribute;
 import com.eurodyn.qlack.fuse.aaa.model.Session;
 import com.eurodyn.qlack.fuse.aaa.model.User;
 import com.eurodyn.qlack.fuse.aaa.model.UserAttribute;
-import com.eurodyn.qlack.fuse.aaa.repository.UserGroupRepository;
+import com.eurodyn.qlack.fuse.aaa.model.UserGroup;
 import com.eurodyn.qlack.fuse.aaa.repository.SessionRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.UserAttributeRepository;
+import com.eurodyn.qlack.fuse.aaa.repository.UserGroupRepository;
 import com.eurodyn.qlack.fuse.aaa.repository.UserRepository;
-import com.eurodyn.qlack.fuse.aaa.util.Md5PasswordEncoder;
-import com.eurodyn.qlack.util.data.SpringBeansUtils;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.extern.java.Log;
-import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.context.annotation.Lazy;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,12 +42,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -83,13 +80,11 @@ public class UserService implements UserDetailsService {
 
   private final PasswordEncoder passwordEncoder;
 
-  private static final int SALT_LENGTH = 16;
-
   public UserService(AccountingService accountingService, LdapUserUtil ldapUserUtil,
                      UserRepository userRepository, UserAttributeRepository userAttributeRepository,
                      SessionRepository sessionRepository, UserGroupRepository userGroupRepository, UserMapper userMapper,
                      SessionMapper sessionMapper, UserAttributeMapper userAttributeMapper,
-                     UserDetailsMapper userDetailsMapper, @Lazy PasswordEncoder passwordEncoder,
+                     UserDetailsMapper userDetailsMapper, PasswordEncoder passwordEncoder,
                      UserGroupHasOperationMapper userGroupHasOperationMapper) {
     this.accountingService = accountingService;
     this.ldapUserUtil = ldapUserUtil;
@@ -105,13 +100,20 @@ public class UserService implements UserDetailsService {
     this.userGroupHasOperationMapper = userGroupHasOperationMapper;
   }
 
-  public String createUser(UserDTO dto) {
+  /**
+   * Creates a new user in AAA. If the password encoder you have chosen needs a salt, make sure
+   * you populate one into {@link UserDTO}. You can find a secure seed/salt generator in
+   * qlack-fuse-crypto's generateSecureRandom.
+   * @param dto The DTO with the user details to create.
+   */
+  public String createUser(UserDTO dto, Optional<String> salt) {
     User user = userMapper.mapToEntity(dto);
-    setUserPassword(dto, user);
-    for(UserAttribute attribute: user.getUserAttributes()){
-      attribute.setUser(user);
+    setUserPassword(dto, user, salt);
+    if (CollectionUtils.isNotEmpty(user.getUserAttributes())) {
+      for (UserAttribute attribute : user.getUserAttributes()) {
+        attribute.setUser(user);
+      }
     }
-
     userRepository.save(user);
 
     return user.getId();
@@ -122,9 +124,9 @@ public class UserService implements UserDetailsService {
     userMapper.mapToExistingEntity(dto, user);
 
     if (updatePassword) {
-      setUserPassword(dto, user);
+      setUserPassword(dto, user, Optional.of(user.getSalt()));
     }
-    if (dto.getUserAttributes() != null) {
+    if (CollectionUtils.isNotEmpty(dto.getUserAttributes())) {
       for (UserAttributeDTO attribute : dto.getUserAttributes()) {
         updateAttribute(attribute, createIfMissing);
       }
@@ -186,7 +188,7 @@ public class UserService implements UserDetailsService {
     return user.isExternal();
   }
 
-  public String canAuthenticate(String username, String password) {
+  public String canAuthenticate(final String username, String password) {
     String retVal = null;
 
     /** Try to find this user in the database */
@@ -198,9 +200,10 @@ public class UserService implements UserDetailsService {
      * user.
      */
     if (user != null && BooleanUtils.isFalse(user.isExternal())) {
-      /** Generate password hash to compare with password stored in the DB. */
-      String checkPassword = DigestUtils.md5Hex(user.getSalt() + password);
-      if (checkPassword.equals(user.getPassword())) {
+      if (StringUtils.isNotBlank(user.getSalt())) {
+        password = user.getSalt() + password;
+      }
+      if (passwordEncoder.matches(password, user.getPassword())) {
         retVal = user.getId();
       }
     } else {
@@ -456,27 +459,14 @@ public class UserService implements UserDetailsService {
     return userDetailsMapper.mapToDTO(user, userGroupHasOperationMapper);
   }
 
-  private void setUserPassword(UserDTO dto, User user) {
+  private void setUserPassword(UserDTO dto, User user, Optional<String> salt) {
     if (dto == null || user == null) {
       return;
     }
 
-    // Retrieve target class from proxied bean interface.
-    Object targetPasswordEncoder = null;
-    try {
-      targetPasswordEncoder = SpringBeansUtils.getTargetObject(passwordEncoder, PasswordEncoder.class);
-    } catch (Exception e) {
-      log.log(Level.WARNING, e.getMessage(), e);
-    }
-
-    if (targetPasswordEncoder instanceof Md5PasswordEncoder) {
-      Md5PasswordEncoder encoder = (Md5PasswordEncoder) passwordEncoder;
-      byte[] salt = encoder.generateSalt(SALT_LENGTH);
-
-      // Generate salt and hash password
-      user.setSalt(new String(salt));
-      String password = encoder.encode(Arrays.toString(salt) + dto.getPassword());
-      user.setPassword(DigestUtils.md5Hex(password));
+    if (salt.isPresent()) {
+      user.setSalt(salt.get());
+      user.setPassword(passwordEncoder.encode(salt + dto.getPassword()));
     } else {
       user.setPassword(passwordEncoder.encode(dto.getPassword()));
     }
