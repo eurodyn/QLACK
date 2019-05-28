@@ -1,5 +1,6 @@
 package com.eurodyn.qlack.fuse.aaa.service;
 
+import com.eurodyn.qlack.common.exception.QDoesNotExistException;
 import com.eurodyn.qlack.fuse.aaa.criteria.UserSearchCriteria;
 import com.eurodyn.qlack.fuse.aaa.criteria.UserSearchCriteria.UserAttributeCriteria;
 import com.eurodyn.qlack.fuse.aaa.criteria.UserSearchCriteria.UserAttributeCriteria.Type;
@@ -464,7 +465,11 @@ public class UserService implements UserDetailsService {
       return;
     }
 
-    if (salt.isPresent()) {
+    if (StringUtils.isBlank(dto.getPassword())) {
+      throw new QDoesNotExistException("Password is empty.");
+    }
+
+    if (salt != null && salt.isPresent()) {
       user.setSalt(salt.get());
       user.setPassword(passwordEncoder.encode(salt + dto.getPassword()));
     } else {
