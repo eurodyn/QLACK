@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.text.MessageFormat;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -42,5 +44,15 @@ public class AuditDTO extends AuditBaseDTO {
     this.groupName = groupName;
     this.shortDescription = description;
     this.prinSessionId = sessionID;
+  }
+
+  public AuditDTO setShortDescription(String message, Object... args) {
+    this.shortDescription = MessageFormat.format(message, args);
+    return this;
+  }
+
+  public AuditDTO setShortDescription(String shortDescription) {
+    this.shortDescription = shortDescription;
+    return this;
   }
 }
