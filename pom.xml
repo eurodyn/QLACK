@@ -71,6 +71,9 @@
     <jwt.version>0.9.1</jwt.version>
     <drools.version>7.20.0.Final</drools.version>
     <commons-io.version>2.6</commons-io.version>
+    <activiti.version>7.1.9</activiti.version>
+    <apache.email.version>1.5</apache.email.version>
+    <commons.codec.version>1.7</commons.codec.version>
   </properties>
 
   <dependencyManagement>

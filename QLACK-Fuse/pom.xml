@@ -28,6 +28,7 @@
     <module>qlack-fuse-search</module>
     <module>qlack-fuse-security</module>
     <module>qlack-fuse-settings</module>
+    <module>qlack-fuse-workflow</module>
   </modules>
 
   <dependencies>
